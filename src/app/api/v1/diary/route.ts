@@ -5,130 +5,66 @@ import { authSessionServer } from "@/lib/auth";
 
 export async function GET(request: Request) {
   const userData = await authSessionServer();
-  // use the same route for both self and if other user is viewing someone's profile
+  const username = userData?.user.username;
+  // check search param
   const url = new URL(request.url);
-  const username = String(url.pathname.split("/profile/").at(-1));
-  const isSelfProfile = userData?.user.username === username;
+  const searchParam = url.searchParams.get("id");
 
+    if (!userData) {
+    throw new Error("User not authenticated");
+  }
+  if (searchParam) {
+    // fetch diary by id
+    // console.log("Fetching diary with id:", searchParam);
+    try {
+      const diary = await prisma.diary.findUnique({
+        where: { slug: searchParam },
+        select: {
+          id: true,
+          slug: true,
+          title: true,
+          diaryCoverImage: true,
+          createdAt: true,
+          types: true,
+          pages: true
+        }
+      });
+      if (!diary) {
+        return new Response("Diary not found", { status: 404 });
+      }
+      return new Response(JSON.stringify(diary), { status: 200 });
+    } catch (error) {
+      console.error("Error fetching diary by id:", error);
+      return new Response("Error fetching diary", { status: 500 });
+    }
+  }
 
+  // console.log(username, "username in getDiaries", userData.user.username);
   try {
-    let diaries;
-    if (isSelfProfile) {
-      diaries = await prisma.diary.findMany({
-        where: {
-          userId: userData?.user.id || "",
+    const diaries = await prisma.diary.findMany({
+      where: {
+        user: {
+          username: username
         },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
-    } else {
-      diaries = await prisma.diary.findMany({
-        where: {
-          user: {
-            username: username
-          },
-          types: {
-            in: ["PERSONAL", "TRIVIAL", "GENERAL"] // Fetch only personal and public diaries
-          }
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
-    }
-      return new Response(JSON.stringify({ diaries, count: diaries.length }), {
-        headers: { "Content-Type": "application/json" },
-      });
-    } catch (error) {
-      console.error("Error fetching diaries:", error);
-      return new Response(JSON.stringify({ error: "Failed to fetch diaries" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-  }
-
-export async function POST(request: Request) {
-    const body = await request.json();
-    const userData = await authSessionServer();
-
-    try {
-      const diary = await prisma.diary.create({
-        data: {
-          title: body.title,
-          slug: body.slug,
-          user: {
-            connect: { id: userData?.user.id } // Ensure user is linked
-          },
-          types: body.types || "PERSONAL", // Default to PERSONAL if not provided
+        types: {
+          in: ["PERSONAL", "GENERAL", "SPECIAL", "TRIVIAL"]
         }
-      });
-      // return new Response(JSON.stringify(diary), {
-      //   headers: { "Content-Type": "application/json" },
-      // });
-    } catch (error) {
-      // console.error("Error creating diary:", error);
-      return new Response(JSON.stringify({ error: "Failed to create diary" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    return new Response(JSON.stringify({ message: "Diary created successfully" }), {
-      status: 201,
-      headers: { "Content-Type": "application/json" },
+      },
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        diaryCoverImage: true,
+        createdAt: true,
+        types: true,
+        pages: true
+      }
     });
+    // revalidatePath(`/profile/${username}/diary`);
+    return new Response(JSON.stringify(diaries), { status: 200 });
+
+  } catch (error) {
+    console.error("Error fetching diaries:", error);
+    return new Response("Error fetching diaries", { status: 500 });
   }
-
-  export async function PATCH(request: Request) {
-    const diaryId = request.headers.get("diaryId") || "";
-    const body = await request.json();
-
-    try {
-      const diary = await prisma.diary.update({
-        where: { id: diaryId },
-        data: {
-          title: body.title,
-          types: body.types
-        }
-      });
-      console.log("Diary updated:", diary);
-    } catch (error) {
-      console.error("Error updating diary:", error);
-      return new Response(JSON.stringify({ error: "Failed to update diary" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    return new Response(JSON.stringify({ message: "Diary updated successfully" }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  export async function DELETE(request: Request) {
-    const diaryId = request.headers.get("diaryId") || "";
-
-    console.log("Deleting diary:", diaryId);
-
-    try {
-      await prisma.diary.delete({
-        where: { id: diaryId }
-      });
-      console.log("Diary deleted:", diaryId);
-    } catch (error) {
-      console.error("Error deleting diary:", error);
-      return new Response(JSON.stringify({ error: "Failed to delete diary" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    return new Response(JSON.stringify({ message: "Diary deleted successfully" }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+}

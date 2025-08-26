@@ -4,7 +4,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import BasicTipTapEditor from '@/components/singleton/BasicTipTapEditor'
 import { Button } from '@/components/ui/button'
 import { PenTool } from 'lucide-react'
-import { toast } from 'sonner'
 
 
 
@@ -30,11 +29,6 @@ function AddButton() {
                     <div className="mt-4">
                         <BasicTipTapEditor
                             placeholder="Share what's on your mind today..."
-                            onSave={(content) => {
-                                console.log('Saved content:', content);
-                                toast.success("Diary entry saved successfully!");
-                                setIsEditorOpen(false);
-                            }}
                             className="w-full"
                         />
                     </div>

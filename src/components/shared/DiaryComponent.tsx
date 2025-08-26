@@ -62,10 +62,11 @@ function DiaryComponent() {
   return (
     <div className="flex-1 p-4 lg:p-6 space-y-6">
       <DiaryHeader
+        isDiary={true}
         title="Your Diaries"
         description="Keep track of your thoughts and experiences."
         btnText="New Diary"
-        href="/diary/new"
+        // href="/diary/new"
       />
 
       {/* Search */}
