@@ -106,7 +106,6 @@ model Note {
 
 model Diary {
   id              String    @id @default(cuid())
-  slug            String    @unique
   title           String
   diaryCoverImage String?
   createdAt       DateTime  @default(now())

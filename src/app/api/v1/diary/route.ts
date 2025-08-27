@@ -18,10 +18,9 @@ export async function GET(request: Request) {
     // console.log("Fetching diary with id:", searchParam);
     try {
       const diary = await prisma.diary.findUnique({
-        where: { slug: searchParam },
+        where: { id: searchParam },
         select: {
           id: true,
-          slug: true,
           title: true,
           diaryCoverImage: true,
           createdAt: true,
@@ -52,7 +51,6 @@ export async function GET(request: Request) {
       },
       select: {
         id: true,
-        slug: true,
         title: true,
         diaryCoverImage: true,
         createdAt: true,

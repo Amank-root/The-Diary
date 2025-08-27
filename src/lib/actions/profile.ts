@@ -1,4 +1,5 @@
 "use server"
+import { redirect } from "next/navigation";
 import { prisma, authSessionServer } from "../auth";
 import type { ProfileDetails } from "../types";
 import { revalidatePath } from "next/cache";
@@ -57,7 +58,7 @@ export async function updateProfileData(formData: FormData): Promise<{ success: 
     }
 
     try {
-        await prisma.user.update({
+        const data = await prisma.user.update({
             where: {
                 id: session.user.id
             },
@@ -69,7 +70,7 @@ export async function updateProfileData(formData: FormData): Promise<{ success: 
                 image: validatedData.data.profileImageUrl,
             }
         });
-        revalidatePath(`/profile/${session.user.username}`);
+        revalidatePath(`/profile/${data.username}`);
         return { success: true };
     }
     catch (error) {

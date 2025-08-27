@@ -1,6 +1,5 @@
 "use server";
 import { prisma } from "@/lib/auth";
-import { randomUUID } from "crypto";
 import { authSessionServer } from "../auth";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
@@ -9,7 +8,6 @@ const CreateDiarySchema = z.object({
     title: z.string().min(2).max(100).default("Untitled"),
     coverImageUrl: z.string().url().optional(),
     type: z.enum(["PERSONAL", "GENERAL", "SPECIAL", "TRIVIAL"]).default("PERSONAL"),
-    slug: z.string().uuid(),
 });
 
 export async function createDiary(formData: FormData) {
@@ -27,7 +25,6 @@ export async function createDiary(formData: FormData) {
         title: formData.get("title")?.toString(),
         coverImageUrl: formData.get("coverImageUrl") ? formData.get("coverImageUrl")?.toString() : defaultImages[formData.get("type")?.toString().toUpperCase() as keyof typeof defaultImages],
         type: formData.get("type")?.toString().toUpperCase(),
-        slug: randomUUID().toString(),
     }
 
     const validated = CreateDiarySchema.safeParse(extracted);
@@ -41,7 +38,6 @@ export async function createDiary(formData: FormData) {
         await prisma.diary.create({
             data: {
                 title: validated.data.title,
-                slug: validated.data.slug,
                 user: {
                     connect: { id: userData?.user.id }
                 },
@@ -76,7 +72,7 @@ export async function getDiaries(username?: string) {
 
             },
             select: {
-                slug: true,
+                id: true,
                 title: true,
                 diaryCoverImage: true,
                 createdAt: true,
@@ -111,7 +107,6 @@ export async function getDiariesWithPages(username?: string) {
             },
             select: {
                 id: true,
-                slug: true,
                 title: true,
                 diaryCoverImage: true,
                 createdAt: true,
@@ -124,6 +119,35 @@ export async function getDiariesWithPages(username?: string) {
 
     } catch (error) {
         console.error("Error fetching diaries:", error);
+        return null;
+    }
+}
+
+export async function getDiaryById(diaryId: string) {
+    const userData = await authSessionServer();
+
+    if (!userData) {
+        throw new Error("User not authenticated");
+    }
+
+    try {
+        const diary = await prisma.diary.findUnique({
+            where: {
+                id: diaryId
+            },
+            select: {
+                id: true,
+                title: true,
+                diaryCoverImage: true,
+                createdAt: true,
+                types: true,
+                pages: true
+            }
+        });
+        return diary;
+
+    } catch (error) {
+        console.error("Error fetching diary:", error);
         return null;
     }
 }

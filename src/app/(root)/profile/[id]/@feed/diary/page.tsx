@@ -15,12 +15,12 @@ async function DiaryProfilePage({ params }: { params: Promise<{ id: string }> })
     return (
         <div className="grid grid-cols-3 gap-1 md:gap-4">
             {diaries && diaries.map((diary) => (
-                <Card key={diary.slug} className="p-0 aspect-auto overflow-hidden group cursor-pointer border-0 shadow-sm">
+                <Card key={diary.id} className="p-0 aspect-auto overflow-hidden group cursor-pointer border-0 shadow-sm">
                     <div className="relative w-full h-full">
-                        <Link href={`/diary/${diary.slug}`}>
+                        <Link href={`/diary/${diary.id}`}>
                             <img
                                 src={diary.diaryCoverImage || "https://dummyimage.com/210x297"}
-                                alt={`diary ${diary.slug}`}
+                                alt={`diary ${diary.id}`}
                                 className="w-full h-full object-cover group-hover:opacity-75 transition-opacity"
                             />
                         </Link>

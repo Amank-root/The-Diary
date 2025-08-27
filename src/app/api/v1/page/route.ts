@@ -31,7 +31,7 @@ export async function GET(request: Request) {
         },
         orderBy: { createdAt: "desc" },
         include: {
-          diary: { select: { title: true, slug: true } }
+          diary: { select: { title: true, id: true } }
         }
       });
 
@@ -64,7 +64,7 @@ export async function GET(request: Request) {
         where: { isPublic: true },
         orderBy: { createdAt: "desc" },
         include: {
-          diary: { select: { title: true, slug: true } }
+          diary: { select: { title: true, id: true } }
         }
       });
     }
@@ -96,7 +96,7 @@ export async function POST(request: Request) {
           content: body.content || "New page content",
           diary: { connect: { id: body.diaryId || "" } },
           isPublic: body.isPublic || false,
-          pageNumber: 1,
+          pageNumber: body.pageNumber || 1,
           pageImageUrl: body.pageImageUrl || null,
         }
       });

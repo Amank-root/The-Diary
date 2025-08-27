@@ -3,32 +3,76 @@ import React, { useState, useEffect, useRef } from "react";
 import HTMLFlipBook from "react-pageflip";
 import { generateHTML } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Image from '@tiptap/extension-image'; // Add this import
+import Underline from '@tiptap/extension-underline';
+import TextAlign from '@tiptap/extension-text-align';
+import Typography from '@tiptap/extension-typography';
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import '../css/diaryflip.css'
 
 // PageCover Component with proper TypeScript
-const PageCover = React.forwardRef<HTMLDivElement, React.PropsWithChildren<{}>>(
-    ({ children }, ref) => (
+// Updated PageCover Component with cover image support
+const PageCover = React.forwardRef<HTMLDivElement, React.PropsWithChildren<{
+    coverImage?: string;
+    isBackCover?: boolean
+}>>(
+    ({ children, coverImage, isBackCover = false }, ref) => (
         <div className="page page-cover" ref={ref} data-density="hard">
-            <div className="page-content">
-                <h2 className="text-2xl font-bold text-center mt-20">{children}</h2>
+            <div className="page-content relative overflow-hidden">
+                {/* Background image if provided */}
+                {coverImage && !isBackCover && (
+                    <div
+                        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                        style={{ backgroundImage: `url(${coverImage})` }}
+                    >
+                        {/* Overlay for better text readability */}
+                        <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                    </div>
+                )}
+
+                {/* Content */}
+                <div className="relative z-10 h-full flex flex-col items-center justify-center">
+                    {coverImage && !isBackCover ? (
+                        // Front cover with image
+                        <div className="text-center text-white drop-shadow-lg">
+                            <h1 className="text-4xl font-bold mb-4 text-shadow-lg">{children}</h1>
+                            <div className="w-16 h-1 bg-white mx-auto opacity-80"></div>
+                        </div>
+                    ) : (
+                        // Back cover or fallback without image
+                        <div className="text-center">
+                            <h2 className="text-2xl font-bold text-center mt-20">{children}</h2>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     )
 );
 PageCover.displayName = "PageCover";
+// const PageCover = React.forwardRef<HTMLDivElement, React.PropsWithChildren<{}>>(
+//     ({ children }, ref) => (
+//         <div className="page page-cover" ref={ref} data-density="hard">
+//             <div className="page-content">
+//                 <h2 className="text-2xl font-bold text-center mt-20">{children}</h2>
+//             </div>
+//         </div>
+//     )
+// );
+// PageCover.displayName = "PageCover";
 
-// Page Component with proper TypeScript
-const Page = React.forwardRef<HTMLDivElement, { number: number; content: string }>(
-    ({ number, content }, ref) => (
-        <div className="page" ref={ref}>
+// Page Component with date instead of "Page X"
+const Page = React.forwardRef<HTMLDivElement, { number: number; content: string; date?: Date }>(
+    ({ number, content, date }, ref) => (
+        <div className="page dark:text-accent" ref={ref}>
             <div className="page-content p-6">
-                <h2 className="page-header text-lg font-semibold mb-4 flex w-full items-center justify-between">Page {number}
-                    <span className="flex flex-col text-xs font-light font-serif leading-0.5 gap-2">
-                        <span className="">username -</span>
-                        <span>title</span>
-                    </span>
+                <h2 className="page-header text-lg font-semibold mb-4 flex w-full items-center justify-between">
+                    {date ? new Date(date).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                    }) : `Page ${number}`}
                 </h2>
                 <div
                     className="page-text prose prose-sm max-w-none"
@@ -53,91 +97,138 @@ interface TiptapContent {
 }
 
 interface DiaryFlipProps {
-    tiptapJson?: TiptapContent | TiptapContent[] | null;
+    diary?: {
+        id: string;
+        title: string;
+        diaryCoverImage?: string;
+        createdAt: Date;
+        updatedAt: Date;
+        pages: {
+            id: string;
+            content: string; // This is a JSON string, not an object
+            pageNumber: number;
+            pageImageUrl?: string;
+            createdAt: Date;
+            updatedAt: Date;
+        }[];
+    };
     title?: string;
 }
 
-const DiaryFlip: React.FC<DiaryFlipProps> = ({ tiptapJson, title = "My Diary" }) => {
+const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
     const [page, setPage] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const [orientation, setOrientation] = useState("");
     const [bookState, setBookState] = useState("");
-    const [pages, setPages] = useState<string[]>([]);
+    const [pages, setPages] = useState<{ content: string; date: Date; pageNumber: number }[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const flipBook = useRef<any>(null);
 
-    // Convert Tiptap JSON to HTML and split into pages
+    // Define the extensions that match your editor
+    const extensions = [
+        StarterKit.configure({
+            heading: { levels: [1, 2, 3] }
+        }),
+        Underline,
+        TextAlign.configure({
+            types: ['heading', 'paragraph']
+        }),
+        Image.configure({
+            inline: false,
+            HTMLAttributes: {
+                class: 'max-w-full h-[200px] max-h-[300px] rounded-lg my-4',
+            },
+        }),
+        Typography,
+    ];
+
+    // Process diary pages
     useEffect(() => {
         const processContent = async () => {
             setIsLoading(true);
 
-            if (!tiptapJson) {
+            if (!diary || !diary.pages || diary.pages.length === 0) {
                 // Fallback dummy content
                 setPages([
-                    "<p>Welcome to your diary! This is your first page.</p><p>Start writing your thoughts and memories here.</p>",
-                    "<p>This is the second page of your diary.</p><p>You can add more content as you continue writing.</p>",
+                    {
+                        content: "<p>Welcome to your diary! This is your first page.</p><p>Start writing your thoughts and memories here.</p>",
+                        date: new Date(),
+                        pageNumber: 1
+                    }
                 ]);
                 setIsLoading(false);
                 return;
             }
 
             try {
-                // Ensure tiptapJson is in the correct format
-                const contentToProcess = Array.isArray(tiptapJson)
-                    ? { type: 'doc', content: tiptapJson }
-                    : tiptapJson;
+                const processedPages = diary.pages.map((diaryPage, index) => {
+                    try {
+                        // Parse the JSON string content
+                        const parsedContent = JSON.parse(diaryPage.content) as TiptapContent;
 
-                const html = generateHTML(contentToProcess, [StarterKit]);
+                        // Generate HTML from Tiptap JSON with all extensions
+                        const html = generateHTML(parsedContent, extensions);
 
-                // Better content splitting logic
-                const splitContentIntoPages = (htmlContent: string): string[] => {
-                    // Remove HTML tags for character counting
-                    const textContent = htmlContent.replace(/<[^>]*>/g, '');
+                        return {
+                            content: html,
+                            date: diaryPage.createdAt,
+                            pageNumber: diaryPage.pageNumber || index + 1
+                        };
+                    } catch (error) {
+                        console.error(`Error parsing page ${index + 1} content:`, error);
+                        console.error('Content that failed to parse:', diaryPage.content);
 
-                    if (textContent.length <= 800) {
-                        return [htmlContent];
-                    }
-
-                    // Split by paragraphs first
-                    const paragraphs = htmlContent.split('</p>');
-                    const pages: string[] = [];
-                    let currentPage = '';
-                    let currentLength = 0;
-
-                    for (const paragraph of paragraphs) {
-                        const paragraphText = paragraph.replace(/<[^>]*>/g, '');
-
-                        if (currentLength + paragraphText.length > 800 && currentPage) {
-                            // Finish current page
-                            pages.push(currentPage + (currentPage.includes('<p>') ? '</p>' : ''));
-                            currentPage = paragraph + '</p>';
-                            currentLength = paragraphText.length;
-                        } else {
-                            currentPage += paragraph + '</p>';
-                            currentLength += paragraphText.length;
+                        // Try to extract plain text as fallback
+                        let fallbackContent = "<p>Error loading this page content.</p>";
+                        try {
+                            const parsedContent = JSON.parse(diaryPage.content);
+                            if (parsedContent?.content) {
+                                // Extract text content from Tiptap structure
+                                const extractText = (node: any): string => {
+                                    if (node.text) return node.text;
+                                    if (node.content) {
+                                        return node.content.map(extractText).join('');
+                                    }
+                                    return '';
+                                };
+                                const text = parsedContent.content.map(extractText).join(' ');
+                                if (text.trim()) {
+                                    fallbackContent = `<p>${text}</p>`;
+                                }
+                            }
+                        } catch (fallbackError) {
+                            console.error('Fallback extraction also failed:', fallbackError);
                         }
+
+                        return {
+                            content: fallbackContent,
+                            date: diaryPage.createdAt,
+                            pageNumber: diaryPage.pageNumber || index + 1
+                        };
                     }
+                });
 
-                    if (currentPage.trim()) {
-                        pages.push(currentPage);
-                    }
+                // Sort pages by page number
+                processedPages.sort((a, b) => a.pageNumber - b.pageNumber);
 
-                    return pages.length > 0 ? pages : [htmlContent];
-                };
-
-                const splitPages = splitContentIntoPages(html);
-                setPages(splitPages);
+                setPages(processedPages);
             } catch (error) {
-                console.error("Error parsing Tiptap JSON:", error);
-                setPages(["<p>Error loading content. Please try again.</p>"]);
+                console.error("Error processing diary pages:", error);
+                setPages([
+                    {
+                        content: "<p>Error loading diary content. Please try again.</p>",
+                        date: new Date(),
+                        pageNumber: 1
+                    }
+                ]);
             } finally {
                 setIsLoading(false);
             }
         };
 
         processContent();
-    }, [tiptapJson]);
+    }, [diary]);
 
     // Set total page count when flipBook is mounted and pages are loaded
     useEffect(() => {
@@ -191,53 +282,12 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ tiptapJson, title = "My Diary" })
         );
     }
 
+    const diaryTitle = title || diary?.title || "My Diary";
+
     return (
         <div className="diary-flip-container">
-            {/* <style jsx>{`
-        .demo-book {
-          margin: 0 auto;
-        }
-        
-        .page {
-          background: white;
-          border: 1px solid #e5e7eb;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        
-        .page-cover {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        
-        .page-content {
-          padding: 20px;
-          height: 100%;
-          box-sizing: border-box;
-          overflow: hidden;
-        }
-        
-        .page-text {
-          line-height: 1.6;
-          font-size: 14px;
-        }
-        
-        .page-footer {
-          position: absolute;
-          bottom: 20px;
-          right: 20px;
-        }
-        
-        .page-header {
-          border-bottom: 1px solid #e5e7eb;
-          padding-bottom: 10px;
-          margin-bottom: 15px;
-        }
-      `}</style> */}
-
             <div className="mb-6">
+                {/* @ts-ignore */}
                 <HTMLFlipBook
                     width={550}
                     height={733}
@@ -254,14 +304,56 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ tiptapJson, title = "My Diary" })
                     className="demo-book"
                     ref={flipBook}
                 >
-                    <PageCover>{title}</PageCover>
+                    {/* Front cover with diary cover image */}
+                    <PageCover coverImage={diary?.diaryCoverImage}>
+                        {diaryTitle}
+                    </PageCover>
 
-                    {pages.map((htmlContent, index) => (
-                        <Page key={index} number={index + 1} content={htmlContent} />
+                    {pages.map((pageData, index) => (
+                        <Page
+                            key={`page-${pageData.pageNumber}-${index}`}
+                            number={pageData.pageNumber}
+                            content={pageData.content}
+                            date={pageData.date}
+                        />
+                    ))}
+
+                    {/* Back cover without image */}
+                    <PageCover isBackCover={true}>
+                        THE END
+                    </PageCover>
+                </HTMLFlipBook>
+                {/* <HTMLFlipBook
+                    width={550}
+                    height={733}
+                    size="stretch"
+                    minWidth={315}
+                    minHeight={400}
+                    maxHeight={1533}
+                    maxShadowOpacity={0.5}
+                    showCover={true}
+                    mobileScrollSupport={true}
+                    onFlip={onPage}
+                    onChangeOrientation={onChangeOrientation}
+                    onChangeState={onChangeState}
+                    className="demo-book"
+                    ref={flipBook}
+                >
+                    <PageCover coverImage={diary?.diaryCoverImage}>
+                        {diaryTitle}
+                    </PageCover>
+
+                    {pages.map((pageData, index) => (
+                        <Page
+                            key={`page-${pageData.pageNumber}-${index}`}
+                            number={pageData.pageNumber}
+                            content={pageData.content}
+                            date={pageData.date}
+                        />
                     ))}
 
                     <PageCover>THE END</PageCover>
-                </HTMLFlipBook>
+                </HTMLFlipBook> */}
             </div>
 
             {/* Controls */}

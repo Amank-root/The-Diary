@@ -2,6 +2,8 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "@prisma/client";
 import { headers } from "next/headers";
+import { sendEmail } from "@/email/mail-conf";
+import { nextCookies } from "better-auth/next-js";
 
 
 // Create a global instance to avoid multiple connections in development
@@ -20,9 +22,15 @@ export const auth = betterAuth({
   
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: false,
+    autoSignIn: false,
+    requireEmailVerification: true,
   },
-  
+  emailVerification: {
+    sendVerificationEmail: async ({url, user}) => {
+      await sendEmail(url, user);
+    }
+  },
+
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -50,6 +58,7 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day
   },
+  plugins: [nextCookies()]
 });
 
 export const authSessionServer = async () => {
