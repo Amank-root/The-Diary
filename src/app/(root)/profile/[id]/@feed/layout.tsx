@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import Navbar from './Navbar';
+import Loading from './loading';
 
 // const revalidate = 0; // Disable caching to always fetch the latest data
 
@@ -11,7 +12,9 @@ async function Layout({ params, children }: { params: Promise<{ id: string }>, c
             <Navbar id={id} />
             <div className='w-full'>
                 <div className='max-w-4xl mx-auto px-4 py-2'>
-                    {children}
+                    <Suspense fallback={<Loading />}>
+                        {children}
+                    </Suspense>
                 </div>
             </div>
         </div>

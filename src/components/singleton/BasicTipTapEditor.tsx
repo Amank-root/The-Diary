@@ -46,6 +46,7 @@ interface DiaryOption {
   id: string;
   title: string;
   slug: string;
+  pages?: any[] | any | null;
 }
 
 interface TiptapEditorProps {
@@ -456,7 +457,8 @@ const convertToImageAndUploadCanvas = async (): Promise<string | null> => {
 };
 
 
-// Update the handleSave to use fallback
+
+// Update the handleSave function with corrected state update logic
 const handleSave = useCallback(async () => {
   if (!editor) {
     toast.error("Editor not ready");
@@ -499,14 +501,24 @@ const handleSave = useCallback(async () => {
 
     console.log(diaryOptions, selectedDiaryId)
 
+    // Calculate page number more reliably
+    let currentPageNumber = 1;
+    if (diaryOptions.length >= 2) {
+      const selectedDiary = diaryOptions.find(option => option.id === selectedDiaryId);
+      currentPageNumber = (selectedDiary?.pages?.length || 0) + 1;
+      // @ts-ignore
+    } else if (diaryOptions.pages) {
+      // @ts-ignore
+      currentPageNumber = (diaryOptions.pages.length || 0) + 1;
+    }
+
     const requestBody: any = {
       content: JSON.stringify(editorContent),
       pageImageUrl: pageImageUrl,
       diaryId: selectedDiaryId,
+      pageNumber: currentPageNumber,
       // @ts-ignore
-      pageNumber: diaryOptions.length >= 2 ? diaryOptions.find(option=> option.id === selectedDiaryId)?.pages.length + 1 : diaryOptions.pages.length + 1 || 1,
-      // @ts-ignore
-      isPublic: diaryOptions.length >= 2 ? diaryOptions.find(option=> option.id === selectedDiaryId)?.types != "SPECIAL" : diaryOptions.types != "SPECIAL",
+      isPublic: diaryOptions.length >= 2 ? diaryOptions.find(option => option.id === selectedDiaryId)?.types !== "SPECIAL" : diaryOptions.types !== "SPECIAL",
     };
 
     const endpoint = "/api/v1/page/";
@@ -528,7 +540,39 @@ const handleSave = useCallback(async () => {
     const result = await response.json();
     console.log("Content saved:", result);
 
+    // Update diary options state to reflect the new page
+    setDiaryOptions((prev) => {
+      if (Array.isArray(prev) && prev.length >= 2) {
+        // Multiple diaries case
+        const updatedDiaries = prev.map((diary) => {
+          if (diary.id === selectedDiaryId) {
+            return {
+              ...diary,
+              pages: Array.isArray(diary.pages) ? [...diary.pages, result] : [result],
+            };
+          }
+          return diary;
+        });
+        return updatedDiaries;
+      } else if (prev && typeof prev === 'object' && 'id' in prev) {
+        // Single diary case
+        if (prev.id === selectedDiaryId) {
+          return {
+            ...prev,
+            // @ts-ignore
+            pages: Array.isArray(prev.pages) ? [...prev.pages, result] : [result],
+          };
+        }
+      }
+      
+      console.log("State update fallback - prev:", prev, "result:", result);
+      return prev;
+    });
+
     toast.success("Page saved successfully!");
+
+    // Clear editor content after successful save
+    editor.commands.clearContent();
 
   } catch (error) {
     console.error("Error saving:", error);
@@ -536,7 +580,7 @@ const handleSave = useCallback(async () => {
   } finally {
     setIsSaving(false);
   }
-}, [editor, selectedDiaryId, isDiaryPath]);
+}, [editor, selectedDiaryId, isDiaryPath, diaryOptions]);
 
   
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -81,7 +81,7 @@ export async function updateProfileData(formData: FormData): Promise<{ success: 
     }
 }
 
-export async function getProfile(username: string): Promise<ProfileDetails> {
+export async function getProfile(username: string): Promise<ProfileDetails | null> {
     const session = await authSessionServer();
     if (!session) throw new Error("Unauthorized");
 
@@ -127,7 +127,7 @@ export async function getProfile(username: string): Promise<ProfileDetails> {
         const [profile, pageCount] = await Promise.all([profileData, page]);
         // revalidatePath(`/profile/`);
         
-        return {
+        return profile ? {
             id: profile?.id ?? "",
             name: profile?.name ?? "",
             username: profile?.username ?? "",
@@ -141,24 +141,25 @@ export async function getProfile(username: string): Promise<ProfileDetails> {
             readingCount: profile?._count.reading ?? 0,
             pageCount: pageCount ?? 0,
             isSelf: isSelf,
-        }
+        } : null;
 
     } catch (error) {
-        return {
-            id: "",
-            name: "",
-            username: "",
-            bio: "",
-            website: "",
-            reading: [],
-            readers: [],
-            profileImage: "",
-            readerCount: 0,
-            diaryCount: 0,
-            readingCount: 0,
-            pageCount: 0,
-            isSelf: isSelf,
-        };
+        // return {
+        //     id: "",
+        //     name: "",
+        //     username: "",
+        //     bio: "",
+        //     website: "",
+        //     reading: [],
+        //     readers: [],
+        //     profileImage: "",
+        //     readerCount: 0,
+        //     diaryCount: 0,
+        //     readingCount: 0,
+        //     pageCount: 0,
+        //     isSelf: isSelf,
+        // };
+        return null;
     }
 
 

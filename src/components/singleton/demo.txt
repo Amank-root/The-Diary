@@ -236,32 +236,16 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
             // Add a small delay to ensure the flip book is fully rendered
             const timer = setTimeout(() => {
                 try {
-                    // The correct way to access HTMLFlipBook methods
-                    if (flipBook.current && typeof flipBook.current.getPageFlip === 'function') {
-                        const pageFlipInstance = flipBook.current.getPageFlip();
-                        if (pageFlipInstance && typeof pageFlipInstance.getPageCount === 'function') {
-                            const pageCount = pageFlipInstance.getPageCount();
-                            setTotalPage(pageCount);
-                            console.log("Total pages from flipbook:", pageCount);
-                        } else {
-                            // Fallback: calculate total pages manually
-                            const totalPages = pages.length + 2;
-                            setTotalPage(totalPages);
-                            console.log("Using fallback page count:", totalPages);
-                        }
-                    } else {
-                        // Fallback: calculate total pages manually
-                        const totalPages = pages.length + 2;
-                        setTotalPage(totalPages);
-                        console.log("Using fallback page count (no getPageFlip):", totalPages);
+                    const pageFlip = flipBook.current?.getPageFlip();
+                    if (pageFlip) {
+                        const pageCount = pageFlip.getPageCount();
+                        setTotalPage(pageCount);
                     }
                 } catch (error) {
                     console.error("Error getting page count:", error);
-                    // Fallback calculation
-                    const totalPages = pages.length + 2;
-                    setTotalPage(totalPages);
+                    setTotalPage(pages.length + 2); // pages + 2 covers
                 }
-            }, 1000); // Increased delay for better initialization
+            }, 100);
 
             return () => clearTimeout(timer);
         }
@@ -269,16 +253,7 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
 
     const nextButtonClick = () => {
         try {
-            if (flipBook.current && typeof flipBook.current.getPageFlip === 'function') {
-                const pageFlipInstance = flipBook.current.getPageFlip();
-                if (pageFlipInstance && typeof pageFlipInstance.flipNext === 'function') {
-                    pageFlipInstance.flipNext();
-                } else {
-                    console.warn("flipNext method not available");
-                }
-            } else {
-                console.warn("FlipBook not properly initialized");
-            }
+            flipBook.current?.getPageFlip()?.flipNext();
         } catch (error) {
             console.error("Error flipping to next page:", error);
         }
@@ -286,16 +261,7 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
 
     const prevButtonClick = () => {
         try {
-            if (flipBook.current && typeof flipBook.current.getPageFlip === 'function') {
-                const pageFlipInstance = flipBook.current.getPageFlip();
-                if (pageFlipInstance && typeof pageFlipInstance.flipPrev === 'function') {
-                    pageFlipInstance.flipPrev();
-                } else {
-                    console.warn("flipPrev method not available");
-                }
-            } else {
-                console.warn("FlipBook not properly initialized");
-            }
+            flipBook.current?.getPageFlip()?.flipPrev();
         } catch (error) {
             console.error("Error flipping to previous page:", error);
         }
@@ -392,7 +358,7 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
 
             {/* Controls */}
             <div className="flex items-center justify-center gap-4 mt-4">
-                {/* <Button
+                <Button
                     variant="outline"
                     size="sm"
                     onClick={prevButtonClick}
@@ -400,7 +366,7 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
                 >
                     <ChevronLeft className="h-4 w-4 mr-1" />
                     Previous
-                </Button> */}
+                </Button>
 
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                     <span>Page</span>
@@ -409,7 +375,7 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
                     <span className="font-semibold">{totalPage}</span>
                 </div>
 
-                {/* <Button
+                <Button
                     variant="outline"
                     size="sm"
                     onClick={nextButtonClick}
@@ -417,7 +383,7 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
                 >
                     Next
                     <ChevronRight className="h-4 w-4 ml-1" />
-                </Button> */}
+                </Button>
             </div>
 
             {/* Debug info - only in development */}

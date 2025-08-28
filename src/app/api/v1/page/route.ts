@@ -1,4 +1,5 @@
 import { prisma, authSessionServer } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 
 export async function GET(request: Request) {
   const userData = await authSessionServer();
@@ -89,9 +90,9 @@ export async function POST(request: Request) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
     }
     const body = await request.json();
-    console.log(body, "body in create page");
+    // console.log(body, "body in create page", body.pageNumber);
     try {
-      await prisma.page.create({
+      const data = await prisma.page.create({
         data:{
           content: body.content || "New page content",
           diary: { connect: { id: body.diaryId || "" } },
@@ -100,7 +101,12 @@ export async function POST(request: Request) {
           pageImageUrl: body.pageImageUrl || null,
         }
       });
-      // console.log("hi");
+      // console.log("hi", data);
+      revalidatePath(`/diary/${body.diaryId}`);
+      return new Response(JSON.stringify(data), {
+      status: 201,
+      headers: { "Content-Type": "application/json" },
+    });
     } catch (error) {
       console.error("Error creating page:", error);
       return new Response(JSON.stringify({ error: "Failed to create page" }), {
@@ -108,8 +114,5 @@ export async function POST(request: Request) {
         headers: { "Content-Type": "application/json" }
       });
     }
-    return new Response(JSON.stringify({ success: true }), {
-      status: 201,
-      headers: { "Content-Type": "application/json" },
-    });
+    
 }

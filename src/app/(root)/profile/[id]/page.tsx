@@ -2,6 +2,7 @@ import ProfileHeader from "@/components/singleton/ProfileHeader";
 import ProfileDetails from "@/components/singleton/ProfileDetails"
 import { getProfile } from '@/lib/actions/profile';
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata(
   { params }: { params: Promise<{ id: string }> }
@@ -21,6 +22,11 @@ async function Profile({ params }: { params: Promise<{ id: string }> }) {
   const username = await params;
   const profileData = await getProfile(username.id);
   // console.log("Profile Data:", "sdsghdjs", username.id);
+
+  if (!profileData) {
+    console.log("Profile not found, returning 404");
+    return notFound();
+  }
 
 
   return (

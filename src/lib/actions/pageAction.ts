@@ -16,11 +16,22 @@ export async function getPages(username?: string) {
             where: {
                 isPublic: true,
             },
-            select:{
+            select: {
                 id: true,
                 pageImageUrl: true,
                 createdAt: true,
                 diaryId: true,
+                diary: {
+                    select: {
+                        title: true,
+                        user: {
+                            select: {
+                                username: true,
+                                image: true,
+                            }
+                        }
+                    }
+                }
             }
         })
         return pages;
@@ -33,11 +44,22 @@ export async function getPages(username?: string) {
                 diary: { userId: userData.user.id }
 
             },
-            select:{
+            select: {
                 id: true,
                 pageImageUrl: true,
                 createdAt: true,
                 diaryId: true,
+                diary: {
+                    select: {
+                        title: true,
+                        user: {
+                            select: {
+                                username: true,
+                                image: true,
+                            }
+                        }
+                    }
+                }
             }
         })
         return pages;

@@ -1,11 +1,16 @@
 import ProfileHeader from "@/components/singleton/ProfileHeader";
 import ProfileDetails from "@/components/singleton/ProfileDetails"
 import { getProfile } from '@/lib/actions/profile';
+import { notFound } from "next/navigation";
 
 
 async function Profile({ params }: { params: Promise<{ id: string }> }) {
   const username = await params;
   const profileData = await getProfile(username.id);
+
+  if (!profileData) {
+    return notFound();
+  }
 
   return (
     <>
