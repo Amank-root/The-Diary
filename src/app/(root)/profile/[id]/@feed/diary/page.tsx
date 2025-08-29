@@ -7,6 +7,7 @@ import Link from 'next/link';
 async function DiaryProfilePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
     const diaries = await getDiaries(id)
+    // console.log(diaries, 'diaries for user', id);
 
     if (diaries && diaries.length === 0) {
         return <p>No diaries found.</p>;

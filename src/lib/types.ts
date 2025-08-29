@@ -21,6 +21,7 @@ export interface ProfileHeader {
     website: string;
     profileImage: string;
     isSelf?: boolean;
+    currentUser?: any;
 }
 
 export interface ProfileDetails extends ProfileHeader {

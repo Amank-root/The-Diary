@@ -1,11 +1,9 @@
 import React, { Suspense } from 'react'
 import DiaryHeader from '@/components/singleton/DiaryHeader'
 import { Separator } from '@/components/ui/separator'
-import LoadingProfile from './loading'
 
-function layout({ children, feed }: { children: React.ReactNode, feed: React.ReactNode }) {
+function layout({ children, feed, modal }: { children: React.ReactNode, feed: React.ReactNode, modal: React.ReactNode }) {
     return (
-        <Suspense fallback={<LoadingProfile />}>
             <div className='flex-1 p-4 lg:p-6 space-y-4 lg:space-y-6'>
                 <DiaryHeader
                     title="Profile"
@@ -14,18 +12,12 @@ function layout({ children, feed }: { children: React.ReactNode, feed: React.Rea
                 />
                 <Separator />
                 <div>
-                    {/* {feed}
-                {children} */}
-                    {/* <div className='w-full'> */}
-
-                    {/* <div className="max-w-4xl mx-auto px-4"> */}
                     {children}
+                    {modal}
                     {feed}
-                    {/* </div> */}
-                    {/* </div> */}
+
                 </div>
             </div>
-        </Suspense>
     )
 }
 

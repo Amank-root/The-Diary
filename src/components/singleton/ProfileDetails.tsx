@@ -22,7 +22,8 @@ function ProfileDetails({ profileData }: { profileData: ProfileDetails }) {
                     <h2 className="text-xl font-semibold">{profileData.username}</h2>
                     <div className="flex gap-2">
                         {!profileData.isSelf && (
-                            profileData.reading && profileData.readers.some(user => user.readingId === profileData.id) ? (
+                            // @ts-ignore
+                            profileData.currentUser.reading && profileData.currentUser.reading.some(reading => reading.readingId === profileData.id) ? (
                                 // @ts-ignore
                                 <form action={unfollowUser.bind(null, profileData.username)}>
                                     <Button
@@ -31,7 +32,7 @@ function ProfileDetails({ profileData }: { profileData: ProfileDetails }) {
                                         type="submit"
                                         className="bg-secondary text-secondary-foreground hover:bg-secondary/90"
                                     >
-                                        Following
+                                        Reading
                                     </Button>
                                 </form>
                             ) : (
@@ -43,7 +44,7 @@ function ProfileDetails({ profileData }: { profileData: ProfileDetails }) {
                                         type="submit"
                                         className="bg-secondary text-secondary-foreground hover:bg-secondary/90"
                                     >
-                                        Follow
+                                        Read
                                     </Button>
                                 </form>
                             )

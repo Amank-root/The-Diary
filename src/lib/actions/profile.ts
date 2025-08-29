@@ -81,7 +81,7 @@ export async function updateProfileData(formData: FormData): Promise<{ success: 
     }
 }
 
-export async function getProfile(username: string): Promise<ProfileDetails | null> {
+export async function getProfile(username?: string): Promise<ProfileDetails | null> {
     const session = await authSessionServer();
     if (!session) throw new Error("Unauthorized");
 
@@ -124,9 +124,34 @@ export async function getProfile(username: string): Promise<ProfileDetails | nul
             }
         })
 
-        const [profile, pageCount] = await Promise.all([profileData, page]);
+        const self = prisma.user.findFirst({
+            where: {
+                id: session.user.id,
+            },
+            select:{
+                id: true,
+                reading: true,
+            }
+        })
+
+        const [profile, pageCount, currentUser] = await Promise.all([profileData, page, self]);
         // revalidatePath(`/profile/`);
-        
+        // console.log("Fetched profile data:", {
+        //     id: profile?.id ?? "",
+        //     name: profile?.name ?? "",
+        //     username: profile?.username ?? "",
+        //     bio: profile?.bio ?? "",
+        //     website: profile?.website ?? "",
+        //     profileImage: profile?.image ?? "",
+        //     readerCount: profile?._count.readers ?? 0,
+        //     reading: profile?.reading ?? [],
+        //     readers: profile?.readers ?? [],
+        //     diaryCount: profile?._count.diaries ?? 0,
+        //     readingCount: profile?._count.reading ?? 0,
+        //     pageCount: pageCount ?? 0,
+        //     currentUser: currentUser,
+        //     isSelf: isSelf,
+        // });
         return profile ? {
             id: profile?.id ?? "",
             name: profile?.name ?? "",
@@ -140,6 +165,7 @@ export async function getProfile(username: string): Promise<ProfileDetails | nul
             diaryCount: profile?._count.diaries ?? 0,
             readingCount: profile?._count.reading ?? 0,
             pageCount: pageCount ?? 0,
+            currentUser: currentUser,
             isSelf: isSelf,
         } : null;
 

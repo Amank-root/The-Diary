@@ -1,25 +1,29 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Bookmark } from 'lucide-react'; // Or any icon lib
+import RouteBack from './RouteBack';
+import { getPageById } from '@/lib/actions/pageAction';
 
 
-// TODO: Implement intercepting route to just show as a modal on explore page (just as a overlay)
+export default async function PageModal({ params }: { params: Promise<{ pageId: string }> }) {
+  const param = await params;
+  console.log("pageId", param);
+  const page = await getPageById(param.pageId);
+  console.log(page, "page in modal")
+  // console.log(pages, "pages in modal")
 
-export default async function PageModal({ params }: { params: Promise<{ id: string }> }) {
-  // const page = await getPageById(params.pageId);
-  const {id} = await params;
-  const page = {
-    id: id,
-    pageImageUrl: "https://dummyimage.com/400x600",
-    diary: {
-      title: "Sample Diary Title",
-      user: {
-        username: "SampleUser",
-        image: "https://dummyimage.com/100x100"
-      }
-    },
-    diaryId: "sample-diary-id"
-  }
+  // const page = {
+  //   id: id,
+  //   pageImageUrl: "https://dummyimage.com/400x600",
+  //   diary: {
+  //     title: "Sample Diary Title",
+  //     user: {
+  //       username: "SampleUser",
+  //       image: "https://dummyimage.com/100x100"
+  //     }
+  //   },
+  //   diaryId: "sample-diary-id"
+  // }
 
   if (!page) return null; // Or redirect/notFound()
 
@@ -53,7 +57,7 @@ export default async function PageModal({ params }: { params: Promise<{ id: stri
           <Link href={`/profile/${page.diary.user.username}`} className="flex items-center gap-2">
             <Image
               src={page.diary.user.image || "https://dummyimage.com/100x100"}
-              alt={page.diary.user.username}
+              alt={page.diary.user.username || ""}
               width={40}
               height={40}
               className="rounded-full"
@@ -66,12 +70,7 @@ export default async function PageModal({ params }: { params: Promise<{ id: stri
         </div>
 
         {/* Optional: Close Button (if needed) */}
-        <Link
-          href={`/profile/${id}`}
-          className="absolute top-2 right-2 text-white bg-black/50 rounded-full p-1 hover:bg-black/70 transition"
-        >
-          ✕
-        </Link>
+        <RouteBack />
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import Image from 'next/image';
 async function Feed({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const allPages = await getPages(id);
+    console.log(allPages, 'all pages for user', id);
     // console.log(id)
     // console.log("All pages:", allPages[0]);
     if (!allPages) {

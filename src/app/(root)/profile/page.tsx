@@ -1,6 +1,5 @@
 import { authSessionServer } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import React from 'react'
 
 async function page() {
     const userData = await authSessionServer()
