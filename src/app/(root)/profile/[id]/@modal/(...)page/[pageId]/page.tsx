@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Bookmark } from 'lucide-react'; // Or any icon lib
 import RouteBack from './RouteBack';
 import { getPageById } from '@/lib/actions/pageAction';
 import BookmarkSaved from '@/components/shared/BookmarkSaved';
@@ -8,10 +7,10 @@ import BookmarkSaved from '@/components/shared/BookmarkSaved';
 
 export default async function PageModal({ params }: { params: Promise<{ pageId: string }> }) {
   const param = await params;
-  console.log("pageId", param);
+  // // console.log("pageId", param);
   const page = await getPageById(param.pageId);
-  console.log(page, "page in modal")
-  // console.log(pages, "pages in modal")
+  // // console.log(page, "page in modal")
+  // // console.log(pages, "pages in modal")
 
   // const page = {
   //   id: id,

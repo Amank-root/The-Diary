@@ -43,9 +43,9 @@ export async function getFriendsNotes() {
       name: r.reading.name,
       image: r.reading.image
     }));
-    // console.log("Followed users:", followedUsers);
+    // // console.log("Followed users:", followedUsers);
   } catch (error) {
-    // console.error("Error fetching followed users:", error);
+    console.error("Error fetching followed users:", error);
     return new Response(JSON.stringify({ error: "Failed to fetch followed users" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
@@ -65,7 +65,7 @@ export async function getFriendsNotes() {
         },
       },
     });
-    console.log("Friends' diaries:", getFriendsDiaries);
+    // console.log("Friends' diaries:", getFriendsDiaries);
     // return new Response(JSON.stringify(getFriendsDiaries), {
     //   status: 200,
     //   headers: { "Content-Type": "application/json" },

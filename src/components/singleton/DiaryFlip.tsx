@@ -7,8 +7,6 @@ import Image from '@tiptap/extension-image'; // Add this import
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Typography from '@tiptap/extension-typography';
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import '../css/diaryflip.css'
 
 // PageCover Component with proper TypeScript
@@ -92,7 +90,9 @@ interface TiptapContent {
     type: string;
     content?: TiptapContent[];
     text?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     attrs?: Record<string, any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     marks?: any[];
 }
 
@@ -115,6 +115,24 @@ interface DiaryFlipProps {
     title?: string;
 }
 
+const extensions = [
+    StarterKit.configure({
+        heading: { levels: [1, 2, 3] }
+    }),
+    Underline,
+    TextAlign.configure({
+        types: ['heading', 'paragraph']
+    }),
+    Image.configure({
+        inline: false,
+        HTMLAttributes: {
+            class: 'max-w-full h-[200px] max-h-[300px] rounded-lg my-4',
+        },
+    }),
+    Typography,
+];
+
+
 const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
     const [page, setPage] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
@@ -122,26 +140,11 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
     const [bookState, setBookState] = useState("");
     const [pages, setPages] = useState<{ content: string; date: Date; pageNumber: number }[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const flipBook = useRef<any>(null);
 
     // Define the extensions that match your editor
-    const extensions = [
-        StarterKit.configure({
-            heading: { levels: [1, 2, 3] }
-        }),
-        Underline,
-        TextAlign.configure({
-            types: ['heading', 'paragraph']
-        }),
-        Image.configure({
-            inline: false,
-            HTMLAttributes: {
-                class: 'max-w-full h-[200px] max-h-[300px] rounded-lg my-4',
-            },
-        }),
-        Typography,
-    ];
+
 
     // Process diary pages
     useEffect(() => {
@@ -185,6 +188,7 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
                             const parsedContent = JSON.parse(diaryPage.content);
                             if (parsedContent?.content) {
                                 // Extract text content from Tiptap structure
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 const extractText = (node: any): string => {
                                     if (node.text) return node.text;
                                     if (node.content) {
@@ -242,18 +246,18 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
                         if (pageFlipInstance && typeof pageFlipInstance.getPageCount === 'function') {
                             const pageCount = pageFlipInstance.getPageCount();
                             setTotalPage(pageCount);
-                            console.log("Total pages from flipbook:", pageCount);
+                            // console.log("Total pages from flipbook:", pageCount);
                         } else {
                             // Fallback: calculate total pages manually
                             const totalPages = pages.length + 2;
                             setTotalPage(totalPages);
-                            console.log("Using fallback page count:", totalPages);
+                            // console.log("Using fallback page count:", totalPages);
                         }
                     } else {
                         // Fallback: calculate total pages manually
                         const totalPages = pages.length + 2;
                         setTotalPage(totalPages);
-                        console.log("Using fallback page count (no getPageFlip):", totalPages);
+                        // console.log("Using fallback page count (no getPageFlip):", totalPages);
                     }
                 } catch (error) {
                     console.error("Error getting page count:", error);
@@ -267,39 +271,39 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
         }
     }, [pages, isLoading]);
 
-    const nextButtonClick = () => {
-        try {
-            if (flipBook.current && typeof flipBook.current.getPageFlip === 'function') {
-                const pageFlipInstance = flipBook.current.getPageFlip();
-                if (pageFlipInstance && typeof pageFlipInstance.flipNext === 'function') {
-                    pageFlipInstance.flipNext();
-                } else {
-                    console.warn("flipNext method not available");
-                }
-            } else {
-                console.warn("FlipBook not properly initialized");
-            }
-        } catch (error) {
-            console.error("Error flipping to next page:", error);
-        }
-    };
+    // const nextButtonClick = () => {
+    //     try {
+    //         if (flipBook.current && typeof flipBook.current.getPageFlip === 'function') {
+    //             const pageFlipInstance = flipBook.current.getPageFlip();
+    //             if (pageFlipInstance && typeof pageFlipInstance.flipNext === 'function') {
+    //                 pageFlipInstance.flipNext();
+    //             } else {
+    //                 // console.warn("flipNext method not available");
+    //             }
+    //         } else {
+    //             // console.warn("FlipBook not properly initialized");
+    //         }
+    //     } catch (error) {
+    //         console.error("Error flipping to next page:", error);
+    //     }
+    // };
 
-    const prevButtonClick = () => {
-        try {
-            if (flipBook.current && typeof flipBook.current.getPageFlip === 'function') {
-                const pageFlipInstance = flipBook.current.getPageFlip();
-                if (pageFlipInstance && typeof pageFlipInstance.flipPrev === 'function') {
-                    pageFlipInstance.flipPrev();
-                } else {
-                    console.warn("flipPrev method not available");
-                }
-            } else {
-                console.warn("FlipBook not properly initialized");
-            }
-        } catch (error) {
-            console.error("Error flipping to previous page:", error);
-        }
-    };
+    // const prevButtonClick = () => {
+    //     try {
+    //         if (flipBook.current && typeof flipBook.current.getPageFlip === 'function') {
+    //             const pageFlipInstance = flipBook.current.getPageFlip();
+    //             if (pageFlipInstance && typeof pageFlipInstance.flipPrev === 'function') {
+    //                 pageFlipInstance.flipPrev();
+    //             } else {
+    //                 // console.warn("flipPrev method not available");
+    //             }
+    //         } else {
+    //             // console.warn("FlipBook not properly initialized");
+    //         }
+    //     } catch (error) {
+    //         console.error("Error flipping to previous page:", error);
+    //     }
+    // };
 
     const onPage = (e: { data: number }) => setPage(e.data);
     const onChangeOrientation = (e: { data: string }) => setOrientation(e.data);
@@ -321,7 +325,7 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
     return (
         <div className="diary-flip-container">
             <div className="mb-6">
-                {/* @ts-ignore */}
+                {/* @ts-expect-error: i dont know */}
                 <HTMLFlipBook
                     width={550}
                     height={733}

@@ -3,7 +3,7 @@
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Bell, Calendar, MessageSquare, User } from 'lucide-react'
+import { Bell, Calendar, User } from 'lucide-react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import Link from 'next/link'

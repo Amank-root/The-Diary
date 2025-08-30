@@ -2,7 +2,6 @@ import React from 'react'
 import { Card } from '@/components/ui/card';
 import { getPages } from '@/lib/actions/pageAction';
 import Link from 'next/link';
-import { Bookmark } from 'lucide-react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import BookmarkSaved from '@/components/shared/BookmarkSaved';
@@ -12,9 +11,9 @@ import BookmarkSaved from '@/components/shared/BookmarkSaved';
 async function Feed({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const allPages = await getPages(id);
-    // console.log(allPages, 'all pages for user', id);
-    // console.log(id)
-    // console.log("All pages:", allPages[0]);
+    // // console.log(allPages, 'all pages for user', id);
+    // // console.log(id)
+    // // console.log("All pages:", allPages[0]);
     if (allPages?.length === 0) {
         return notFound();
     }

@@ -1,15 +1,13 @@
 "use client";
 
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 // import { AvatarImage,  } from "@radix-ui/react-avatar";
 
 // interface 
-interface Readers {
+type Readers = {
     // id: string;
     createdAt: Date;
     reader: {
@@ -20,7 +18,7 @@ interface Readers {
     };
 }[]
 
-interface Reading {
+type Reading = {
     // id: string;
     createdAt: Date;
     reading: {
@@ -32,14 +30,14 @@ interface Reading {
 }[]
 
 export default function UserModal({ data, type }: { data: Readers | Reading | [], type: "reader" | "reading" }) {
-    if (data?.length === 0) return null;
-
-    console.log(data)
-    // Example data
-    // const items = Array.from({ length: 30 }, (_, i) => `Item ${i + 1}`);
-    // return (
-    //     <div>{data.length}</div>
-    // )
+    if (data?.length === 0) {
+        return (
+            <div className="text-center">
+                <div className="font-semibold">{data?.length}</div>
+                <div className="text-sm text-muted-foreground">{type === "reader" ? "Readers" : "Reading"}</div>
+            </div>
+        )
+    };
 
     return (
         <Dialog>

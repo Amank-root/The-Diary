@@ -44,7 +44,7 @@ export default function SignUpForm() {
         email: formData.email,
         password: formData.password,
         name: formData.name,
-        // @ts-ignore
+        // @ts-expect-error: i dont know
         username: formData.username,
       });
 
@@ -54,6 +54,7 @@ export default function SignUpForm() {
         toast.success("Account created successfully!");
         window.location.href = "/";
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred");
     } finally {
@@ -67,7 +68,9 @@ export default function SignUpForm() {
         provider: "google",
         callbackURL: "/",
       });
-    } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      setError(err?.message || "An unexpected error occurred");
       toast.error("Failed to sign up with Google");
     }
   };

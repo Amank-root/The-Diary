@@ -1,7 +1,5 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Bookmark } from 'lucide-react'; // Or any icon lib
-import { headers } from 'next/headers';
 import RouteBack from './RouteBack';
 import { getPageById } from '@/lib/actions/pageAction';
 import BookmarkSaved from '@/components/shared/BookmarkSaved';
@@ -10,20 +8,6 @@ import BookmarkSaved from '@/components/shared/BookmarkSaved';
 export default async function PageModal({ params }: { params: Promise<{ id: string }> }) {
   const {id} = await params;
   const page = await getPageById(id);
-  // console.log(pages, "pages in modal")
-
-  // const page = {
-  //   id: id,
-  //   pageImageUrl: "https://dummyimage.com/400x600",
-  //   diary: {
-  //     title: "Sample Diary Title",
-  //     user: {
-  //       username: "SampleUser",
-  //       image: "https://dummyimage.com/100x100"
-  //     }
-  //   },
-  //   diaryId: "sample-diary-id"
-  // }
 
   if (!page) return null; // Or redirect/notFound()
 

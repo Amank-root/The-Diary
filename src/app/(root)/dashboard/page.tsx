@@ -1,5 +1,4 @@
 import UserProfile from "@/components/auth/UserProfile";
-import Container  from "@/components/shared/container";
 
 export default function DashboardPage() {
   return (

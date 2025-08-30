@@ -1,15 +1,20 @@
 import React from 'react'
 import ExploreSearch from '@/components/singleton/ExploreSearch'
 
-function layout({ children, modal }: { children: React.ReactNode, modal: React.ReactNode }) {
+function Layout({ children, modal }: { children: React.ReactNode, modal: React.ReactNode }) {
     return (
         <div className="min-h-screen bg-background">
             {/* Header with Search */}
             <ExploreSearch />
-            {modal}
-            {children}
+            
+            {/* Main content - don't hide when modal is present */}
+            {/* <div className="relative"> */}
+                {children}
+                {/* Modal renders on top */}
+                {modal}
+            {/* </div> */}
         </div>
     )
 }
 
-export default layout
+export default Layout

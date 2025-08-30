@@ -1,5 +1,4 @@
 "use server"
-import { redirect } from "next/navigation";
 import { prisma, authSessionServer } from "../auth";
 import type { ProfileDetails } from "../types";
 import { revalidatePath } from "next/cache";
@@ -16,23 +15,14 @@ const profileUpdateSchema = z.object({
 
 // const profileUpdateSchema = profileSchema.omit({ id: true });
 
-type ProfileFormData = FormData;
 type ProfileError = z.infer<typeof profileUpdateSchema>;
-
-const demoData = {
-    name: "John Doe",
-    username: "johndoe",
-    bio: "📸 Photography enthusiast\n🌍 Traveling the world\n✨ Living life to the fullest",
-    website: "www.johndoe.com",
-    profileImage: "https://dummyimage.com/400&text=Profile+Image",
-}
 
 
 export async function updateProfileData(formData: FormData): Promise<{ success: boolean } | { error: ProfileError | string }> {
     const session = await authSessionServer();
     if (!session) throw new Error("Unauthorized");
 
-    // console.log(formData, "form data")
+    // // console.log(formData, "form data")
 
     // Extract values from FormData
     const extractedData = {
@@ -46,12 +36,12 @@ export async function updateProfileData(formData: FormData): Promise<{ success: 
     if (extractedData.website && !extractedData.website.startsWith('http')) {
         extractedData.website = `https://${extractedData.website}`;
     }
-    // console.log(extractedData, "extracted data");
+    // // console.log(extractedData, "extracted data");
 
     const validatedData = profileUpdateSchema.safeParse(extractedData);
 
     if (!validatedData.success) {
-        console.log(validatedData.error, "validation error");
+        // console.log(validatedData.error, "validation error");
         return {
             error: validatedData.error.message
         };
@@ -74,10 +64,8 @@ export async function updateProfileData(formData: FormData): Promise<{ success: 
         return { success: true };
     }
     catch (error) {
-        console.log(error, "update error");
-        return {
-            error: "Failed to update profile"
-        };
+        console.error("Error updating profile data:", error);
+        throw new Error("Failed to update profile data");
     }
 }
 
@@ -86,7 +74,7 @@ export async function getProfile(username?: string): Promise<ProfileDetails | nu
     if (!session) throw new Error("Unauthorized");
 
     const isSelf = session.user.username === username;
-    // console.log("Fetching profile for:", username, "Is self:", isSelf, session);
+    // // console.log("Fetching profile for:", username, "Is self:", isSelf, session);
 
 
     try {
@@ -162,7 +150,7 @@ export async function getProfile(username?: string): Promise<ProfileDetails | nu
 
         const [profile, pageCount, currentUser] = await Promise.all([profileData, page, self]);
         // revalidatePath(`/profile/`);
-        // console.log("Fetched profile data:", {
+        // // console.log("Fetched profile data:", {
         //     id: profile?.id ?? "",
         //     name: profile?.name ?? "",
         //     username: profile?.username ?? "",
@@ -214,32 +202,14 @@ export async function getProfile(username?: string): Promise<ProfileDetails | nu
         } : null;
 
     } catch (error) {
-        // return {
-        //     id: "",
-        //     name: "",
-        //     username: "",
-        //     bio: "",
-        //     website: "",
-        //     reading: [],
-        //     readers: [],
-        //     profileImage: "",
-        //     readerCount: 0,
-        //     diaryCount: 0,
-        //     readingCount: 0,
-        //     pageCount: 0,
-        //     isSelf: isSelf,
-        // };
-        return null;
+        console.error("Error fetching profile data:", error);
+        throw new Error("Failed to fetch profile data");
     }
 
 
 }
 
 
-
-
-// TODO: implement follow user properly as the current implementation is not working correctly
-// clicking follow increases the reading count for the followed user rather than the readers count
 export async function followUser(username: string): Promise<null | { error: string }> {
     const session = await authSessionServer();
     if (!session) throw new Error("Unauthorized");
@@ -257,8 +227,7 @@ export async function followUser(username: string): Promise<null | { error: stri
         revalidatePath(`/profile/${username}`); 
         return null;
     } catch (error) {
-        console.log(error, "follow user error");
-        // return null
+        console.error(error, "follow user error");
         return {
             error: "Failed to follow user"
         };
@@ -294,7 +263,7 @@ export async function unfollowUser(username: string): Promise<null | { error: st
         revalidatePath(`/profile/${username}`);
         return null;
     } catch (error) {
-        console.log(error, "unfollow user error");
+        console.error(error, "unfollow user error");
         return {
             error: "Failed to unfollow user"
         };

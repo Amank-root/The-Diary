@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/auth";
-import { cookies } from "next/headers";
 import { authSessionServer } from "@/lib/auth";
 
 
@@ -15,7 +14,7 @@ export async function GET(request: Request) {
   }
   if (searchParam) {
     // fetch diary by id
-    // console.log("Fetching diary with id:", searchParam);
+    // // console.log("Fetching diary with id:", searchParam);
     try {
       const diary = await prisma.diary.findUnique({
         where: { id: searchParam },
@@ -38,7 +37,7 @@ export async function GET(request: Request) {
     }
   }
 
-  // console.log(username, "username in getDiaries", userData.user.username);
+  // // console.log(username, "username in getDiaries", userData.user.username);
   try {
     const diaries = await prisma.diary.findMany({
       where: {

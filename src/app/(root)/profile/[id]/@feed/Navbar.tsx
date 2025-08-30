@@ -1,5 +1,5 @@
 'use client'
-import React, {useState} from 'react'
+import React from 'react'
 import Link from 'next/link';
 import { BookOpen, Bookmark, Grid3X3 } from 'lucide-react';
 import { usePathname } from 'next/navigation';

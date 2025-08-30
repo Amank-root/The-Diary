@@ -8,7 +8,6 @@ export async function generateMetadata(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {
   const username = (await params).id;
-  console.log("Generating metadata for:", username);
 
   return {
     title: `${username}`,
@@ -21,20 +20,13 @@ export async function generateMetadata(
 async function Profile({ params }: { params: Promise<{ id: string }> }) {
   const username = await params;
   const profileData = await getProfile(username.id);
-  // console.log("Profile Data:", "sdsghdjs", username.id);
 
   if (!profileData) {
-    console.log("Profile not found, returning 404");
     return notFound();
   }
 
 
   return (
- 
-
-  // <div className='w-full'>
-
-  //   <div className="max-w-4xl mx-auto px-4">
       <>
       {/* Header */}
       <ProfileHeader profileData={profileData} />
@@ -42,11 +34,7 @@ async function Profile({ params }: { params: Promise<{ id: string }> }) {
       {/* Profile Section */}
       <ProfileDetails profileData={profileData} />
 
-      {/* <ProfilePageTabs posts={posts} diaryEntries={diaryEntries} /> */}
       </>
-
-  //   </div>
-  // </div>
   
   )
 }

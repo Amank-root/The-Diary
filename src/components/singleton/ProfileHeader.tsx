@@ -46,7 +46,7 @@ function ProfileHeader({ profileData }: ProfileHeaderProps) {
             });
 
             const data = await res.json();
-            console.log(data, 'cloudinary response');
+            // console.log(data, 'cloudinary response');
             setImagePreview(data.secure_url);
             toast.success('Image uploaded successfully');
             setBtnDisabled(false);
@@ -68,7 +68,7 @@ function ProfileHeader({ profileData }: ProfileHeaderProps) {
                         <DialogHeader>
                             <DialogTitle>Edit Profile</DialogTitle>
                         </DialogHeader>
-                        {/* @ts-ignore */}
+                        {/* @ts-expect-error: i dont know */}
                         <form action={updateProfileData}>
                             <div className="space-y-4">
                                 <div className="space-y-2">

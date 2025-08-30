@@ -1,42 +1,16 @@
 import React from 'react'
-import {
-  Card, CardContent, CardDescription, CardHeader, CardTitle
-} from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Search, Bookmark } from 'lucide-react'
+import { Card } from '@/components/ui/card'
+import { Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import DiaryHeader from '@/components/singleton/DiaryHeader'
 import { Separator } from '@/components/ui/separator'
-import Image from 'next/image'
 import Link from 'next/link'
 import { getDiaries } from '@/lib/actions/diaryAction'
 import BookmarkSaved from '@/components/shared/BookmarkSaved'
+import Image from 'next/image'
 
 async function Diary() {
   const getAllDiaries = await getDiaries()
-  // console.log("Diaries Data:", /diarydiarys)
-
-  const demoData = [
-    {
-      id: 'cmeok7d28000007hwbs06ol2o',
-      slug: '66877263-982c-47fd-bf88-4842faf1ad50',
-      title: 'New Diary',
-      diaryCoverImage: 'https://res.cloudinary.com/dp3vyfcyc/image/upload/v1755971357/Modern_Botanical_Journal_Cover_Diary_wedo3z.png',
-      createdAt: "2025-08-23T17:54:46.877Z",
-      updatedAt: "2025-08-23T17:55:30.372Z",
-      userId: 'auzmVGEA38eQfnMGybilUXgU59o5utvC',
-      types: 'SPECIAL'
-    }
-  ]
-
-
-  type Mood = "Happy" | "Thoughtful" | "Excited"
-
-  const moodColors: Record<Mood, string> = {
-    Happy: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-    Thoughtful: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
-    Excited: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-  }
 
   return (
     <div className="flex-1 p-4 lg:p-6 space-y-6">
@@ -65,7 +39,9 @@ async function Diary() {
           <Card key={diary.id} className="p-0 aspect-auto overflow-hidden group cursor-pointer border-0 shadow-sm">
             <div className="relative w-full h-full">
               <Link href={`/diary/${diary.id}`}>
-                <img
+                <Image
+                  width={400}
+                  height={600}
                   src={diary.diaryCoverImage || "https://dummyimage.com/210x297"}
                   alt={`diary ${diary.id}`}
                   className="w-full h-full object-cover group-hover:opacity-75 transition-opacity"
@@ -90,16 +66,7 @@ async function Diary() {
                 </div>
                 <BookmarkSaved />
               </div>
-              {/* <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <div className="flex items-center gap-4 text-white">
-                  <div className="flex items-center gap-1">
-                    <span className="text-sm font-semibold">{diary.mood}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-sm font-semibold">{diary.date}</span>
-                  </div>
-                </div>
-              </div> */}
+           
             </div>
           </Card>
         )) : (

@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     // Check if route is /profile/[username]
     if (pathname.includes("/profile/")) {
       const username = pathname.split("/profile/").at(-1);
-      const isSelf = username === userData?.user.username;
+      // const isSelf = username === userData?.user.username;
 
       // Find user by username
       const user = await prisma.user.findUnique({
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
     }
     const body = await request.json();
-    // console.log(body, "body in create page", body.pageNumber);
+    // // console.log(body, "body in create page", body.pageNumber);
     try {
       const data = await prisma.page.create({
         data:{
@@ -101,7 +101,7 @@ export async function POST(request: Request) {
           pageImageUrl: body.pageImageUrl || null,
         }
       });
-      // console.log("hi", data);
+      // // console.log("hi", data);
       revalidatePath(`/diary/${body.diaryId}`);
       return new Response(JSON.stringify(data), {
       status: 201,

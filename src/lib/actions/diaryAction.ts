@@ -19,7 +19,7 @@ export async function createDiary(formData: FormData) {
         TRIVIAL: "https://res.cloudinary.com/dp3vyfcyc/image/upload/v1755970932/Modern_Botanical_Journal_Cover_Diary_3_g3gq9w.png"
     };
 
-    console.log("Form Data received:", formData);
+    // console.log("Form Data received:", formData);
 
     const extracted = {
         title: formData.get("title")?.toString(),
@@ -59,7 +59,7 @@ export async function getDiaries(username?: string) {
     if (!userData) {
         throw new Error("User not authenticated");
     }
-    // console.log(username, "username in getDiaries", userData.user.username);
+    // // console.log(username, "username in getDiaries", userData.user.username);
     try {
         const diaries = await prisma.diary.findMany({
             where: {
@@ -97,7 +97,7 @@ export async function getDiariesWithPages(username?: string) {
     if (!userData) {
         throw new Error("User not authenticated");
     }
-    // console.log(username, "username in getDiaries", userData.user.username);
+    // // console.log(username, "username in getDiaries", userData.user.username);
     try {
         const diaries = await prisma.diary.findMany({
             where: {

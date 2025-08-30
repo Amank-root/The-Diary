@@ -67,7 +67,7 @@ export const getConnections = async () => {
         }
       }
     })
-    // console.log(getUserWithDiaries?.readers, getUserWithDiaries?.reading)
+    // // console.log(getUserWithDiaries?.readers, getUserWithDiaries?.reading)
     return getUserWithDiaries;
   } catch (error) {
     console.error("Error fetching user with diaries:", error);

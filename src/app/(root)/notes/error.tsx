@@ -20,7 +20,7 @@ export default function Error({ error, reset }: ErrorPageProps) {
     });
 
   useEffect(() => {
-    console.error("Profile page error:", error);
+    // console.error("Profile page error:", error);
   }, [error]);
 
   return (

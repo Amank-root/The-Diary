@@ -1,15 +1,15 @@
 import React from 'react'
 import { Card } from '@/components/ui/card';
 import { getDiaries } from '@/lib/actions/diaryAction';
-import { Bookmark } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import BookmarkSaved from '@/components/shared/BookmarkSaved';
+import Image from 'next/image';
 
 async function DiaryProfilePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
     const diaries = await getDiaries(id)
-    // console.log(diaries, 'diaries for user', id);
+    // // console.log(diaries, 'diaries for user', id);
 
     if (diaries && diaries.length === 0) {
         return notFound();
@@ -21,7 +21,9 @@ async function DiaryProfilePage({ params }: { params: Promise<{ id: string }> })
                 <Card key={diary.id} className="p-0 aspect-auto overflow-hidden group cursor-pointer border-0 shadow-sm">
                     <div className="relative w-full h-full">
                         <Link href={`/diary/${diary.id}`}>
-                            <img
+                            <Image
+                                width={400}
+                                height={600}
                                 src={diary.diaryCoverImage || "https://dummyimage.com/210x297"}
                                 alt={`diary ${diary.id}`}
                                 className="w-full h-full object-cover group-hover:opacity-75 transition-opacity"

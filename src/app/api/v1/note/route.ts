@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       create: {
         ...extractedContent,
         title: userData?.user?.username || "Untitled",
-        userId: userData?.user?.id!,
+        userId: userData?.user?.id || "",
       },
       select:{
         id: true,

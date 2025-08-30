@@ -24,9 +24,8 @@ function ProfileDetails({ profileData }: { profileData: ProfileDetails }) {
                     <h2 className="text-xl font-semibold">{profileData.username}</h2>
                     <div className="flex gap-2">
                         {!profileData.isSelf && (
-                            // @ts-ignore
-                            profileData.currentUser.reading && profileData.currentUser.reading.some(reading => reading.readingId === profileData.id) ? (
-                                // @ts-ignore
+                            profileData.currentUser?.reading && profileData.currentUser.reading.some(reading => reading.readingId === profileData.id) ? (
+                                // @ts-expect-error: i dont know
                                 <form action={unfollowUser.bind(null, profileData.username)}>
                                     <Button
                                         variant="secondary"
@@ -38,7 +37,7 @@ function ProfileDetails({ profileData }: { profileData: ProfileDetails }) {
                                     </Button>
                                 </form>
                             ) : (
-                                // @ts-ignore
+                                // @ts-expect-error: i dont know
                                 <form action={followUser.bind(null, profileData.username)}>
                                     <Button
                                         variant="secondary"
@@ -82,7 +81,7 @@ function ProfileDetails({ profileData }: { profileData: ProfileDetails }) {
                     {profileData.bio &&
                         profileData.bio.split(/\r?\n/).map((line, index) => {
                             if (line.includes("mailto:")){
-                                console.log(line)
+                                // console.log(line)
                                 return (
                                     <div className="text-sm" key={index}>
                                         <a href={line} className="hover:underline flex flex-row items-center-safe"><Mail className="mr-1 text-sm" /> {line.split("mailto:")[1]}</a>

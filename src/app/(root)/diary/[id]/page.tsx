@@ -18,7 +18,7 @@ async function InnerDiary({ params }: { params: Promise<{ id: string }> }) {
       />
       <Separator />
       {getDiary ? (
-        // @ts-ignore
+        // @ts-expect-error: i dont know
         <DiaryFlip diary={getDiary} />
       ) : (
         <div className="flex items-center justify-center h-96">

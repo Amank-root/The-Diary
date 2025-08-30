@@ -42,7 +42,7 @@ export default function WelcomePage() {
               </h1>
               <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
                 Capture your thoughts, memories, and experiences in a beautiful, secure digital space. 
-                Share moments with friends or keep them private - it's your choice.
+                Share moments with friends or keep them private - it&apos;s your choice.
               </p>
             </div>
             <div className="space-x-4">

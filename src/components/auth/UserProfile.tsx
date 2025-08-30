@@ -9,7 +9,7 @@ import { Loader2, LogOut } from "lucide-react";
 export default function UserProfile() {
   const { data: session, isPending } = useSession();
 
-  console.log(session);
+  // console.log(session);
 
   const handleSignOut = async () => {
     await authClient.signOut();
@@ -44,9 +44,9 @@ export default function UserProfile() {
           <div>
             <h3 className="text-lg font-semibold">{session.user.name}</h3>
             <p className="text-sm text-muted-foreground">{session.user.email}</p>
-            {/* @ts-ignore */}
+            {/* @ts-expect-error: i dont know */}
             {session.user.username && (
-                // @ts-ignore
+                // @ts-expect-error: i dont know
               <p className="text-sm text-muted-foreground">@{session.user.username}</p>
             )}
           </div>

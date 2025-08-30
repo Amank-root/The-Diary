@@ -1,4 +1,3 @@
-import { Bookmark } from "lucide-react"
 import { Card } from '@/components/ui/card';
 import { getPages } from '@/lib/actions/pageAction';
 import Link from 'next/link';
@@ -7,7 +6,6 @@ import { getSimilarUsers } from "@/lib/actions/exploreActions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { followUser, unfollowUser } from "@/lib/actions/profile";
-import { authSessionServer } from "@/lib/auth";
 import BookmarkSaved from "@/components/shared/BookmarkSaved";
 
 
@@ -16,7 +14,6 @@ async function ExplorePage({ searchParams }: { searchParams: Promise<{ search: s
     const { search } = await searchParams || null;
     const allPages = await getPages();
     const getUsers = search && await getSimilarUsers(search);
-    const session = await authSessionServer();
 
     if (search && !getUsers) {
         return <div className="px-4">No User Found</div>
@@ -197,7 +194,7 @@ async function ExplorePage({ searchParams }: { searchParams: Promise<{ search: s
     // ]
 
     if (search && getUsers) {
-        // console.log(getUsers.currentUser, getUsers.users);
+        // // console.log(getUsers.currentUser, getUsers.users);
         return (
             <div className="space-y-2 p-4">
                 {getUsers.users.map((user) => (
@@ -214,9 +211,9 @@ async function ExplorePage({ searchParams }: { searchParams: Promise<{ search: s
                         </div>
                         {/* {getUsers.currentUser, user} */}
                         {getUsers.currentUser?.reading.some(reading => reading.readingId === user.id) ? (
-                            // @ts-ignore
+                            // @ts-expect-error: i dont know
                             <form action={unfollowUser.bind(null, user.username)}>
-                                {/* console.log user and currentUser */}
+                                {/* // console.log user and currentUser */}
                                 <Button
                                     variant="secondary"
                                     size="sm"
@@ -227,7 +224,7 @@ async function ExplorePage({ searchParams }: { searchParams: Promise<{ search: s
                                 </Button>
                             </form>
                         ) : (
-                            // @ts-ignore
+                            // @ts-expect-error: i dont know
                             <form action={followUser.bind(null, user.username)}>
                                 <Button
                                     variant="secondary"

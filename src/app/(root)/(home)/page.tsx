@@ -16,7 +16,7 @@ async function ExplorePage() {
         redirect("/auth/sign-in");
     }
     const result = await getReadingUsersPosts()
-    // console.log(allPages, 'get reading users posts');
+    // // console.log(allPages, 'get reading users posts');
 
     if (!result || Array.isArray(result)) {
         return <div>No pages found</div>;
@@ -47,7 +47,7 @@ async function ExplorePage() {
                     </Link>
 
                     {/* Recent Moods as Stories */}
-                    {getNotes ? getNotes.map((note, index) => (
+                    {getNotes ? getNotes.map((note) => (
                         <div key={note.id} className="flex flex-col items-center gap-1 min-w-0">
                             <Link href={`/notes`} className='flex flex-col items-center gap-1 min-w-0'>
 
@@ -130,16 +130,3 @@ async function ExplorePage() {
 export default ExplorePage
 
 
-
-
-// import MainContent from "@/components/shared/MainContent";
-
-
-// export default function Home() {
-
-//   return (
-//     <div>
-//       {/* <MainContent /> */}
-//     </div>
-//   );
-// }

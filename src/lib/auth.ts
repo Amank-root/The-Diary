@@ -43,7 +43,7 @@ export const auth = betterAuth({
       username: {
         defaultValue() {
           // how to access email here?
-          console.warn(this.input, "fhdjfvjdhg")
+          // console.warn(this.input, "fhdjfvjdhg")
           return "user" + Math.floor(Math.random() * 10000); // Default username if not provided
         },
         type: "string",

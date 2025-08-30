@@ -20,7 +20,7 @@ export const getReadingUsersPosts = async () =>{
                 reading: true,
             }
         });
-        // console.log(getReading, 'get reading users');
+        // // console.log(getReading, 'get reading users');
         if (!getReading) return [];
     
         if (getReading.reading.length === 0) return [];
@@ -55,7 +55,7 @@ export const getReadingUsersPosts = async () =>{
         console.error("Error fetching notes from reading users:", error);
         throw new Error("Failed to fetch notes from reading users");
     }
-    // console.log(notes, 'notes from reading users');
+    // // console.log(notes, 'notes from reading users');
 
     try {
         pages = prisma.page.findMany({
@@ -94,8 +94,8 @@ export const getReadingUsersPosts = async () =>{
     }
 
     const [getNotes, getPages] = await Promise.all([notes, pages]);
-    console.log(getNotes, 'get notes from reading users');
-    // console.log(getPages, 'get pages from reading users');
+    // console.log(getNotes, 'get notes from reading users');
+    // // console.log(getPages, 'get pages from reading users');
 
     return { getNotes, getPages };
 }

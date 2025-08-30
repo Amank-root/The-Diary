@@ -43,6 +43,7 @@ export default function SignInForm() {
         // Use router instead of window.location for better Next.js integration
         window.location.href = "/";
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred");
     } finally {
@@ -56,7 +57,9 @@ export default function SignInForm() {
         provider: "google",
         callbackURL: "/",
       });
-    } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      setError(err?.message || "An unexpected error occurred");
       toast.error("Failed to sign in with Google");
     }
   };
@@ -153,7 +156,7 @@ export default function SignInForm() {
           </Button>
 
           <div className="text-center text-sm">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <a href="/auth/sign-up" className="font-medium text-primary hover:underline">
               Sign up
             </a>

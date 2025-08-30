@@ -46,6 +46,7 @@ interface DiaryOption {
   id: string;
   title: string;
   slug: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   pages?: any[] | any | null;
 }
 
@@ -71,20 +72,18 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
   const pathname = usePathname();
   const isDiaryPath = pathname.includes('/diary');
 
-  
+
 
   useEffect(() => {
-    if (isDiaryPath){
+    if (isDiaryPath) {
       setIsLoading(true)
-      console.log("Diary path detected", pathname);
-      // setSelectedDiaryId(pathname.split('/')[2]);
-      // console.log("Selected diary ID:", pathname.split('/')[2] );
-      const data = fetch(`/api/v1/diary?id=${pathname.split("/")[2] ?? ""}`).then(res => res.json()).then(data=> {
+
+      fetch(`/api/v1/diary?id=${pathname.split("/")[2] ?? ""}`).then(res => res.json()).then(data => {
         setDiaryOptions(data || [])
         setSelectedDiaryId(data.id ?? "")
       });
+      // console.log("Diary path detected", data);      
       setIsLoading(false);
-      // console.log("Fetched diary options inside /diary:", diaryOptions);
     }
     if (!isDiaryPath) {
       setIsLoading(true);
@@ -100,7 +99,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
           toast.error('Failed to load diaries');
         });
     }
-  }, [isDiaryPath]);
+  }, [isDiaryPath, pathname]);
 
   const editor = useEditor({
     extensions: [
@@ -141,448 +140,444 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
   };
 
   // Function to convert HTML to PNG and upload
-
-const convertToImageAndUpload = async (): Promise<string | null> => {
-
-  if (!editor) {
-    console.error("Editor not available");
-    return null;
-  }
-
-  try {
-    // Get the HTML content from editor
-    const htmlContent = editor.getHTML();
-    console.log("HTML Content to convert:", htmlContent);
-    
-    if (!htmlContent || htmlContent.trim() === '<p></p>' || htmlContent.trim() === '') {
-      console.error("No content to convert");
-      toast.error("No content to convert to image");
+  const convertToImageAndUpload = useCallback(async (): Promise<string | null> => {
+    if (!editor) {
+      console.error("Editor not available");
       return null;
     }
 
-    // Create the exact container structure you provided
-    const pageDiv = document.createElement('div');
-    pageDiv.className = 'page';
-    pageDiv.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 400px;
-      height: 600px;
-      z-index: 9999;
-      opacity: 1;
-      visibility: visible;
-    `;
+    try {
+      // Get the HTML content from editor
+      const htmlContent = editor.getHTML();
+      // console.log("HTML Content to convert:", htmlContent);
 
-    // Create page-content div with minimal padding
-    const pageContentDiv = document.createElement('div');
-    pageContentDiv.className = 'page-content';
-    pageContentDiv.style.cssText = `
-      padding: 6px;
-      height: 100%;
-      box-sizing: border-box;
-      overflow: hidden;
-    `;
-
-    // Create page header with just date (minimal spacing)
-    const pageHeaderDiv = document.createElement('h2');
-    pageHeaderDiv.className = 'page-header';
-    pageHeaderDiv.style.cssText = `
-      font-size: 12px;
-      font-weight: 600;
-      margin: 0 0 4px 0;
-      display: flex;
-      width: 100%;
-      align-items: center;
-      justify-content: center;
-      border-bottom: 1px solid #e5e7eb;
-      padding-bottom: 2px;
-      font-family: Georgia, serif;
-      color: #333;
-    `;
-
-    // Get current date (shorter format)
-    const currentDate = new Date().toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric',
-      year: 'numeric'
-    });
-
-    pageHeaderDiv.textContent = currentDate;
-
-    // Create page text div with content (maximum height and minimal spacing)
-    const pageTextDiv = document.createElement('div');
-    pageTextDiv.className = 'page-text prose prose-sm max-w-none';
-    pageTextDiv.style.cssText = `
-      line-height: 1.1;
-      font-size: 10px;
-      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-      color: #333;
-      max-width: none;
-      height: calc(100% - 40px);
-      overflow: hidden;
-      margin: 0;
-      padding: 0;
-    `;
-
-    // Clean and style the HTML content with minimal spacing
-    let styledContent = htmlContent;
-    
-    // Remove conflicting styles
-    styledContent = styledContent.replace(/style="[^"]*"/g, '');
-    
-    // Apply ultra-compact styling for maximum content
-    styledContent = styledContent
-      .replace(/<p>/g, '<p style="margin: 0 0 2px 0; color: #333; font-family: inherit; font-size: 10px; line-height: 1.1;">')
-      .replace(/<h1>/g, '<h1 style="font-size: 12px; margin: 0 0 3px 0; color: #333; font-family: inherit; font-weight: bold;">')
-      .replace(/<h2>/g, '<h2 style="font-size: 11px; margin: 0 0 3px 0; color: #333; font-family: inherit; font-weight: bold;">')
-      .replace(/<h3>/g, '<h3 style="font-size: 10px; margin: 0 0 2px 0; color: #333; font-family: inherit; font-weight: bold;">')
-      .replace(/<blockquote>/g, '<blockquote style="margin: 2px 0; padding: 1px 4px; border-left: 1px solid #ccc; background: #f9f9f9; font-style: italic; color: #333; font-family: inherit;">')
-      .replace(/<ul>/g, '<ul style="margin: 2px 0; padding-left: 8px; color: #333; font-family: inherit;">')
-      .replace(/<ol>/g, '<ol style="margin: 2px 0; padding-left: 8px; color: #333; font-family: inherit;">')
-      .replace(/<li>/g, '<li style="margin: 0; color: #333; font-family: inherit;">')
-      .replace(/<strong>/g, '<strong style="color: #333; font-family: inherit; font-weight: bold;">')
-      .replace(/<em>/g, '<em style="color: #333; font-family: inherit; font-style: italic;">')
-      .replace(/<br>/g, '<br>')
-      .replace(/&nbsp;/g, ' ');
-
-    pageTextDiv.innerHTML = styledContent;
-
-    // Create page footer with page number (black color)
-    const pageFooterDiv = document.createElement('div');
-    pageFooterDiv.className = 'page-footer';
-    pageFooterDiv.style.cssText = `
-      position: absolute;
-      bottom: 4px;
-      right: 6px;
-      text-align: center;
-      font-size: 12px;
-      color: #000;
-      margin: 0;
-      font-family: Georgia, serif;
-    `;
-    pageFooterDiv.textContent = '1'; // Page number
-
-    // Assemble the structure
-    pageContentDiv.appendChild(pageHeaderDiv);
-    pageContentDiv.appendChild(pageTextDiv);
-    pageContentDiv.appendChild(pageFooterDiv);
-    pageDiv.appendChild(pageContentDiv);
-
-    // Append to body temporarily
-    document.body.appendChild(pageDiv);
-    
-    // Force reflow
-    pageDiv.offsetHeight;
-
-    // Wait for styles to load
-    await new Promise(resolve => setTimeout(resolve, 200));
-
-    console.log("About to convert element:", pageDiv);
-    console.log("Element dimensions:", pageDiv.offsetWidth, pageDiv.offsetHeight);
-
-    // Convert to PNG using html-to-image with high quality settings for sharp image
-    const dataUrl = await htmlToImage.toPng(pageDiv, {
-      width: 400,
-      height: 600,
-      quality: 1.0, // Maximum quality
-      backgroundColor: '#fdfaf4',
-      pixelRatio: 3, // Higher pixel ratio for sharp image
-      cacheBust: true,
-      imagePlaceholder: undefined,
-      skipAutoScale: true,
-      style: {
-        transform: 'scale(1)',
-        transformOrigin: 'top left',
-        imageRendering: 'crisp-edges', // Sharp image rendering
-        // @ts-ignore
-        WebkitFontSmoothing: 'antialiased',
-        fontSmooth: 'always',
+      if (!htmlContent || htmlContent.trim() === '<p></p>' || htmlContent.trim() === '') {
+        console.error("No content to convert");
+        toast.error("No content to convert to image");
+        return null;
       }
-    });
 
-    console.log("Conversion completed, dataUrl length:", dataUrl.length);
+      // Create the exact container structure you provided
+      const pageDiv = document.createElement('div');
+      pageDiv.className = 'page';
+      pageDiv.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 400px;
+        height: 600px;
+        z-index: 9999;
+        opacity: 1;
+        visibility: visible;
+      `;
 
-    // Remove temporary div
-    document.body.removeChild(pageDiv);
+      // Create page-content div with minimal padding
+      const pageContentDiv = document.createElement('div');
+      pageContentDiv.className = 'page-content';
+      pageContentDiv.style.cssText = `
+        padding: 6px;
+        height: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+      `;
 
-    if (!dataUrl || dataUrl === 'data:,') {
-      throw new Error("Failed to generate image - empty dataUrl");
-    }
+      // Create page header with just date (minimal spacing)
+      const pageHeaderDiv = document.createElement('h2');
+      pageHeaderDiv.className = 'page-header';
+      pageHeaderDiv.style.cssText = `
+        font-size: 12px;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 2px;
+        font-family: Georgia, serif;
+        color: #333;
+      `;
 
-    // Convert dataUrl to blob
-    const response = await fetch(dataUrl);
-    const blob = await response.blob();
+      // Get current date (shorter format)
+      const currentDate = new Date().toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
 
-    console.log("Blob size:", blob.size);
+      pageHeaderDiv.textContent = currentDate;
 
-    if (blob.size === 0) {
-      throw new Error("Generated image is empty");
-    }
+      // Create page text div with content (maximum height and minimal spacing)
+      const pageTextDiv = document.createElement('div');
+      pageTextDiv.className = 'page-text prose prose-sm max-w-none';
+      pageTextDiv.style.cssText = `
+        line-height: 1.1;
+        font-size: 10px;
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        color: #333;
+        max-width: none;
+        height: calc(100% - 40px);
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+      `;
 
-    // Upload to Cloudinary
-    const imageUrl = await uploadToCloudinary(blob);
-    console.log("Uploaded to Cloudinary:", imageUrl);
-    
-    return imageUrl;
+      // Clean and style the HTML content with minimal spacing
+      let styledContent = htmlContent;
 
-  } catch (error) {
-    console.error("Error converting to image:", error);
-    return null;
-  }
-};
+      // Remove conflicting styles
+      styledContent = styledContent.replace(/style="[^"]*"/g, '');
 
-// Fallback canvas method
-const convertToImageAndUploadCanvas = async (): Promise<string | null> => {
-  if (!editor) {
-    console.error("Editor not available");
-    return null;
-  }
+      // Apply ultra-compact styling for maximum content
+      styledContent = styledContent
+        .replace(/<p>/g, '<p style="margin: 0 0 2px 0; color: #333; font-family: inherit; font-size: 10px; line-height: 1.1;">')
+        .replace(/<h1>/g, '<h1 style="font-size: 12px; margin: 0 0 3px 0; color: #333; font-family: inherit; font-weight: bold;">')
+        .replace(/<h2>/g, '<h2 style="font-size: 11px; margin: 0 0 3px 0; color: #333; font-family: inherit; font-weight: bold;">')
+        .replace(/<h3>/g, '<h3 style="font-size: 10px; margin: 0 0 2px 0; color: #333; font-family: inherit; font-weight: bold;">')
+        .replace(/<blockquote>/g, '<blockquote style="margin: 2px 0; padding: 1px 4px; border-left: 1px solid #ccc; background: #f9f9f9; font-style: italic; color: #333; font-family: inherit;">')
+        .replace(/<ul>/g, '<ul style="margin: 2px 0; padding-left: 8px; color: #333; font-family: inherit;">')
+        .replace(/<ol>/g, '<ol style="margin: 2px 0; padding-left: 8px; color: #333; font-family: inherit;">')
+        .replace(/<li>/g, '<li style="margin: 0; color: #333; font-family: inherit;">')
+        .replace(/<strong>/g, '<strong style="color: #333; font-family: inherit; font-weight: bold;">')
+        .replace(/<em>/g, '<em style="color: #333; font-family: inherit; font-style: italic;">')
+        .replace(/<br>/g, '<br>')
+        .replace(/&nbsp;/g, ' ');
 
-  try {
-    const htmlContent = editor.getHTML();
-    const textContent = editor.getText();
-    
-    if (!textContent.trim()) {
-      toast.error("No content to convert");
-      return null;
-    }
+      pageTextDiv.innerHTML = styledContent;
 
-    // Create canvas
-    const canvas = document.createElement('canvas');
-    canvas.width = 400;
-    canvas.height = 600;
-    const ctx = canvas.getContext('2d');
+      // Create page footer with page number (black color)
+      const pageFooterDiv = document.createElement('div');
+      pageFooterDiv.className = 'page-footer';
+      pageFooterDiv.style.cssText = `
+        position: absolute;
+        bottom: 4px;
+        right: 6px;
+        text-align: center;
+        font-size: 12px;
+        color: #000;
+        margin: 0;
+        font-family: Georgia, serif;
+      `;
+      pageFooterDiv.textContent = '1'; // Page number
 
-    if (!ctx) {
-      throw new Error("Could not get canvas context");
-    }
+      // Assemble the structure
+      pageContentDiv.appendChild(pageHeaderDiv);
+      pageContentDiv.appendChild(pageTextDiv);
+      pageContentDiv.appendChild(pageFooterDiv);
+      pageDiv.appendChild(pageContentDiv);
 
-    // Fill background
-    ctx.fillStyle = '#fdfaf4';
-    ctx.fillRect(0, 0, 400, 600);
-
-    // Add border
-    ctx.strokeStyle = '#e5e7eb';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(0, 0, 400, 600);
-
-    // Add date header
-    ctx.fillStyle = '#333';
-    ctx.font = '12px Georgia';
-    ctx.textAlign = 'center';
-    const dateText = new Date().toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric',
-      year: 'numeric'
-    });
-    ctx.fillText(dateText, 200, 25);
-
-    // Add header line
-    ctx.strokeStyle = '#e5e7eb';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(20, 35);
-    ctx.lineTo(380, 35);
-    ctx.stroke();
-
-    // Add content
-    const lines = textContent.split('\n');
-    ctx.fillStyle = '#333';
-    ctx.font = '10px Georgia';
-    ctx.textAlign = 'left';
-    
-    let y = 55;
-    const lineHeight = 12;
-    const maxWidth = 360;
-    
-    lines.forEach(line => {
-      if (y > 570) return; // Stop if we run out of space
+      // Append to body temporarily
+      document.body.appendChild(pageDiv);
       
-      if (line.trim()) {
-        // Word wrap
-        const words = line.split(' ');
-        let currentLine = '';
-        
-        words.forEach(word => {
-          const testLine = currentLine + (currentLine ? ' ' : '') + word;
-          const metrics = ctx.measureText(testLine);
-          
-          if (metrics.width > maxWidth && currentLine) {
-            ctx.fillText(currentLine, 20, y);
-            currentLine = word;
-            y += lineHeight;
-          } else {
-            currentLine = testLine;
-          }
-        });
-        
-        if (currentLine) {
-          ctx.fillText(currentLine, 20, y);
-          y += lineHeight;
+      // Force reflow
+      void pageDiv.offsetHeight;
+
+      // Wait for styles to load
+      await new Promise(resolve => setTimeout(resolve, 200));      // console.log("About to convert element:", pageDiv);
+      // console.log("Element dimensions:", pageDiv.offsetWidth, pageDiv.offsetHeight);
+
+      // Convert to PNG using html-to-image with high quality settings for sharp image
+      const dataUrl = await htmlToImage.toPng(pageDiv, {
+        width: 400,
+        height: 600,
+        quality: 1.0, // Maximum quality
+        backgroundColor: '#fdfaf4',
+        pixelRatio: 3, // Higher pixel ratio for sharp image
+        cacheBust: true,
+        imagePlaceholder: undefined,
+        skipAutoScale: true,
+        style: {
+          transform: 'scale(1)',
+          transformOrigin: 'top left',
+          imageRendering: 'crisp-edges', // Sharp image rendering
+          // @ts-expect-error: i dont know
+          WebkitFontSmoothing: 'antialiased',
+          fontSmooth: 'always',
         }
-      } else {
-        y += lineHeight / 2; // Small gap for empty lines
+      });
+
+      // console.log("Conversion completed, dataUrl length:", dataUrl.length);
+
+      // Remove temporary div
+      document.body.removeChild(pageDiv);
+
+      if (!dataUrl || dataUrl === 'data:,') {
+        throw new Error("Failed to generate image - empty dataUrl");
       }
-    });
 
-    // Add page number
-    ctx.fillStyle = '#000';
-    ctx.font = '12px Georgia';
-    ctx.textAlign = 'right';
-    ctx.fillText('1', 390, 590);
+      // Convert dataUrl to blob
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
 
-    // Convert canvas to blob
-    return new Promise((resolve) => {
-      canvas.toBlob(async (blob) => {
-        if (blob && blob.size > 0) {
-          try {
-            const imageUrl = await uploadToCloudinary(blob);
-            resolve(imageUrl);
-          } catch (error) {
-            console.error("Error uploading to Cloudinary:", error);
-            resolve(null);
+      // console.log("Blob size:", blob.size);
+
+      if (blob.size === 0) {
+        throw new Error("Generated image is empty");
+      }
+
+      // Upload to Cloudinary
+      const imageUrl = await uploadToCloudinary(blob);
+      // console.log("Uploaded to Cloudinary:", imageUrl);
+
+      return imageUrl;
+
+    } catch (error) {
+      console.error("Error converting to image:", error);
+      return null;
+    }
+  }, [editor]);
+
+  // Fallback canvas method
+  const convertToImageAndUploadCanvas = useCallback(async (): Promise<string | null> => {
+    if (!editor) {
+      console.error("Editor not available");
+      return null;
+    }
+
+    try {
+      // const htmlContent = editor.getHTML();
+      const textContent = editor.getText();
+
+      if (!textContent.trim()) {
+        toast.error("No content to convert");
+        return null;
+      }
+
+      // Create canvas
+      const canvas = document.createElement('canvas');
+      canvas.width = 400;
+      canvas.height = 600;
+      const ctx = canvas.getContext('2d');
+
+      if (!ctx) {
+        throw new Error("Could not get canvas context");
+      }
+
+      // Fill background
+      ctx.fillStyle = '#fdfaf4';
+      ctx.fillRect(0, 0, 400, 600);
+
+      // Add border
+      ctx.strokeStyle = '#e5e7eb';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(0, 0, 400, 600);
+
+      // Add date header
+      ctx.fillStyle = '#333';
+      ctx.font = '12px Georgia';
+      ctx.textAlign = 'center';
+      const dateText = new Date().toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+      ctx.fillText(dateText, 200, 25);
+
+      // Add header line
+      ctx.strokeStyle = '#e5e7eb';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(20, 35);
+      ctx.lineTo(380, 35);
+      ctx.stroke();
+
+      // Add content
+      const lines = textContent.split('\n');
+      ctx.fillStyle = '#333';
+      ctx.font = '10px Georgia';
+      ctx.textAlign = 'left';
+
+      let y = 55;
+      const lineHeight = 12;
+      const maxWidth = 360;
+
+      lines.forEach(line => {
+        if (y > 570) return; // Stop if we run out of space
+
+        if (line.trim()) {
+          // Word wrap
+          const words = line.split(' ');
+          let currentLine = '';
+
+          words.forEach(word => {
+            const testLine = currentLine + (currentLine ? ' ' : '') + word;
+            const metrics = ctx.measureText(testLine);
+
+            if (metrics.width > maxWidth && currentLine) {
+              ctx.fillText(currentLine, 20, y);
+              currentLine = word;
+              y += lineHeight;
+            } else {
+              currentLine = testLine;
+            }
+          });
+
+          if (currentLine) {
+            ctx.fillText(currentLine, 20, y);
+            y += lineHeight;
           }
         } else {
-          console.error("Canvas produced empty blob");
-          resolve(null);
+          y += lineHeight / 2; // Small gap for empty lines
         }
-      }, 'image/png', 0.9);
-    });
+      });
 
-  } catch (error) {
-    console.error("Error with canvas conversion:", error);
-    return null;
-  }
-};
+      // Add page number
+      ctx.fillStyle = '#000';
+      ctx.font = '12px Georgia';
+      ctx.textAlign = 'right';
+      ctx.fillText('1', 390, 590);
+
+      // Convert canvas to blob
+      return new Promise((resolve) => {
+        canvas.toBlob(async (blob) => {
+          if (blob && blob.size > 0) {
+            try {
+              const imageUrl = await uploadToCloudinary(blob);
+              resolve(imageUrl);
+            } catch (error) {
+              console.error("Error uploading to Cloudinary:", error);
+              resolve(null);
+            }
+          } else {
+            console.error("Canvas produced empty blob");
+            resolve(null);
+          }
+        }, 'image/png', 0.9);
+      });
+
+    } catch (error) {
+      console.error("Error with canvas conversion:", error);
+      return null;
+    }
+  }, [editor]);
 
 
 
-// Update the handleSave function with corrected state update logic
-const handleSave = useCallback(async () => {
-  if (!editor) {
-    toast.error("Editor not ready");
-    return;
-  }
-
-  setIsSaving(true);
-
-  try {
-    const editorContent = editor.getJSON();
-    const textContent = editor.getText();
-
-    // Validation
-    if (!isDiaryPath && !selectedDiaryId) {
-      toast.error("Please select a diary");
+  // Update the handleSave function with corrected state update logic
+  const handleSave = useCallback(async () => {
+    if (!editor) {
+      toast.error("Editor not ready");
       return;
     }
 
-    if (!textContent.trim()) {
-      toast.error("Please add some content");
-      return;
-    }
+    setIsSaving(true);
 
-    console.log("Converting content to image...");
+    try {
+      const editorContent = editor.getJSON();
+      const textContent = editor.getText();
 
-    // Try the main method first, fallback to canvas if needed
-    let pageImageUrl = await convertToImageAndUpload();
-    
-    if (!pageImageUrl) {
-      console.log("Main method failed, trying canvas fallback...");
-      pageImageUrl = await convertToImageAndUploadCanvas();
-    }
-    
-    if (!pageImageUrl) {
-      toast.error("Failed to create page preview image");
-      return;
-    }
+      // Validation
+      if (!isDiaryPath && !selectedDiaryId) {
+        toast.error("Please select a diary");
+        return;
+      }
 
-    console.log("Image uploaded successfully:", pageImageUrl);
+      if (!textContent.trim()) {
+        toast.error("Please add some content");
+        return;
+      }
 
-    console.log(diaryOptions, selectedDiaryId)
+      // console.log("Converting content to image...");
 
-    // Calculate page number more reliably
-    let currentPageNumber = 1;
-    if (diaryOptions.length >= 2) {
-      const selectedDiary = diaryOptions.find(option => option.id === selectedDiaryId);
-      currentPageNumber = (selectedDiary?.pages?.length || 0) + 1;
-      // @ts-ignore
-    } else if (diaryOptions.pages) {
-      // @ts-ignore
-      currentPageNumber = (diaryOptions.pages.length || 0) + 1;
-    }
+      // Try the main method first, fallback to canvas if needed
+      let pageImageUrl = await convertToImageAndUpload();
 
-    const requestBody: any = {
-      content: JSON.stringify(editorContent),
-      pageImageUrl: pageImageUrl,
-      diaryId: selectedDiaryId,
-      pageNumber: currentPageNumber,
-      // @ts-ignore
-      isPublic: diaryOptions.length >= 2 ? diaryOptions.find(option => option.id === selectedDiaryId)?.types !== "SPECIAL" : diaryOptions.types !== "SPECIAL",
-    };
+      if (!pageImageUrl) {
+        // console.log("Main method failed, trying canvas fallback...");
+        pageImageUrl = await convertToImageAndUploadCanvas();
+      }
 
-    const endpoint = "/api/v1/page/";
-    console.log("Saving to endpoint:", endpoint, "with body:", requestBody);
+      if (!pageImageUrl) {
+        toast.error("Failed to create page preview image");
+        return;
+      }
 
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-    });
+      // console.log("Image uploaded successfully:", pageImageUrl);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Server error: ${response.statusText} - ${errorText}`);
-    }
+      // console.log(diaryOptions, selectedDiaryId)
 
-    const result = await response.json();
-    console.log("Content saved:", result);
+      // Calculate page number more reliably
+      let currentPageNumber = 1;
+      if (diaryOptions.length >= 2) {
+        const selectedDiary = diaryOptions.find(option => option.id === selectedDiaryId);
+        currentPageNumber = (selectedDiary?.pages?.length || 0) + 1;
+        // @ts-expect-error: i dont know
+      } else if (diaryOptions.pages) {
+        // @ts-expect-error: i dont know
+        currentPageNumber = (diaryOptions.pages.length || 0) + 1;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const requestBody: any = {
+        content: JSON.stringify(editorContent),
+        pageImageUrl: pageImageUrl,
+        diaryId: selectedDiaryId,
+        pageNumber: currentPageNumber,
+        // @ts-expect-error: i dont know
+        isPublic: diaryOptions.length >= 2 ? diaryOptions.find(option => option.id === selectedDiaryId)?.types !== "SPECIAL" : diaryOptions.types !== "SPECIAL",
+      };
 
-    // Update diary options state to reflect the new page
-    setDiaryOptions((prev) => {
-      if (Array.isArray(prev) && prev.length >= 2) {
-        // Multiple diaries case
-        const updatedDiaries = prev.map((diary) => {
-          if (diary.id === selectedDiaryId) {
+      const endpoint = "/api/v1/page/";
+      // console.log("Saving to endpoint:", endpoint, "with body:", requestBody);
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server error: ${response.statusText} - ${errorText}`);
+      }
+
+      const result = await response.json();
+      // console.log("Content saved:", result);
+
+      // Update diary options state to reflect the new page
+      setDiaryOptions((prev) => {
+        if (Array.isArray(prev) && prev.length >= 2) {
+          // Multiple diaries case
+          const updatedDiaries = prev.map((diary) => {
+            if (diary.id === selectedDiaryId) {
+              return {
+                ...diary,
+                pages: Array.isArray(diary.pages) ? [...diary.pages, result] : [result],
+              };
+            }
+            return diary;
+          });
+          return updatedDiaries;
+        } else if (prev && typeof prev === 'object' && 'id' in prev) {
+          // Single diary case
+          if (prev.id === selectedDiaryId) {
             return {
-              ...diary,
-              pages: Array.isArray(diary.pages) ? [...diary.pages, result] : [result],
+              ...prev,
+              // @ts-expect-error: i dont know
+              pages: Array.isArray(prev.pages) ? [...prev.pages, result] : [result],
             };
           }
-          return diary;
-        });
-        return updatedDiaries;
-      } else if (prev && typeof prev === 'object' && 'id' in prev) {
-        // Single diary case
-        if (prev.id === selectedDiaryId) {
-          return {
-            ...prev,
-            // @ts-ignore
-            pages: Array.isArray(prev.pages) ? [...prev.pages, result] : [result],
-          };
         }
-      }
-      
-      console.log("State update fallback - prev:", prev, "result:", result);
-      return prev;
-    });
 
-    toast.success("Page saved successfully!");
+        // console.log("State update fallback - prev:", prev, "result:", result);
+        return prev;
+      });
 
-    // Clear editor content after successful save
-    editor.commands.clearContent();
+      toast.success("Page saved successfully!");
 
-  } catch (error) {
-    console.error("Error saving:", error);
-    toast.error("Failed to save page");
-  } finally {
-    setIsSaving(false);
-  }
-}, [editor, selectedDiaryId, isDiaryPath, diaryOptions]);
+      // Clear editor content after successful save
+      editor.commands.clearContent();
 
-  
+    } catch (error) {
+      console.error("Error saving:", error);
+      toast.error("Failed to save page");
+    } finally {
+      setIsSaving(false);
+    }
+  }, [editor, selectedDiaryId, isDiaryPath, diaryOptions, convertToImageAndUpload, convertToImageAndUploadCanvas]);
+
+
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;

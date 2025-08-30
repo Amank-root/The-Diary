@@ -15,11 +15,11 @@ interface SessionProviderProps {
 export default function SessionProvider({ children }: SessionProviderProps) {
     const { data: session, isPending } = useSession();
     const pathname = usePathname();
-    console.log("SessionProvider - Session:", session, "isPending:", isPending);
+    // console.log("SessionProvider - Session:", session, "isPending:", isPending);
     const router = useRouter();
     const [initialLoad, setInitialLoad] = useState(true);
 
-    console.log("Home page - Session:", session, "isPending:", isPending);
+    // console.log("Home page - Session:", session, "isPending:", isPending);
 
     useEffect(() => {
         // Give a small delay on initial load to allow session to be established
@@ -33,13 +33,13 @@ export default function SessionProvider({ children }: SessionProviderProps) {
 
     useEffect(() => {
         if (!initialLoad && !isPending && !session && pathname !== "/auth/sign-in" && pathname !== "/auth/sign-up") {
-            console.log("No session found, redirecting to sign-in");
+            // console.log("No session found, redirecting to sign-in");
             router.push("/auth/sign-in");
         }
-    }, [session, isPending, router, initialLoad]);
+    }, [session, isPending, router, initialLoad, pathname]);
 
     if (isPending || initialLoad) {
-        console.log("Session is pending or initial load, showing loader");
+        // console.log("Session is pending or initial load, showing loader");
         return (
             <div className="min-h-screen flex flex-col items-center justify-center">
                 <Loader2 className="h-8 w-8 animate-spin mb-4" />
@@ -48,7 +48,7 @@ export default function SessionProvider({ children }: SessionProviderProps) {
     }
 
     // if (!session) {
-    //   console.log("No session, returning debug info");
+    //   // console.log("No session, returning debug info");
     //   return (
     //     <div className="min-h-screen flex items-center justify-center">
     //       <AuthDebug />

@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React from 'react'
 import DiaryHeader from '@/components/singleton/DiaryHeader'
 import { Separator } from '@/components/ui/separator'
 
@@ -9,11 +9,11 @@ function layout({ children, feed, modal }: { children: React.ReactNode, feed: Re
                     title="Profile"
                     description="View and edit your profile information"
                     btnHidden
-                />
+                    />
                 <Separator />
                 <div>
-                    {children}
                     {modal}
+                    {children}
                     {feed}
 
                 </div>

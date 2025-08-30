@@ -37,7 +37,7 @@ function DiaryCreateForm() {
             });
 
             const data = await res.json();
-            console.log(data, 'cloudinary response');
+            // console.log(data, 'cloudinary response');
             setImagePreview(data.secure_url);
             setBtnDisabled(false);
         } catch (err) {
@@ -58,7 +58,7 @@ function DiaryCreateForm() {
                     <DialogHeader>
                         <DialogTitle>Create New Diary</DialogTitle>
                     </DialogHeader>
-                    {/* @ts-ignore */}
+                    {/* @ts-expect-error: i dont know */}
                     <form action={createDiary}>
                         <div className="space-y-4">
                             <div className="space-y-2">

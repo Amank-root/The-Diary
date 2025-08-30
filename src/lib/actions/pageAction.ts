@@ -7,42 +7,47 @@ import { prisma, authSessionServer } from "../auth";
 
 export async function getPages(username?: string) {
     const userData = await authSessionServer();
-    // console.log(username, 'userData in getPages');
+    // // console.log(username, 'userData in getPages');
     if (!userData) {
         throw new Error("User not authenticated");
     }
     if (!username) {
-        // console.log("inside username!")
-        const pages = await prisma.page.findMany({
-            where: {
-                isPublic: true,
-            },
-            select: {
-                id: true,
-                pageImageUrl: true,
-                createdAt: true,
-                diaryId: true,
-                diary: {
-                    select: {
-                        title: true,
-                        user: {
-                            select: {
-                                username: true,
-                                image: true,
+        // // console.log("inside username!")
+        try {
+            const pages = await prisma.page.findMany({
+                where: {
+                    isPublic: true,
+                },
+                select: {
+                    id: true,
+                    pageImageUrl: true,
+                    createdAt: true,
+                    diaryId: true,
+                    diary: {
+                        select: {
+                            title: true,
+                            user: {
+                                select: {
+                                    username: true,
+                                    image: true,
+                                }
                             }
                         }
                     }
+                },
+                orderBy: {
+                    createdAt: 'desc'
                 }
-            },
-            orderBy: {
-                createdAt: 'desc'
-            }
-        })
-        return pages;
+            })
+            return pages;
+        } catch (error) {
+            console.error("Error fetching pages:", error);
+            return null;
+        }
     }
-    // console.log(username, "username in getDiaries", userData.user.username);
+    // // console.log(username, "username in getDiaries", userData.user.username);
     try {
-        // console.log("inside username", username);
+        // // console.log("inside username", username);
         const pages = await prisma.page.findMany({
             where: {
                 isPublic: true,

@@ -16,16 +16,12 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar'
 import { 
-  ChartArea, 
   Home, 
-  Inbox, 
   Search, 
-  Settings,
   BookOpen,
   PlusCircle,
   CircleUser,
   Users,
-  LogOut,
   UserStar,
   Github,
   LetterText,
@@ -37,7 +33,6 @@ import { ModeToggle } from './toogle-theme'
 import Link from 'next/link'
 import { Separator } from '../ui/separator'
 import { usePathname } from 'next/navigation'
-import { title } from 'process'
 import { Button } from '../ui/button'
 
 // Menu items.
