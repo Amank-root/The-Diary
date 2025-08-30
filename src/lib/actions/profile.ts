@@ -101,8 +101,34 @@ export async function getProfile(username?: string): Promise<ProfileDetails | nu
                 bio: true,
                 website: true,
                 image: true,
-                reading: true,
-                readers: true,
+                reading: {
+                    select: {
+                        id: true,                        
+                        createdAt: true,
+                        reading: {
+                            select: {
+                                id: true,
+                                username: true,
+                                name: true,
+                                image: true,
+                            }
+                        }
+                    }
+                },
+                readers: {
+                    select: {
+                        id: true,                        
+                        createdAt: true,
+                        reader: {
+                            select: {
+                                id: true,
+                                username: true,
+                                name: true,
+                                image: true,
+                            }
+                        }
+                    }
+                },
                 _count: {
                     select: {
                         diaries: true,
@@ -160,12 +186,30 @@ export async function getProfile(username?: string): Promise<ProfileDetails | nu
             website: profile?.website ?? "",
             profileImage: profile?.image ?? "",
             readerCount: profile?._count.readers ?? 0,
-            reading: profile?.reading ?? [],
-            readers: profile?.readers ?? [],
+            reading: profile?.reading?.map(r => ({
+                id: parseInt(r.id),
+                createdAt: r.createdAt,
+                reading: {
+                    id: parseInt(r.reading.id),
+                    username: r.reading.username ?? "",
+                    name: r.reading.name ?? "",
+                    image: r.reading.image ?? "",
+                }
+            })) ?? [],
+            readers: profile?.readers?.map(r => ({
+                id: parseInt(r.id),
+                createdAt: r.createdAt,
+                reader: {
+                    id: parseInt(r.reader.id),
+                    username: r.reader.username ?? "",
+                    name: r.reader.name ?? "",
+                    image: r.reader.image ?? "",
+                }
+            })) ?? [],
             diaryCount: profile?._count.diaries ?? 0,
             readingCount: profile?._count.reading ?? 0,
             pageCount: pageCount ?? 0,
-            currentUser: currentUser,
+            currentUser: currentUser ?? undefined,
             isSelf: isSelf,
         } : null;
 

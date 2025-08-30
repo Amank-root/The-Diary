@@ -9,8 +9,10 @@ import { memo } from 'react';
 function NoteEditor({ notesData }: { notesData?: ReactStickyNotesProps['notes'] }) {
     const [notes, setNotes] = useState<ReactStickyNotesProps['notes']>(notesData || []);
 
+    console.log('Initial notes data:', notesData);
+
     if(notes && notes.length === 0) {
-        return <p>No notes available</p>;
+        return <div className='p-4 text-center text-gray-500'>No notes available.</div>;
     }
 
     const getRandomColor = () => {
@@ -74,6 +76,7 @@ function NoteEditor({ notesData }: { notesData?: ReactStickyNotesProps['notes'] 
 
     // Delete a note via API
     const deleteNote = async (noteId: string) => {
+        
         if (!noteId) {
             console.error('Cannot delete note - missing ID');
             toast.error('Error: Note ID is missing');

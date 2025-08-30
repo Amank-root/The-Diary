@@ -12,7 +12,7 @@ export async function getPages(username?: string) {
         throw new Error("User not authenticated");
     }
     if (!username) {
-        console.log("inside username!")
+        // console.log("inside username!")
         const pages = await prisma.page.findMany({
             where: {
                 isPublic: true,
@@ -42,7 +42,7 @@ export async function getPages(username?: string) {
     }
     // console.log(username, "username in getDiaries", userData.user.username);
     try {
-        console.log("inside username", username);
+        // console.log("inside username", username);
         const pages = await prisma.page.findMany({
             where: {
                 isPublic: true,

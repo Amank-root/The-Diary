@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getDiaries } from '@/lib/actions/diaryAction'
+import BookmarkSaved from '@/components/shared/BookmarkSaved'
 
 async function Diary() {
   const getAllDiaries = await getDiaries()
@@ -82,12 +83,12 @@ async function Diary() {
                 {/* DATE diaryED ON */}
                 <span className="text-sm text-accent dark:text-white">{diary.createdAt.toLocaleDateString()}</span>
               </div>
-              <div className="absolute flex w-full justify-between bottom-5 px-4">
+              <div className="absolute flex items-center w-full justify-between bottom-5 px-4">
                 <div>
                   {/* title */}
-                  <h3 className="text-lg font-semibold mix-blend-difference text-white">{diary.title}</h3>
+                  <h3 className="text-md md:text-lg font-semibold mix-blend-difference text-white">{diary.title}</h3>
                 </div>
-                <Bookmark className="w-6 h-6 text-white drop-shadow-md fill-white" />
+                <BookmarkSaved />
               </div>
               {/* <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <div className="flex items-center gap-4 text-white">

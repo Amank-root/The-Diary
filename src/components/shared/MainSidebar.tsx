@@ -1,6 +1,7 @@
 "use client"
 
 import React from 'react'
+import { authClient } from '@/lib/auth-client'
 import {
   Sidebar,
   SidebarContent,
@@ -23,12 +24,21 @@ import {
   BookOpen,
   PlusCircle,
   CircleUser,
-  Users
+  Users,
+  LogOut,
+  UserStar,
+  Github,
+  LetterText,
+  Linkedin,
+  Twitter,
+  Mail
 } from 'lucide-react'
 import { ModeToggle } from './toogle-theme'
 import Link from 'next/link'
 import { Separator } from '../ui/separator'
 import { usePathname } from 'next/navigation'
+import { title } from 'process'
+import { Button } from '../ui/button'
 
 // Menu items.
 const items = [
@@ -57,11 +67,11 @@ const items = [
     url: "/connections",
     icon: Users,
   },
-  {
-    title: "Analytics",
-    url: "/analytics",
-    icon: ChartArea,
-  },
+  // {
+  //   title: "Analytics",
+  //   url: "/analytics",
+  //   icon: ChartArea,
+  // },
 //   {
 //     title: "Favorites",
 //     url: "#",
@@ -76,21 +86,56 @@ const items = [
 
 const secondaryItems = [
   {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
+    title: "Aman Kushwaha",
+    url: "/profile/amank-root",
+    icon: UserStar,
+    target: "_self"
   },
+  {
+    title: "GitHub",
+    url: "https://github.com/amank-root",
+    icon: Github,
+    target: "_blank"
+  },
+  {
+    title: "Portfolio",
+    url: "https://amankushwaha.netlify.app/",
+    icon: LetterText,
+    target: "_blank"
+  },
+  {
+    title: "LinkedIn",
+    url: "https://www.linkedin.com/in/amank-root",
+    icon: Linkedin,
+    target: "_blank"
+  },
+  {
+    title: "Twitter",
+    url: "https://twitter.com/Amankushwaha_28",
+    icon: Twitter,
+    target: "_blank"
+  },
+  {
+    title: "Contact",
+    url: "mailto:contact@amank-root.slmail.me",
+    icon: Mail,
+    target: "_self"
+  }
 ]
 
 function MainSidebar() {
   const pathname = usePathname();
+   const handleSignOut = async () => {
+      await authClient.signOut();
+      window.location.href = "/auth/sign-in";
+    };
 
   return (
     <Sidebar className='sticky border-r-2' variant="inset">
       <SidebarHeader>
         <div className="flex items-center gap-2 px-4 py-2">
           <BookOpen className="h-6 w-6" />
-          <span className="font-semibold text-lg">My Diary</span>
+          <Link href='/' className="font-semibold text-lg">My Diary</Link>
         </div>
       </SidebarHeader>
       
@@ -115,13 +160,13 @@ function MainSidebar() {
         <Separator/>
 
         <SidebarGroup>
-          <SidebarGroupLabel>Settings</SidebarGroupLabel>
+          <SidebarGroupLabel>Developer</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {secondaryItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <Link href={item.url}>
+                    <Link target={item.target} href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>
@@ -137,6 +182,7 @@ function MainSidebar() {
         <div className="p-4">
           <ModeToggle />
         </div>
+        <Button onClick={handleSignOut}>Sign Out</Button>
       </SidebarFooter>
       
       <SidebarRail />

@@ -1,7 +1,28 @@
 import React from 'react'
 import { Card } from '@/components/ui/card';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 function page() {
+    return (
+        <div className="flex items-center justify-center px-6">
+            {/* dont use card */}
+            <div className="max-w-md w-full text-center">
+                <div className="p-8">
+                    <h2 className="text-2xl font-semibold mb-2">Developer Error</h2>
+                    <p className="text-muted-foreground mb-6">
+                        Saved is not yet implemented. Please check back later.
+                    </p>
+                    <Link href="/profile/amank-root">
+                        <Button size="lg" className="w-full">
+                            Complain
+                        </Button>
+                    </Link>
+                </div>
+            </div>
+        </div>
+    )
+
     const posts = [
         { id: 1, image: "https://dummyimage.com/210x297", likes: 10, comments: 5 },
         { id: 2, image: "https://dummyimage.com/210x297", likes: 20, comments: 10 },

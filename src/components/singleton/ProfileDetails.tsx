@@ -2,6 +2,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import type { ProfileDetails } from "@/lib/types"
 import { followUser, unfollowUser } from "@/lib/actions/profile"
+import { Mail } from "lucide-react"
+import UserModal from "./UserModal"
 
 
 function ProfileDetails({ profileData }: { profileData: ProfileDetails }) {
@@ -62,23 +64,35 @@ function ProfileDetails({ profileData }: { profileData: ProfileDetails }) {
                         <div className="font-semibold">{profileData.diaryCount}</div>
                         <div className="text-sm text-muted-foreground">Diaries</div>
                     </div>
-                    <div className="text-center">
+                    <UserModal data={profileData.readers} type="reader" />
+                    <UserModal data={profileData.reading} type="reading" />
+                    {/* <div className="text-center">
                         <div className="font-semibold">{profileData.readerCount}</div>
                         <div className="text-sm text-muted-foreground">Readers</div>
                     </div>
                     <div className="text-center">
                         <div className="font-semibold">{profileData.readingCount}</div>
                         <div className="text-sm text-muted-foreground">Reading</div>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Bio */}
                 <div className="space-y-1">
                     {/* <div className="font-semibold">John Doe</div> */}
                     {profileData.bio &&
-                        profileData.bio.split(/\r?\n/).map((line, index) => (
-                            <div className="text-sm" key={index}>{line}</div>
-                        ))}
+                        profileData.bio.split(/\r?\n/).map((line, index) => {
+                            if (line.includes("mailto:")){
+                                console.log(line)
+                                return (
+                                    <div className="text-sm" key={index}>
+                                        <a href={line} className="hover:underline flex flex-row items-center-safe"><Mail className="mr-1 text-sm" /> {line.split("mailto:")[1]}</a>
+                                    </div>
+                                )
+                            }
+                            return (
+                                <div className="text-sm" key={index}>{line}</div>
+                            )
+                        })}
                     {/* <div className="text-sm">📸 Photography enthusiast</div>
                     <div className="text-sm">🌍 Traveling the world</div>
                     <div className="text-sm">✨ Living life to the fullest</div> */}

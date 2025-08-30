@@ -4,21 +4,23 @@ import { getPages } from '@/lib/actions/pageAction';
 import Link from 'next/link';
 import { Bookmark } from 'lucide-react';
 import Image from 'next/image';
+import { notFound } from 'next/navigation';
+import BookmarkSaved from '@/components/shared/BookmarkSaved';
 
 
 
 async function Feed({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const allPages = await getPages(id);
-    console.log(allPages, 'all pages for user', id);
+    // console.log(allPages, 'all pages for user', id);
     // console.log(id)
     // console.log("All pages:", allPages[0]);
-    if (!allPages) {
-        return <div>No pages found</div>;
+    if (allPages?.length === 0) {
+        return notFound();
     }
 
     return (
-        <div className="grid grid-cols-3 gap-1 md:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
             {allPages && allPages.map((page) => (
                 <Card key={page.id} className="p-0 aspect-auto overflow-hidden group cursor-pointer border-0 shadow-sm">
                     <div className="relative w-full h-full">
@@ -46,14 +48,14 @@ async function Feed({ params }: { params: Promise<{ id: string }> }) {
                                     <Image
                                         src={page.diary.user.image || "https://dummyimage.com/210x297"}
                                         alt={`Profile picture of ${page.diary.user.username}`}
-                                        width={40}
-                                        height={40}
+                                        width={30}
+                                        height={30}
                                         className="rounded-full"
                                     />
-                                    <h3 className="text-md font-light mix-blend-difference text-white">{page.diary.user.username}</h3>
+                                    <h3 className="text-sm md:text-md font-light mix-blend-difference text-white">{page.diary.user.username}</h3>
                                 {/* </div> */}
                             </Link>
-                            <Bookmark className="w-6 h-6 text-white drop-shadow-md fill-white" />
+                            <BookmarkSaved />
                         </div>
                     </div>
                 </Card>

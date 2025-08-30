@@ -21,14 +21,40 @@ export interface ProfileHeader {
     website: string;
     profileImage: string;
     isSelf?: boolean;
-    currentUser?: any;
-}
+    currentUser?: {
+        id: string;
+        reading: {
+            id: string;
+            createdAt: Date;
+            readerId: string;
+            readingId: string;
+        }[]
+    }
+};
 
 export interface ProfileDetails extends ProfileHeader {
     readerCount: number;
     readingCount: number;
     pageCount: number;
-    reading: Array<any>;
-    readers: Array<any>;
+    reading: {
+        id: number;
+        createdAt: Date;
+        reading: {
+            id: number;
+            username: string;
+            name: string;
+            image: string;
+        };
+    }[];
+    readers: {
+        id: number;
+        createdAt: Date;
+        reader: {
+            id: number;
+            username: string;
+            name: string;
+            image: string;
+        };
+    }[];
     diaryCount: number;
 }

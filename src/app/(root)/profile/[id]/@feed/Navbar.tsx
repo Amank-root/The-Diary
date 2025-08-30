@@ -16,7 +16,7 @@ function Navbar({id}: {id: string}) {
                     }`}
             >
                 <Grid3X3 className="w-4 h-4" />
-                POSTS
+                Pages
             </Link>
             <Link href={`/profile/${id}/diary`}
                 className={`flex items-center gap-2 px-4 py-3 text-sm font-medium ${activeTab === "diary" ? "border-t-2 border-foreground" : "text-muted-foreground hover:text-foreground"

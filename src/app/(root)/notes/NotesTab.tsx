@@ -10,6 +10,20 @@ async function NotesTab() {
     const userNotes = Array.isArray(userNotesResult) ? userNotesResult : [];
     const friendsNotes = Array.isArray(friendsNotesResult) ? friendsNotesResult : [];
 
+    console.log('User Notes:', userNotes);
+
+    if (userNotes.length === 0) {
+        userNotes.push({
+            id: '1',
+            createdAt: new Date(),
+            userId: '',
+            title: null,
+            position: { x: 100, y: 100 },
+            text: 'Welcome to your notes!',
+            color: '#ff0',
+        });
+    }
+
     return (
         <Tabs defaultValue="yours">
             <TabsList>

@@ -3,6 +3,8 @@ import { Card } from '@/components/ui/card';
 import { getDiaries } from '@/lib/actions/diaryAction';
 import { Bookmark } from 'lucide-react';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import BookmarkSaved from '@/components/shared/BookmarkSaved';
 
 async function DiaryProfilePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
@@ -10,11 +12,11 @@ async function DiaryProfilePage({ params }: { params: Promise<{ id: string }> })
     // console.log(diaries, 'diaries for user', id);
 
     if (diaries && diaries.length === 0) {
-        return <p>No diaries found.</p>;
+        return notFound();
     }
 
     return (
-        <div className="grid grid-cols-3 gap-1 md:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 md:gap-4">
             {diaries && diaries.map((diary) => (
                 <Card key={diary.id} className="p-0 aspect-auto overflow-hidden group cursor-pointer border-0 shadow-sm">
                     <div className="relative w-full h-full">
@@ -37,12 +39,12 @@ async function DiaryProfilePage({ params }: { params: Promise<{ id: string }> })
                             {/* DATE diaryED ON */}
                             <span className="text-sm text-accent dark:text-white">{diary.createdAt.toLocaleDateString()}</span>
                         </div>
-                        <div className="absolute flex w-full justify-between bottom-5 px-4">
+                        <div className="absolute flex items-center w-full justify-between bottom-5 px-4">
                             <div>
                                 {/* title */}
-                                <h3 className="text-lg font-semibold mix-blend-difference text-white">{diary.title}</h3>
+                                <h3 className="text-md md:text-lg font-semibold mix-blend-difference text-white">{diary.title}</h3>
                             </div>
-                            <Bookmark className="w-6 h-6 text-white drop-shadow-md fill-white" />
+                            <BookmarkSaved />
                         </div>
                         {/* <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                 <div className="flex items-center gap-4 text-white">

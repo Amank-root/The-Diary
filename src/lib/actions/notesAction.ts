@@ -8,6 +8,7 @@ export async function getAllUserNotes() {
     try {
         const notes = await prisma.note.findMany({
             where: { userId: userData?.user?.id },
+            orderBy: { createdAt: "desc" },
         });
 
         return notes;

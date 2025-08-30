@@ -77,6 +77,9 @@ export async function getDiaries(username?: string) {
                 diaryCoverImage: true,
                 createdAt: true,
                 types: true,
+            },
+            orderBy: {
+                createdAt: 'desc'
             }
         });
         // revalidatePath(`/profile/${username}/diary`);
@@ -112,6 +115,9 @@ export async function getDiariesWithPages(username?: string) {
                 createdAt: true,
                 types: true,
                 pages: true
+            },
+            orderBy: {
+                createdAt: 'desc'
             }
         });
         // revalidatePath(`/profile/${username}/diary`);

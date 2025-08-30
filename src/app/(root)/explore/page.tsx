@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { followUser, unfollowUser } from "@/lib/actions/profile";
 import { authSessionServer } from "@/lib/auth";
+import BookmarkSaved from "@/components/shared/BookmarkSaved";
 
 
 
@@ -246,7 +247,7 @@ async function ExplorePage({ searchParams }: { searchParams: Promise<{ search: s
 
     return (
         <div className="min-h-screen bg-background py-4">
-            <div className="grid grid-cols-3 gap-1 md:gap-4 px-4 pb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 px-4 pb-4">
                 {allPages && allPages.map((page) => (
                     <Card key={page.id} className="p-0 aspect-auto overflow-hidden group cursor-pointer border-0 shadow-sm">
                         <div className="relative w-full h-full">
@@ -275,10 +276,10 @@ async function ExplorePage({ searchParams }: { searchParams: Promise<{ search: s
                                         <AvatarImage src={page.diary.user.image || "https://dummyimage.com/210x297"} alt={`Profile picture of ${page.diary.user.username}`} />
                                         <AvatarFallback>{page.diary.user.username}</AvatarFallback>
                                     </Avatar>
-                                    <h3 className="text-md font-light mix-blend-difference text-white">{page.diary.user.username}</h3>
+                                    <h3 className="text-sm md:text-md font-light mix-blend-difference text-white">{page.diary.user.username}</h3>
                                     {/* </div> */}
                                 </Link>
-                                <Bookmark className="w-6 h-6 text-white drop-shadow-md fill-white" />
+                                <BookmarkSaved/>
                             </div>
                         </div>
                     </Card>

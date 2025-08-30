@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Bookmark } from 'lucide-react'; // Or any icon lib
 import RouteBack from './RouteBack';
 import { getPageById } from '@/lib/actions/pageAction';
+import BookmarkSaved from '@/components/shared/BookmarkSaved';
 
 
 export default async function PageModal({ params }: { params: Promise<{ pageId: string }> }) {
@@ -66,7 +67,7 @@ export default async function PageModal({ params }: { params: Promise<{ pageId: 
               {page.diary.user.username}
             </h3>
           </Link>
-          <Bookmark className="w-6 h-6 text-white drop-shadow-md fill-white" />
+          <BookmarkSaved />
         </div>
 
         {/* Optional: Close Button (if needed) */}

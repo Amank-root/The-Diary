@@ -62,7 +62,7 @@ function ProfileHeader({ profileData }: ProfileHeaderProps) {
             <div className="flex items-center gap-2">
                 <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
                     <DialogTrigger asChild>
-                        <Settings className="w-6 h-6 cursor-pointer hover:text-accent transition-colors" />
+                        <Settings className="w-6 h-6 cursor-pointer hover:text-accent transition-colors dark:text-muted-foreground" />
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>

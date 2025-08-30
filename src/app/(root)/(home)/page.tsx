@@ -1,28 +1,91 @@
-import { Bookmark } from "lucide-react"
 import { Card } from '@/components/ui/card';
-import { getPages } from '@/lib/actions/pageAction';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getSimilarUsers } from "@/lib/actions/exploreActions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { followUser, unfollowUser } from "@/lib/actions/profile";
 import { authSessionServer } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import BookmarkSaved from "@/components/shared/BookmarkSaved";
+import { getReadingUsersPosts } from "@/lib/actions/userAction";
+import { Plus } from 'lucide-react';
 
 
 
 async function ExplorePage() {
-    const allPages = await getPages();
+    const session = await authSessionServer();
+    if (!session) {
+        redirect("/auth/sign-in");
+    }
+    const result = await getReadingUsersPosts()
+    // console.log(allPages, 'get reading users posts');
 
-    if (!allPages) {
+    if (!result || Array.isArray(result)) {
         return <div>No pages found</div>;
     }
 
+    const { getNotes, getPages } = result;
+
+    if (getPages && getPages?.length === 0) {
+        return <div>No pages found</div>;
+    }
 
     return (
-        <div className="min-h-screen bg-background py-4">
-            <div className="grid grid-cols-3 gap-1 md:gap-4 px-4 pb-4">
-                {allPages && allPages.map((page) => (
+        <div className="min-h-screen bg-background">
+            <div className="p-4 border-b">
+                <div className="flex items-center gap-4 overflow-x-auto">
+                    {/* Add Story */}
+                    <Link href={'/notes'}>
+                    <div className="flex flex-col items-center gap-1 min-w-0">
+                        <div className="relative">
+                            <Avatar className="w-16 h-16 border-2 border-dashed border-gray-300">
+                                <AvatarFallback>
+                                    <Plus className="w-6 h-6 text-gray-400" />
+                                </AvatarFallback>
+                            </Avatar>
+                        </div>
+                        <span className="text-xs text-center">Your Notes</span>
+                    </div>
+                    </Link>
+
+                    {/* Recent Moods as Stories */}
+                    {getNotes ? getNotes.map((note, index) => (
+                        <div key={note.id} className="flex flex-col items-center gap-1 min-w-0">
+                            <Link href={`/notes`} className='flex flex-col items-center gap-1 min-w-0'>
+
+                                <div className="relative">
+                                    <Avatar className="w-16 h-16 border-2 border-gradient-to-r from-purple-500 to-pink-500 p-0.5">
+                                        <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
+                                            <AvatarImage src={note.user.image || ""} alt={`User ${note.id}` || "Unknown User"} width={64} height={64} className="w-full h-full object-cover rounded-full" />
+                                            <AvatarFallback>{note?.title?.substring(0,2)}</AvatarFallback>
+                                            {/* <span className="text-2xl">{note.user.image}</span> */}
+                                            {/* <Image
+                                                src={note.user.image || "https://dummyimage.com/210x297"}
+                                                alt={`User ${note.id}` || "Unknown User"}
+                                                width={64}
+                                                height={64}
+                                                className="w-full h-full object-cover rounded-full"
+                                            /> */}
+                                        </div>
+                                    </Avatar>
+                                </div>
+                                <span className="text-xs text-center">{note.title}</span>
+                            </Link>
+                        </div>
+                    )) : (
+                        <div className="flex flex-col items-center gap-1 min-w-0">
+                            <div className="relative">
+                                <Avatar className="w-16 h-16 border-2 border-dashed border-gray-300">
+                                    <AvatarFallback>
+                                        <Plus className="w-6 h-6 text-gray-400" />
+                                    </AvatarFallback>
+                                </Avatar>
+                            </div>
+                            <span className="text-xs text-center">No Notes</span>
+                        </div>
+                    )}
+                </div>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 md:gap-4 px-4 py-4">
+                {getPages && getPages.map((page) => (
                     <Card key={page.id} className="p-0 aspect-auto overflow-hidden group cursor-pointer border-0 shadow-sm">
                         <div className="relative w-full h-full">
                             <Link href={`/page/${page.id}`}>
@@ -53,7 +116,7 @@ async function ExplorePage() {
                                     <h3 className="text-md font-light mix-blend-difference text-white">{page.diary.user.username}</h3>
                                     {/* </div> */}
                                 </Link>
-                                <Bookmark className="w-6 h-6 text-white drop-shadow-md fill-white" />
+                                <BookmarkSaved />
                             </div>
                         </div>
                     </Card>
