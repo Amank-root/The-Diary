@@ -7,26 +7,37 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { followUser, unfollowUser } from "@/lib/actions/profile";
 import BookmarkSaved from "@/components/shared/BookmarkSaved";
+import SearchUserNotFound from './UserNotFound';
+import PageNotFound from './PageNotFound';
 
 
 
 async function ExplorePage({ searchParams }: { searchParams: Promise<{ search: string | null }> }) {
     const { search } = await searchParams || null;
     const allPages = await getPages();
-    const getUsers = search && await getSimilarUsers(search);
-
-    if (search && !getUsers) {
-        return <div className="px-4">No User Found</div>
+    let getUsers = null;
+    
+    if (search && search.trim()) {
+        try {
+            getUsers = await getSimilarUsers(search.trim());
+        } catch (error) {
+            console.error('Error searching users:', error);
+        }
+    }
+    
+    // If there's a search query but no users found
+    if (search && search.trim() && !getUsers) {
+        return <SearchUserNotFound />
     }
 
-    if (!allPages) {
-        return <div>No pages found</div>;
-    }
-
-    if (search && getUsers) {
-        // // console.log(getUsers.currentUser, getUsers.users);
+    // If there's a search query and users are found, show search results
+    if (search && search.trim() && getUsers && getUsers.users) {
         return (
             <div className="space-y-2 p-4">
+                <div className="mb-4">
+                    <h2 className="text-lg font-semibold">Search results for &quot;{search}&quot;</h2>
+                    <p className="text-sm text-muted-foreground">{getUsers.users.length} user(s) found</p>
+                </div>
                 {/* // @ts-expect-error: i dont know */}
                 {getUsers.users.map((user) => (
                     <div
@@ -72,6 +83,11 @@ async function ExplorePage({ searchParams }: { searchParams: Promise<{ search: s
                 ))}
             </div>
         )
+    }
+
+    // If no search query and no pages available
+    if (!search && (!allPages || allPages.length === 0)) {
+        return <PageNotFound />
     }
 
     return (

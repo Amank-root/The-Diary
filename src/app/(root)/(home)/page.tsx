@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { authSessionServer } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import BookmarkSaved from "@/components/shared/BookmarkSaved";
 import { getReadingUsersPosts } from "@/lib/actions/userAction";
 import { Plus } from 'lucide-react';
@@ -19,13 +19,13 @@ async function Home() {
     // // console.log(allPages, 'get reading users posts');
 
     if (!result || Array.isArray(result)) {
-        return <div>No pages found</div>;
+        return notFound();  
     }
 
     const { getNotes, getPages } = result;
 
     if (getPages && getPages?.length === 0) {
-        return <div>No pages found</div>;
+        return notFound();
     }
 
     return (

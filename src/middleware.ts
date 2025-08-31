@@ -8,9 +8,8 @@ export async function middleware(request: NextRequest) {
     const isAuthPage = pathname.startsWith("/auth");
     const isApiRoute = pathname.startsWith("/api");
     
-    // Define all protected routes including root
-    const isProtectedPage = pathname === "/" ||
-                           pathname.startsWith("/dashboard") ||
+    // Define all protected routes excluding root initially
+    const isProtectedPage = pathname.startsWith("/dashboard") ||
                            pathname.startsWith("/notes") ||
                            pathname.startsWith("/explore") ||
                            pathname.startsWith("/profile") ||
@@ -23,22 +22,30 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
-    // Check for session token in cookies
-    const token = request.cookies.get("better-auth.session_token")?.value;
+    // Check for session token in cookies - both possible cookie names
+    const token = request.cookies.get("better-auth.session_token")?.value || 
+                  request.cookies.get("authjs.session-token")?.value;
+
+    // Additional validation: check if token exists and is not empty
+    const hasValidToken = token && token.length > 0;
 
     // Redirect authenticated users away from auth pages to explore
-    if (token && isAuthPage) {
+    if (hasValidToken && isAuthPage) {
       return NextResponse.redirect(new URL("/explore", request.url));
+    }
+
+    // Handle root path - redirect to explore if authenticated, otherwise to sign-in
+    if (pathname === "/") {
+      if (!hasValidToken) {
+      //   return NextResponse.redirect(new URL("/", request.url));
+      // } else {
+        return NextResponse.redirect(new URL("/auth/sign-in", request.url));
+      }
     }
 
     // Redirect unauthenticated users to sign-in for protected routes
-    if (!token && isProtectedPage) {
+    if (!hasValidToken && isProtectedPage) {
       return NextResponse.redirect(new URL("/auth/sign-in", request.url));
-    }
-
-    // Handle root path specifically - redirect authenticated users to explore
-    if (token && pathname === "/") {
-      return NextResponse.redirect(new URL("/explore", request.url));
     }
 
     return NextResponse.next();
@@ -50,7 +57,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // "/",
+    "/",
     "/notes/:path*",
     "/dashboard/:path*", 
     "/auth/:path*",
