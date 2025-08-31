@@ -76,9 +76,9 @@ export async function middleware(request: NextRequest) {
 
   // Handle root path
   if (pathname === "/") {
-    if (hasValidToken) {
-      return NextResponse.redirect(new URL("/explore", request.url));
-    } else {
+    if (!hasValidToken) {
+    //   return NextResponse.redirect(new URL("/explore", request.url));
+    // } else {
       return NextResponse.redirect(new URL("/auth/sign-in", request.url));
     }
   }
