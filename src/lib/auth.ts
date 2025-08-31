@@ -19,6 +19,7 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql", 
   }),
+  trustedOrigins: ["http://localhost:5173", "https://write-diary.vercel.app"],
   
   emailAndPassword: {
     enabled: true,
@@ -57,8 +58,34 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 5 // 5 minutes
+    }
   },
-  plugins: [nextCookies()]
+  
+  // Advanced settings for production
+  advanced: {
+    crossSubDomainCookies: {
+      enabled: false // Set to true if you have subdomains
+    },
+    generateId: false // Use default ID generation
+  },
+  
+  plugins: [nextCookies()],
+  
+  // Ensure proper cookie settings for production
+  cookies: {
+    sessionToken: {
+      name: "better-auth.session_token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+      }
+    }
+  }
 });
 
 export const authSessionServer = async () => {
