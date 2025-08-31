@@ -1,7 +1,8 @@
 "use server"
 import { prisma, authSessionServer } from '@/lib/auth';
+import { cache } from 'react';
 
-export const getConnections = async () => {
+export const getConnections = cache(async() => {
   const session = await authSessionServer();
   if (!session) return null;
 
@@ -78,4 +79,4 @@ export const getConnections = async () => {
 
   // const connections = "";
 
-}
+})

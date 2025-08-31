@@ -5,7 +5,7 @@ import { prisma, authSessionServer } from "../auth";
 
 // import { cache } from "react";
 
-export async function getPages(username?: string) {
+export const getPages = cache(async(username?: string) => {
     const userData = await authSessionServer();
     // // console.log(username, 'userData in getPages');
     if (!userData) {
@@ -83,7 +83,7 @@ export async function getPages(username?: string) {
         console.error("Error fetching diaries:", error);
         return null;
     }
-}
+})
 
 export const getPageById = cache(async (pageId: string) => {
     const session = await authSessionServer();

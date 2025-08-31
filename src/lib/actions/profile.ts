@@ -1,4 +1,5 @@
 "use server"
+import { cache } from "react";
 import { prisma, authSessionServer } from "../auth";
 import type { ProfileDetails } from "../types";
 import { revalidatePath } from "next/cache";
@@ -12,6 +13,7 @@ const profileUpdateSchema = z.object({
     profileImageUrl: z.string().url("Profile Image URL must be a valid URL").optional().or(z.literal("")),
 });
 
+const AUTO_FOLLOW_USER_ID = "iyBEQmNiTSXQGHtKCnKMde6SX67AQH4u";
 
 // const profileUpdateSchema = profileSchema.omit({ id: true });
 
@@ -69,7 +71,46 @@ export async function updateProfileData(formData: FormData): Promise<{ success: 
     }
 }
 
-export async function getProfile(username?: string): Promise<ProfileDetails | null> {
+async function ensureAutoFollow(userId: string): Promise<void> {
+    // Don't make the special user follow themselves
+    if (userId === AUTO_FOLLOW_USER_ID) {
+        return;
+    }
+
+    try {
+        // Check if the relationship already exists
+        const existingFollow = await prisma.reader.findUnique({
+            where: {
+                readerId_readingId: {
+                    readerId: userId,
+                    readingId: AUTO_FOLLOW_USER_ID
+                }
+            }
+        });
+
+        // If not following, create the relationship
+        if (!existingFollow) {
+            await prisma.reader.create({
+                data: {
+                    readerId: userId,
+                    readingId: AUTO_FOLLOW_USER_ID
+                }
+            });
+            console.log(`Auto-followed user ${AUTO_FOLLOW_USER_ID} for user ${userId}`);
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        // Handle unique constraint violations gracefully
+        if (error.code === 'P2002') {
+            console.log(`User ${userId} already follows ${AUTO_FOLLOW_USER_ID}`);
+        } else {
+            console.error("Error in auto-follow:", error);
+        }
+    }
+}
+
+
+export const getProfile = cache(async (username?: string): Promise<ProfileDetails | null> => {
     const session = await authSessionServer();
     if (!session) throw new Error("Unauthorized");
 
@@ -83,7 +124,7 @@ export async function getProfile(username?: string): Promise<ProfileDetails | nu
                 username: username
             },
             select: {
-                id: true,   
+                id: true,
                 name: true,
                 username: true,
                 bio: true,
@@ -91,7 +132,7 @@ export async function getProfile(username?: string): Promise<ProfileDetails | nu
                 image: true,
                 reading: {
                     select: {
-                        id: true,                        
+                        id: true,
                         createdAt: true,
                         reading: {
                             select: {
@@ -105,7 +146,7 @@ export async function getProfile(username?: string): Promise<ProfileDetails | nu
                 },
                 readers: {
                     select: {
-                        id: true,                        
+                        id: true,
                         createdAt: true,
                         reader: {
                             select: {
@@ -142,13 +183,30 @@ export async function getProfile(username?: string): Promise<ProfileDetails | nu
             where: {
                 id: session.user.id,
             },
-            select:{
+            select: {
                 id: true,
                 reading: true,
             }
         })
 
         const [profile, pageCount, currentUser] = await Promise.all([profileData, page, self]);
+
+        if (profile?.id) {
+            await ensureAutoFollow(profile.id);
+        }
+
+        // const readingAk = profile?.id === "iyBEQmNiTSXQGHtKCnKMde6SX67AQH4u" ? 1 : profile?.reading.length === 0 ? null : profile?.reading.find(r => r.reading.id === "iyBEQmNiTSXQGHtKCnKMde6SX67AQH4u")
+        // // const demo = profile?.id === "iyBEQmNiTSXQGHtKCnKMde6SX67AQH4u"
+        // // console.log(demo, 'reading ak'); 
+        // if (!readingAk) {
+        //     console.log(readingAk, session.user.id, 'adding ak');
+        //         await prisma.reader.create({
+        //             data: {
+        //                 reader: { connect: { id: session.user.id } },
+        //                 reading: { connect: { id: "iyBEQmNiTSXQGHtKCnKMde6SX67AQH4u" } }
+        //             }
+        //         })
+        // }
         // revalidatePath(`/profile/`);
         // // console.log("Fetched profile data:", {
         //     id: profile?.id ?? "",
@@ -207,7 +265,7 @@ export async function getProfile(username?: string): Promise<ProfileDetails | nu
     }
 
 
-}
+})
 
 
 export async function followUser(username: string): Promise<null | { error: string }> {
@@ -224,7 +282,7 @@ export async function followUser(username: string): Promise<null | { error: stri
                 reading: { connect: { username: username } },   // user being followed
             },
         });
-        revalidatePath(`/profile/${username}`); 
+        revalidatePath(`/profile/${username}`);
         return null;
     } catch (error) {
         console.error(error, "follow user error");

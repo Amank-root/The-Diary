@@ -1,7 +1,8 @@
 "use server";
+import { cache } from "react";
 import { authSessionServer, prisma } from "../auth";
 
-export const getSimilarUsers = async (username: string) => {
+export const getSimilarUsers = cache(async(username: string) => {
     // Fetch similar users based on the provided username
     const session = await authSessionServer();
     if (!session?.session) {
@@ -45,4 +46,4 @@ export const getSimilarUsers = async (username: string) => {
         throw new Error("Failed to fetch similar users");
     }
 }
-
+)

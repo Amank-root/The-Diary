@@ -2,9 +2,10 @@
 
 "use server";
 import { prisma, authSessionServer } from '@/lib/auth';
+import { cache } from 'react';
 
 
-export const getReadingUsersPosts = async () =>{
+export const getReadingUsersPosts = cache(async () =>{
     const session = await authSessionServer();
     if (!session) return null;
 
@@ -98,7 +99,7 @@ export const getReadingUsersPosts = async () =>{
     // // console.log(getPages, 'get pages from reading users');
 
     return { getNotes, getPages };
-}
+})
 
 // import { authSessionServer, prisma } from "../auth";
 

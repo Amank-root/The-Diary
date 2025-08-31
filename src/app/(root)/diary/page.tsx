@@ -8,9 +8,15 @@ import Link from 'next/link'
 import { getDiaries } from '@/lib/actions/diaryAction'
 import BookmarkSaved from '@/components/shared/BookmarkSaved'
 import Image from 'next/image'
+import { notFound } from 'next/navigation'
 
 async function Diary() {
   const getAllDiaries = await getDiaries()
+
+  if (getAllDiaries?.length === 0) {
+    return notFound()
+  }
+  console.log(getAllDiaries, 'get all diaries');
 
   return (
     <div className="flex-1 p-4 lg:p-6 space-y-6">

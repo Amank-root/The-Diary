@@ -3,6 +3,7 @@ import { prisma } from "@/lib/auth";
 import { authSessionServer } from "../auth";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { cache } from "react";
 
 const CreateDiarySchema = z.object({
     title: z.string().min(2).max(100).default("Untitled"),
@@ -53,7 +54,7 @@ export async function createDiary(formData: FormData) {
     revalidatePath('/diary');
 }
 
-export async function getDiaries(username?: string) {
+export const getDiaries = cache(async(username?: string) => {
     const userData = await authSessionServer();
 
     if (!userData) {
@@ -89,9 +90,9 @@ export async function getDiaries(username?: string) {
         console.error("Error fetching diaries:", error);
         return null;
     }
-}
+})
 
-export async function getDiariesWithPages(username?: string) {
+export const getDiariesWithPages = cache(async(username?: string) => {
     const userData = await authSessionServer();
 
     if (!userData) {
@@ -127,9 +128,9 @@ export async function getDiariesWithPages(username?: string) {
         console.error("Error fetching diaries:", error);
         return null;
     }
-}
+})
 
-export async function getDiaryById(diaryId: string) {
+export const getDiaryById = cache(async (diaryId: string) => {
     const userData = await authSessionServer();
 
     if (!userData) {
@@ -156,4 +157,4 @@ export async function getDiaryById(diaryId: string) {
         console.error("Error fetching diary:", error);
         return null;
     }
-}
+})

@@ -1,8 +1,9 @@
 "use server";
 
+import { cache } from "react";
 import { prisma, authSessionServer } from "../auth";
 
-export async function getAllUserNotes() {
+export const getAllUserNotes = cache(async() => {
     const userData = await authSessionServer();
 
     try {
@@ -19,10 +20,10 @@ export async function getAllUserNotes() {
             headers: { "Content-Type": "application/json" },
         });
     }
-}
+})
 
 
-export async function getFriendsNotes() {
+export const getFriendsNotes = cache(async () => {
   const userData = await authSessionServer();
   let followedUsers;
   try {
@@ -78,4 +79,4 @@ export async function getFriendsNotes() {
       headers: { "Content-Type": "application/json" },
     });
   }
-}
+})
