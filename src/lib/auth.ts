@@ -17,7 +17,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
-    provider: "sqlite", 
+    provider: "postgresql", 
   }),
   
   emailAndPassword: {

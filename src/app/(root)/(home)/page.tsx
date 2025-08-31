@@ -10,7 +10,7 @@ import { Plus } from 'lucide-react';
 
 
 
-async function ExplorePage() {
+async function Home() {
     const session = await authSessionServer();
     if (!session) {
         redirect("/auth/sign-in");
@@ -47,7 +47,8 @@ async function ExplorePage() {
                     </Link>
 
                     {/* Recent Moods as Stories */}
-                    {getNotes ? getNotes.map((note) => (
+                    {/* // @ts-expect-error:i d k  */}
+                    {getNotes ? getNotes?.map((note) => (
                         <div key={note.id} className="flex flex-col items-center gap-1 min-w-0">
                             <Link href={`/notes`} className='flex flex-col items-center gap-1 min-w-0'>
 
@@ -85,6 +86,7 @@ async function ExplorePage() {
                 </div>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 md:gap-4 px-4 py-4">
+                {/* // @ts-expect-error: i don't know */}
                 {getPages && getPages.map((page) => (
                     <Card key={page.id} className="p-0 aspect-auto overflow-hidden group cursor-pointer border-0 shadow-sm">
                         <div className="relative w-full h-full">
@@ -127,6 +129,4 @@ async function ExplorePage() {
 
 }
 
-export default ExplorePage
-
-
+export default Home

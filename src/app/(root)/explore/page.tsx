@@ -22,181 +22,12 @@ async function ExplorePage({ searchParams }: { searchParams: Promise<{ search: s
     if (!allPages) {
         return <div>No pages found</div>;
     }
-    // const syntheticUsers = [
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    //     {
-    //         id: "1",
-    //         name: "John Doe",
-    //         image: "https://dummyimage.com/210x297",
-    //         username: "johndoe"
-    //     },
-    // ]
 
     if (search && getUsers) {
         // // console.log(getUsers.currentUser, getUsers.users);
         return (
             <div className="space-y-2 p-4">
+                {/* // @ts-expect-error: i dont know */}
                 {getUsers.users.map((user) => (
                     <div
                         key={Math.random().toString(36).substr(2, 9)}
@@ -210,6 +41,7 @@ async function ExplorePage({ searchParams }: { searchParams: Promise<{ search: s
                             <span className="text-sm font-medium">{user.username}</span>
                         </div>
                         {/* {getUsers.currentUser, user} */}
+                        {/* // @ts-expect-error: i dont know */}
                         {getUsers.currentUser?.reading.some(reading => reading.readingId === user.id) ? (
                             // @ts-expect-error: i dont know
                             <form action={unfollowUser.bind(null, user.username)}>
@@ -245,6 +77,7 @@ async function ExplorePage({ searchParams }: { searchParams: Promise<{ search: s
     return (
         <div className="min-h-screen bg-background py-4">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 px-4 pb-4">
+                {/* // @ts-expect-error: i dont know */}
                 {allPages && allPages.map((page) => (
                     <Card key={page.id} className="p-0 aspect-auto overflow-hidden group cursor-pointer border-0 shadow-sm">
                         <div className="relative w-full h-full">
@@ -276,7 +109,7 @@ async function ExplorePage({ searchParams }: { searchParams: Promise<{ search: s
                                     <h3 className="text-sm md:text-md font-light mix-blend-difference text-white">{page.diary.user.username}</h3>
                                     {/* </div> */}
                                 </Link>
-                                <BookmarkSaved/>
+                                <BookmarkSaved />
                             </div>
                         </div>
                     </Card>

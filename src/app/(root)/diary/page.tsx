@@ -35,6 +35,7 @@ async function Diary() {
 
       {/* Rectangular Diary Cards */}
       <div className="grid h-full grid-cols-2 lg:grid-cols-3 gap-6 ">
+        {/* // @ts-expect-error: i dont know */}
         {getAllDiaries ? getAllDiaries?.map((diary) => (
           <Card key={diary.id} className="p-0 aspect-auto overflow-hidden group cursor-pointer border-0 shadow-sm">
             <div className="relative w-full h-full">

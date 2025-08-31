@@ -13,7 +13,7 @@ async function Connections() {
 
   return (
     <div className='w-full h-full '>
-      {/* @ts-expect-error: i dont know */}
+      {/* @ts-expect-error: i don't know */}
       <ReactFlowUserConnection data={data} />
     </div>
   )

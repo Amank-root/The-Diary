@@ -42,4 +42,3 @@ next-env.d.ts
 
 # other
 AUTH_SETUP.md
-src/lib/types/react-sticky-notes.d.ts
