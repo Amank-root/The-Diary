@@ -31,11 +31,9 @@ async function NotesTab() {
                 <TabsTrigger value="friends">Friends Notes</TabsTrigger>
             </TabsList>
             <TabsContent value="yours">
-                {/*@ts-expect-error: I don't know how to type this*/}
                 <NoteEditor notesData={userNotes} />
             </TabsContent>
             <TabsContent value="friends">
-                {/*@ts-expect-error: I don't know how to type this*/}
                 <NoteEditor notesData={friendsNotes} />
             </TabsContent>
         </Tabs>

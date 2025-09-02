@@ -1,59 +1,130 @@
 "use client"
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-// import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Calendar, Clock } from 'lucide-react'
+import { Calendar, Clock, TrendingUp } from 'lucide-react'
 import DiaryHeader from '../singleton/DiaryHeader'
 import SmallCards from '../singleton/smallCards'
 
-const smallCardsData = [
-    {
-        title: "Total Entries",
-        icon: <Calendar className="h-4 w-4 text-muted-foreground" />,
-        mainContent: "25%",
-        subContent: "+3 from last week"
-    },
-    {
-        title: "Writing Streak",
-        icon: <Clock className="h-4 w-4 text-muted-foreground" />,
-        mainContent: "7 days",
-        subContent: "Keep it going!"
-    },
-    {
-        title: "Happy",
-        icon: <div className="h-4 w-4 bg-yellow-400 rounded-full" />,
-        mainContent: "60%",
-        subContent: "of entries"
-    }
-]
+interface AnalyticsData {
+  totalEntries: number;
+  entriesThisWeek: number;
+  writingStreak: number;
+  recentEntries: Array<{
+    id: number;
+    title: string;
+    preview: string;
+    date: string;
+    mood: string;
+    tags: string[];
+  }>;
+}
 
-function AnalyticsComponent() {
-    const recentEntries = [
+interface AnalyticsComponentProps {
+  initialData?: AnalyticsData;
+}
+
+function AnalyticsComponent({ initialData }: AnalyticsComponentProps) {
+    const [analytics, setAnalytics] = useState<AnalyticsData | null>(initialData || null);
+    const [loading, setLoading] = useState(!initialData);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!initialData) {
+            fetchAnalytics();
+        }
+    }, [initialData]);
+
+    const fetchAnalytics = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await fetch('/api/v1/analytics');
+            
+            if (!response.ok) {
+                throw new Error(`Failed to fetch analytics: ${response.statusText}`);
+            }
+            
+            const data = await response.json();
+            setAnalytics(data);
+        } catch (err) {
+            console.error('Error fetching analytics:', err);
+            setError(err instanceof Error ? err.message : 'Failed to load analytics');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className='flex-1 p-4 lg:p-6 space-y-4 lg:space-y-6'>
+                <DiaryHeader title='Analytics' description='Get insights about your diary entries and writing habits.' />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {[1, 2, 3].map((i) => (
+                        <Card key={i} className="animate-pulse">
+                            <CardContent className="p-6">
+                                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                                <div className="h-8 bg-gray-200 rounded w-1/2 mb-1"></div>
+                                <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className='flex-1 p-4 lg:p-6 space-y-4 lg:space-y-6'>
+                <DiaryHeader title='Analytics' description='Get insights about your diary entries and writing habits.' />
+                <Card>
+                    <CardContent className="p-6 text-center">
+                        <p className="text-red-500">{error}</p>
+                        <button 
+                            onClick={fetchAnalytics}
+                            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                            Retry
+                        </button>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+
+    if (!analytics) {
+        return (
+            <div className='flex-1 p-4 lg:p-6 space-y-4 lg:space-y-6'>
+                <DiaryHeader title='Analytics' description='Get insights about your diary entries and writing habits.' />
+                <Card>
+                    <CardContent className="p-6 text-center">
+                        <p className="text-gray-500">No analytics data available</p>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+
+    const smallCardsData = [
         {
-            id: 1,
-            title: "A Beautiful Day",
-            preview: "Today was absolutely wonderful. The weather was perfect and I spent time...",
-            date: "August 18, 2025",
-            mood: "Happy",
-            tags: ["sunny", "family", "gratitude"]
+            title: "Total Entries",
+            icon: <Calendar className="h-4 w-4 text-muted-foreground" />,
+            mainContent: analytics.totalEntries.toString(),
+            subContent: `+${analytics.entriesThisWeek} this week`
         },
         {
-            id: 2,
-            title: "Reflection on Growth",
-            preview: "I've been thinking a lot about personal growth lately. It's interesting how...",
-            date: "August 17, 2025",
-            mood: "Thoughtful",
-            tags: ["reflection", "growth", "mindfulness"]
+            title: "Writing Streak",
+            icon: <Clock className="h-4 w-4 text-muted-foreground" />,
+            mainContent: `${analytics.writingStreak} days`,
+            subContent: analytics.writingStreak > 0 ? "Keep it going!" : "Start writing!"
         },
         {
-            id: 3,
-            title: "Weekend Adventures",
-            preview: "This weekend was packed with activities. From hiking in the morning to...",
-            date: "August 16, 2025",
-            mood: "Excited",
-            tags: ["adventure", "hiking", "weekend"]
+            title: "Recent Activity", 
+            icon: <TrendingUp className="h-4 w-4 text-muted-foreground" />,
+            mainContent: analytics.recentEntries.length.toString(),
+            subContent: "recent entries"
         }
     ]
 
@@ -104,8 +175,9 @@ function AnalyticsComponent() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    {recentEntries.map((entry) => (
-                        <div key={entry.id} className="border rounded-lg p-3 lg:p-4 hover:bg-accent/50 transition-colors cursor-pointer">
+                    {analytics.recentEntries.map((entry) => (
+                        <div key={entry.id} className="border rounded-lg p-3 lg:p-4 hover:bg-accent/50 transition-colors cursor-pointer"
+                             onClick={() => window.location.href = `/page/${entry.id}`}>
                             <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-3 lg:gap-4">
                                 <div className="flex-1 min-w-0">
                                     <h3 className="font-semibold text-base lg:text-lg mb-2">{entry.title}</h3>

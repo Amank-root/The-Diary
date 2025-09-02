@@ -13,6 +13,18 @@ declare module '@react-latest-ui/react-sticky-notes' {
     // [key: string]: any; // for additional custom fields
   }
 
+  export interface StickyNotePayload {
+    data: {
+      id: string | number;
+      text: string;
+      color: string;
+      x: number;
+      y: number;
+    };
+    id: string | number;
+    color: string;
+  }
+
   export interface ReactStickyNotesProps {
     notes: StickyNote[];
     containerWidth?: string | number;
@@ -23,12 +35,12 @@ declare module '@react-latest-ui/react-sticky-notes' {
     editable?: boolean;
     onChange?: (
       type: 'add' | 'delete' | 'update',
-      payload: StickyNote,
+      payload: StickyNotePayload,
       updatedNotes: StickyNote[]
     ) => void;
     onBeforeChange?: (
       type: 'add' | 'delete' | 'update',
-      payload: StickyNote,
+      payload: StickyNotePayload,
       currentNotes: StickyNote[]
     ) => boolean;
 

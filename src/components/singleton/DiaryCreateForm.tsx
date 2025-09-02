@@ -7,16 +7,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectGroup, SelectLabel, SelectTrigger, SelectValue } from '../ui/select';
-import { createDiary } from "@/lib/actions/diaryAction"
 import { Plus, Camera } from "lucide-react"
-
+import { toast } from "sonner"
 
 function DiaryCreateForm() {
     const [isOpen, setIsOpen] = useState(false)
     const [imagePreview, setImagePreview] = useState<string | null>(null)
     const [btnDisabled, setBtnDisabled] = useState(false)
-
-
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -42,6 +40,51 @@ function DiaryCreateForm() {
             setBtnDisabled(false);
         } catch (err) {
             console.error('Image upload failed:', err);
+            toast.error('Failed to upload image');
+            setBtnDisabled(false);
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+
+        const formData = new FormData(e.currentTarget);
+        const diaryData = {
+            title: formData.get('title') as string,
+            type: formData.get('type') as string,
+            coverImageUrl: imagePreview || undefined,
+        };
+
+        try {
+            const response = await fetch('/api/v1/diary', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(diaryData),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to create diary');
+            }
+
+            const result = await response.json();
+            toast.success('Diary created successfully!');
+            
+            // Reset form
+            setImagePreview(null);
+            setIsOpen(false);
+            
+            // Optionally refresh the page or update state
+            window.location.reload();
+
+        } catch (error) {
+            console.error('Error creating diary:', error);
+            toast.error(error instanceof Error ? error.message : 'Failed to create diary');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -58,8 +101,7 @@ function DiaryCreateForm() {
                     <DialogHeader>
                         <DialogTitle>Create New Diary</DialogTitle>
                     </DialogHeader>
-                    {/* @ts-expect-error: i dont know */}
-                    <form action={createDiary}>
+                    <form onSubmit={handleSubmit}>
                         <div className="space-y-4">
                             <div className="space-y-2">
                                 <Label>Cover Picture</Label>
@@ -80,14 +122,13 @@ function DiaryCreateForm() {
                                         <Input
                                             id="profile-image"
                                             type="file"
-                                            // name="cover"
                                             accept="image/*"
                                             onChange={handleImageUpload}
                                             className="hidden"
+                                            disabled={isSubmitting}
                                         />
                                     </div>
                                 </div>
-                                <Input type="hidden" name="coverImageUrl" value={imagePreview ?? ""} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="name">Title</Label>
@@ -98,11 +139,13 @@ function DiaryCreateForm() {
                                     maxLength={50}
                                     defaultValue={"New Diary"}
                                     placeholder="Your Title"
+                                    disabled={isSubmitting}
+                                    required
                                 />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="types">Type</Label>
-                                <Select name='type' defaultValue='personal'>
+                                <Select name='type' defaultValue='personal' disabled={isSubmitting}>
                                     <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Select a type" />
                                     </SelectTrigger>
@@ -118,16 +161,22 @@ function DiaryCreateForm() {
                                 </Select>
                             </div>
                             <div className="flex gap-2 pt-4">
-                                <Button type="submit" onClick={() => setIsOpen((prev) => !prev)} className="flex-1" disabled={btnDisabled}>
-                                    Save Changes
+                                <Button 
+                                    type="submit" 
+                                    className="flex-1" 
+                                    disabled={btnDisabled || isSubmitting}
+                                >
+                                    {isSubmitting ? 'Creating...' : 'Create Diary'}
                                 </Button>
                                 <Button
+                                    type="button"
                                     variant="outline"
                                     onClick={() => {
                                         setImagePreview(null)
                                         setIsOpen(false)
                                     }}
                                     className="flex-1"
+                                    disabled={isSubmitting}
                                 >
                                     Cancel
                                 </Button>

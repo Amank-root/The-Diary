@@ -1,17 +1,20 @@
-'use client'
 import React, { useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import ReactStickyNotes from '@react-latest-ui/react-sticky-notes';
-import type { ReactStickyNotesProps } from '@react-latest-ui/react-sticky-notes';
+import type { StickyNote, StickyNotePayload } from '@react-latest-ui/react-sticky-notes';
 import { toast } from 'sonner';
 import { memo } from 'react';
 
-function NoteEditor({ notesData }: { notesData?: ReactStickyNotesProps['notes'] }) {
-    const [notes, setNotes] = useState<ReactStickyNotesProps['notes']>(notesData || []);
+interface NoteEditorProps {
+  notesData?: StickyNote[];
+}
+
+function NoteEditor({ notesData }: NoteEditorProps) {
+    const [notes, setNotes] = useState<StickyNote[]>(notesData || []);
 
     // console.log('Initial notes data:', notesData);
 
-    const debouncedSave = useDebouncedCallback((note: ReactStickyNotesProps['notes'][number]) => {
+    const debouncedSave = useDebouncedCallback((note: StickyNotePayload) => {
         createOrUpdateNote(note);
     }, 1000);
 
@@ -25,16 +28,14 @@ function NoteEditor({ notesData }: { notesData?: ReactStickyNotesProps['notes'] 
     };
 
     // Create or update a note via API
-    const createOrUpdateNote = async (note: ReactStickyNotesProps['notes'][number]) => {
+    const createOrUpdateNote = async (note: StickyNotePayload) => {
         // Validate required fields
         // console.log('Creating/updating note:', note);
-        // @ts-expect-error: I don't know how to type this
         if (!note.data.id) {
             console.error('Cannot save note - missing ID:', note);
             toast.error('Error: Note ID is missing');
             return;
         }
-        // @ts-expect-error: I don't know how to type this
         if (!note.data.text || note.data.text.trim() === '') {
             // console.log('Skipping save - note has no text');
             return;
@@ -54,16 +55,11 @@ function NoteEditor({ notesData }: { notesData?: ReactStickyNotesProps['notes'] 
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    // @ts-expect-error: I don't know how to type this
                     id: note.data.id,
-                    // @ts-expect-error: I don't know how to type this
                     text: note.data.text,
-                    // @ts-expect-error: I don't know how to type this
-                    color: notes.find(n => n.id === note.data.id)?.color || getRandomColor(), // use a random color
+                    color: note.data.color || getRandomColor(),
                     position: {
-                        // @ts-expect-error: I don't know how to type this
                         x: note.data.x || 0,
-                        // @ts-expect-error: I don't know how to type this
                         y: note.data.y || 0
                     }
                 }),
@@ -159,7 +155,6 @@ function NoteEditor({ notesData }: { notesData?: ReactStickyNotesProps['notes'] 
                     // Handle different types of changes
                     switch (type) {
                         case 'add':
-                            // @ts-expect-error: I don't know how to type this
                             if (!payload.data.id) {
                                 toast.error("New note has no ID!");
                                 // console.error('New note has no ID!', payload);
@@ -169,14 +164,12 @@ function NoteEditor({ notesData }: { notesData?: ReactStickyNotesProps['notes'] 
 
                         case 'update':
                             // console.log('Note updated:', payload.data.id || 'NO_ID');
-                            // @ts-expect-error: I don't know how to type this
                             if (!payload.data.id) {
                                 toast.error("Updated note has no ID!");
                                 // console.error('Updated note has no ID!', payload);
                                 break;
                             }
 
-                            // @ts-expect-error: I don't know how to type this
                             if (payload.data.text && payload.data.text.trim() !== '') {
                                 // // console.log('Debouncing save for note:', payload.data.id);
                                 debouncedSave(payload);
@@ -188,7 +181,6 @@ function NoteEditor({ notesData }: { notesData?: ReactStickyNotesProps['notes'] 
                         case 'delete':
                             // console.log('Note deleted:', payload.data.id || 'NO_ID');
 
-                            // @ts-expect-error: I don't know how to type this
                             if (!payload.data.id) {
                                 toast.error('Error while deleting note');
                                 break;
@@ -197,8 +189,7 @@ function NoteEditor({ notesData }: { notesData?: ReactStickyNotesProps['notes'] 
                             // Cancel any pending saves for this note
                             debouncedSave.cancel();
                             // Delete from backend immediately
-                            // @ts-expect-error: I don't know how to type this
-                            deleteNote(payload.data.id);
+                            deleteNote(payload.data.id.toString());
                             break;
 
                         // case 'move':
