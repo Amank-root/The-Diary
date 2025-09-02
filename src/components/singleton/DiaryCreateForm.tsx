@@ -70,7 +70,7 @@ function DiaryCreateForm() {
                 throw new Error(errorData.error || 'Failed to create diary');
             }
 
-            const result = await response.json();
+            await response.json();
             toast.success('Diary created successfully!');
             
             // Reset form

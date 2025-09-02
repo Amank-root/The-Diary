@@ -1,11 +1,14 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, Clock, TrendingUp } from 'lucide-react'
 import DiaryHeader from '../singleton/DiaryHeader'
 import SmallCards from '../singleton/smallCards'
+import ErrorBoundary from './ErrorBoundary'
+import { AnalyticsLoadingSkeleton } from './LoadingSkeleton'
+import { useApi } from '@/hooks/useApi'
 
 interface AnalyticsData {
   totalEntries: number;
@@ -26,53 +29,15 @@ interface AnalyticsComponentProps {
 }
 
 function AnalyticsComponent({ initialData }: AnalyticsComponentProps) {
-    const [analytics, setAnalytics] = useState<AnalyticsData | null>(initialData || null);
-    const [loading, setLoading] = useState(!initialData);
-    const [error, setError] = useState<string | null>(null);
+    const { data: analytics, loading, error, refetch } = useApi<AnalyticsData>('/api/v1/analytics', {
+        immediate: !initialData
+    });
 
-    useEffect(() => {
-        if (!initialData) {
-            fetchAnalytics();
-        }
-    }, [initialData]);
-
-    const fetchAnalytics = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            const response = await fetch('/api/v1/analytics');
-            
-            if (!response.ok) {
-                throw new Error(`Failed to fetch analytics: ${response.statusText}`);
-            }
-            
-            const data = await response.json();
-            setAnalytics(data);
-        } catch (err) {
-            console.error('Error fetching analytics:', err);
-            setError(err instanceof Error ? err.message : 'Failed to load analytics');
-        } finally {
-            setLoading(false);
-        }
-    };
+    // Use initial data if provided, otherwise use fetched data
+    const currentData = initialData || analytics;
 
     if (loading) {
-        return (
-            <div className='flex-1 p-4 lg:p-6 space-y-4 lg:space-y-6'>
-                <DiaryHeader title='Analytics' description='Get insights about your diary entries and writing habits.' />
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {[1, 2, 3].map((i) => (
-                        <Card key={i} className="animate-pulse">
-                            <CardContent className="p-6">
-                                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                                <div className="h-8 bg-gray-200 rounded w-1/2 mb-1"></div>
-                                <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
-            </div>
-        );
+        return <AnalyticsLoadingSkeleton />;
     }
 
     if (error) {
@@ -83,7 +48,7 @@ function AnalyticsComponent({ initialData }: AnalyticsComponentProps) {
                     <CardContent className="p-6 text-center">
                         <p className="text-red-500">{error}</p>
                         <button 
-                            onClick={fetchAnalytics}
+                            onClick={refetch}
                             className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                         >
                             Retry
@@ -94,7 +59,7 @@ function AnalyticsComponent({ initialData }: AnalyticsComponentProps) {
         );
     }
 
-    if (!analytics) {
+    if (!currentData) {
         return (
             <div className='flex-1 p-4 lg:p-6 space-y-4 lg:space-y-6'>
                 <DiaryHeader title='Analytics' description='Get insights about your diary entries and writing habits.' />
@@ -111,19 +76,19 @@ function AnalyticsComponent({ initialData }: AnalyticsComponentProps) {
         {
             title: "Total Entries",
             icon: <Calendar className="h-4 w-4 text-muted-foreground" />,
-            mainContent: analytics.totalEntries.toString(),
-            subContent: `+${analytics.entriesThisWeek} this week`
+            mainContent: currentData.totalEntries.toString(),
+            subContent: `+${currentData.entriesThisWeek} this week`
         },
         {
             title: "Writing Streak",
             icon: <Clock className="h-4 w-4 text-muted-foreground" />,
-            mainContent: `${analytics.writingStreak} days`,
-            subContent: analytics.writingStreak > 0 ? "Keep it going!" : "Start writing!"
+            mainContent: `${currentData.writingStreak} days`,
+            subContent: currentData.writingStreak > 0 ? "Keep it going!" : "Start writing!"
         },
         {
             title: "Recent Activity", 
             icon: <TrendingUp className="h-4 w-4 text-muted-foreground" />,
-            mainContent: analytics.recentEntries.length.toString(),
+            mainContent: currentData.recentEntries.length.toString(),
             subContent: "recent entries"
         }
     ]
@@ -135,7 +100,8 @@ function AnalyticsComponent({ initialData }: AnalyticsComponentProps) {
     }
 
     return (
-        <div className="flex-1 p-4 lg:p-6 space-y-4 lg:space-y-6">
+        <ErrorBoundary>
+            <div className="flex-1 p-4 lg:p-6 space-y-4 lg:space-y-6">
             {/* Header Section */}
             <DiaryHeader
                 title="Analytics"
@@ -175,7 +141,7 @@ function AnalyticsComponent({ initialData }: AnalyticsComponentProps) {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    {analytics.recentEntries.map((entry) => (
+                    {currentData.recentEntries.map((entry) => (
                         <div key={entry.id} className="border rounded-lg p-3 lg:p-4 hover:bg-accent/50 transition-colors cursor-pointer"
                              onClick={() => window.location.href = `/page/${entry.id}`}>
                             <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-3 lg:gap-4">
@@ -214,7 +180,8 @@ function AnalyticsComponent({ initialData }: AnalyticsComponentProps) {
                     ))}
                 </CardContent>
             </Card>
-        </div>
+            </div>
+        </ErrorBoundary>
     )
 }
 

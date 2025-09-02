@@ -9,7 +9,7 @@ interface NoteEditorProps {
   notesData?: StickyNote[];
 }
 
-function NoteEditor({ notesData }: NoteEditorProps) {
+const NoteEditor = memo(function NoteEditor({ notesData }: NoteEditorProps) {
     const [notes, setNotes] = useState<StickyNote[]>(notesData || []);
 
     // console.log('Initial notes data:', notesData);
@@ -237,7 +237,7 @@ function NoteEditor({ notesData }: NoteEditorProps) {
             )}
         </div>
     );
-}
+})
 
-export default memo(NoteEditor)
+export default NoteEditor
 
