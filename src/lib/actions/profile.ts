@@ -73,6 +73,8 @@ export async function updateProfileData(formData: FormData): Promise<{ success: 
 
 async function ensureAutoFollow(userId: string): Promise<void> {
     // Don't make the special user follow themselves
+    if (AUTO_FOLLOW_USER_ID === "") return;
+
     if (userId === AUTO_FOLLOW_USER_ID) {
         return;
     }
@@ -87,6 +89,7 @@ async function ensureAutoFollow(userId: string): Promise<void> {
                 }
             }
         });
+        // console.log(existingFollow);
 
         // If not following, create the relationship
         if (!existingFollow) {

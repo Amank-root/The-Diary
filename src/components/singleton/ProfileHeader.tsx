@@ -17,6 +17,7 @@ interface ProfileHeaderProps {
         name: string;
         username: string;
         profileImage: string;
+        isSelf?: boolean;
     };
 }
 
@@ -60,9 +61,10 @@ function ProfileHeader({ profileData }: ProfileHeaderProps) {
         <div className="flex items-center justify-between mb-8">
             <h1 className="text-2xl font-bold">{profileData.name}</h1>
             <div className="flex items-center gap-2">
+                {profileData.isSelf && (
                 <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
                     <DialogTrigger asChild>
-                        <Settings className="w-6 h-6 cursor-pointer hover:text-accent transition-colors dark:text-muted-foreground" />
+                        <Settings className="w-6 h-6 cursor-pointer hover:text-accent-foreground transition-colors" />
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>
@@ -166,6 +168,7 @@ function ProfileHeader({ profileData }: ProfileHeaderProps) {
                         </form>
                     </DialogContent>
                 </Dialog>
+                )}
             </div>
         </div>
     )
