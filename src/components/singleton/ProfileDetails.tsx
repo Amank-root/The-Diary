@@ -4,6 +4,7 @@ import type { ProfileDetails } from "@/lib/types"
 import { followUser, unfollowUser } from "@/lib/actions/profile"
 import { Mail } from "lucide-react"
 import UserModal from "./UserModal"
+import Link from "next/link"
 
 
 function ProfileDetails({ profileData }: { profileData: ProfileDetails }) {
@@ -55,11 +56,11 @@ function ProfileDetails({ profileData }: { profileData: ProfileDetails }) {
 
                 {/* Stats */}
                 <div className="flex justify-center md:justify-start gap-8 mb-4">
-                    <div className="text-center">
+                    <div className="text-center cursor-pointer">
                         <div className="font-semibold">{profileData.pageCount}</div>
                         <div className="text-sm text-muted-foreground">Pages</div>
                     </div>
-                    <div className="text-center">
+                    <div className="text-center cursor-pointer">
                         <div className="font-semibold">{profileData.diaryCount}</div>
                         <div className="text-sm text-muted-foreground">Diaries</div>
                     </div>
@@ -84,7 +85,7 @@ function ProfileDetails({ profileData }: { profileData: ProfileDetails }) {
                                 // console.log(line)
                                 return (
                                     <div className="text-sm" key={index}>
-                                        <a href={line} className="hover:underline flex flex-row items-center-safe"><Mail className="mr-1 text-sm" /> {line.split("mailto:")[1]}</a>
+                                        <Link target="_blank" href={line} className="hover:underline flex flex-row items-center-safe"><Mail className="mr-1 text-sm" /> {line.split("mailto:")[1]}</Link>
                                     </div>
                                 )
                             }
@@ -97,9 +98,9 @@ function ProfileDetails({ profileData }: { profileData: ProfileDetails }) {
                     <div className="text-sm">✨ Living life to the fullest</div> */}
                     {profileData.website && (
                         <div className="text-sm text-accent-foreground font-semibold">
-                            <a href={profileData.website} className="hover:underline">
+                            <Link target="_blank" href={profileData.website} className="hover:underline">
                                 {profileData.website}
-                            </a>
+                            </Link>
                         </div>
                     )}
                 </div>

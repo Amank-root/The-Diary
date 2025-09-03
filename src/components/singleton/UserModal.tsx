@@ -32,7 +32,7 @@ type Reading = {
 export default function UserModal({ data, type }: { data: Readers | Reading | [], type: "reader" | "reading" }) {
     if (data?.length === 0) {
         return (
-            <div className="text-center">
+            <div className="text-center cursor-pointer">
                 <div className="font-semibold">{data?.length}</div>
                 <div className="text-sm text-muted-foreground">{type === "reader" ? "Readers" : "Reading"}</div>
             </div>
@@ -42,7 +42,7 @@ export default function UserModal({ data, type }: { data: Readers | Reading | []
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <div className="text-center">
+                <div className="text-center cursor-pointer">
                     <div className="font-semibold">{data?.length}</div>
                     <div className="text-sm text-muted-foreground">{type === "reader" ? "Readers" : "Reading"}</div>
                 </div>

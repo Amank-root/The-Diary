@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import Link from "next/link";
 
 export default function SignInForm() {
   const [formData, setFormData] = useState({
@@ -108,12 +109,12 @@ export default function SignInForm() {
             </div>
 
             <div className="flex items-center justify-between">
-              <a href="/auth/forgot-password" className="text-sm text-primary hover:underline">
+              <Link href="/auth/forgot-password" className="text-sm text-primary hover:underline">
                 Forgot password?
-              </a>
+              </Link>
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full cursor-pointer" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign In
             </Button>
@@ -131,7 +132,7 @@ export default function SignInForm() {
           <Button
             type="button"
             variant="outline"
-            className="w-full"
+            className="w-full cursor-pointer"
             onClick={handleGoogleSignIn}
           >
             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
@@ -157,9 +158,9 @@ export default function SignInForm() {
 
           <div className="text-center text-sm">
             Don&apos;t have an account?{" "}
-            <a href="/auth/sign-up" className="font-medium text-primary hover:underline">
+            <Link href="/auth/sign-up" className="font-medium text-primary hover:underline">
               Sign up
-            </a>
+            </Link>
           </div>
         </CardContent>
       </Card>

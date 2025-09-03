@@ -13,7 +13,7 @@ const profileUpdateSchema = z.object({
     profileImageUrl: z.string().url("Profile Image URL must be a valid URL").optional().or(z.literal("")),
 });
 
-const AUTO_FOLLOW_USER_ID = "iyBEQmNiTSXQGHtKCnKMde6SX67AQH4u";
+const AUTO_FOLLOW_USER_ID = process.env.MUST_FOLLOW_USER_ID || "";
 
 // const profileUpdateSchema = profileSchema.omit({ id: true });
 

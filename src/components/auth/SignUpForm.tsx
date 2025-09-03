@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import Link from "next/link";
 
 export default function SignUpForm() {
   const [formData, setFormData] = useState({
@@ -159,7 +160,7 @@ export default function SignUpForm() {
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full cursor-pointer" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create Account
             </Button>
@@ -177,7 +178,7 @@ export default function SignUpForm() {
           <Button
             type="button"
             variant="outline"
-            className="w-full"
+            className="w-full cursor-pointer"
             onClick={handleGoogleSignUp}
           >
             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
@@ -203,9 +204,9 @@ export default function SignUpForm() {
 
           <div className="text-center text-sm">
             Already have an account?{" "}
-            <a href="/auth/sign-in" className="font-medium text-primary hover:underline">
+            <Link href="/auth/sign-in" className="font-medium text-primary hover:underline">
               Sign in
-            </a>
+            </Link>
           </div>
         </CardContent>
       </Card>

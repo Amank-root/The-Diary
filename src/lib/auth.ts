@@ -2,7 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "@prisma/client";
 import { headers } from "next/headers";
-import { sendEmail } from "@/email/mail-conf";
+import { sendEmail, resetPassword } from "@/email/mail-conf";
 import { nextCookies } from "better-auth/next-js";
 
 
@@ -19,17 +19,22 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql", 
   }),
-  trustedOrigins: ["http://localhost:5173", "https://write-diary.vercel.app"],
+  trustedOrigins: ["http://localhost:3000", "https://write-diary.vercel.app"],
   
   emailAndPassword: {
     enabled: true,
     autoSignIn: false,
     requireEmailVerification: true,
+    sendResetPassword: async ({user, url}) => {
+      await resetPassword(url, user);
+    },
+    revokeSessionsOnPasswordReset: true,
   },
   emailVerification: {
     sendVerificationEmail: async ({url, user}) => {
       await sendEmail(url, user);
-    }
+    },
+    autoSignInAfterVerification: true,
   },
 
   socialProviders: {
@@ -69,7 +74,10 @@ export const auth = betterAuth({
     crossSubDomainCookies: {
       enabled: false // Set to true if you have subdomains
     },
-    generateId: false // Use default ID generation
+    // generateId: false // Use default ID generation
+    database: {
+      generateId: false // Use default ID generation
+    }
   },
   
   plugins: [nextCookies()],

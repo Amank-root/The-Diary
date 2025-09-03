@@ -7,7 +7,7 @@ import { notFound } from "next/navigation";
 async function Profile({ params }: { params: Promise<{ id: string }> }) {
   const username = await params;
   const profileData = await getProfile(username.id);
-  console.log(profileData)
+  // console.log(profileData)
 
   if (!profileData) {
     return notFound();

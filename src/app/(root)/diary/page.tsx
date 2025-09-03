@@ -16,7 +16,7 @@ async function Diary() {
   if (getAllDiaries?.length === 0) {
     return notFound()
   }
-  console.log(getAllDiaries, 'get all diaries');
+  // console.log(getAllDiaries, 'get all diaries');
 
   return (
     <div className="flex-1 p-4 lg:p-6 space-y-6">

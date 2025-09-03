@@ -9,7 +9,7 @@ import { getPageById } from '@/lib/actions/pageAction';
 export default async function PageModal({ params }: { params: Promise<{ id: string }> }) {
   const {id} = await params;
   const page = await getPageById(id);
-  console.log(page)
+  // console.log(page)
 
   if (!page) return null; // Or redirect/notFound()
 

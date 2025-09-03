@@ -20,7 +20,7 @@ async function NotesTab() {
             title: null,
             position: { x: 100, y: 100 },
             text: 'Welcome to your notes!',
-            color: '#ff0',
+            color: '#40bf4d',
         });
     }
 

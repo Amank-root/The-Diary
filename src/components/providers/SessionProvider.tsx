@@ -32,7 +32,7 @@ export default function SessionProvider({ children }: SessionProviderProps) {
     }, [initialLoad]);
 
     useEffect(() => {
-        if (!initialLoad && !isPending && !session && pathname !== "/auth/sign-in" && pathname !== "/auth/sign-up") {
+        if (!initialLoad && !isPending && !session && !pathname.startsWith("/auth")) {
             // console.log("No session found, redirecting to sign-in");
             router.push("/auth/sign-in");
         }
