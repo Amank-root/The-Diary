@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
   secure: false,
   auth: {
     // type: "OAuth2",
-    user: "rexpaul853@gmail.com",
+    user: process.env.SMTP_USER,
     pass: process.env.GOOGLE_APP_PASSWORD,
     // clientId: process.env.GOOGLE_CLIENT_ID,
     // clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -24,7 +24,7 @@ type User = Session['user'];
 export const sendEmail = async (url: string, user: User) => {
     const renderEmailComp = await render(VerificationEmailTemplate({ url, name: user.name }));
     const mailOptions = {
-        from: 'Rex <rexpaul853@gmail.com>',
+        from: `Rex from The Diary <${process.env.SMTP_USER}>`,
         to: user.email,
         subject: 'Verify your email',
         html: renderEmailComp,
@@ -36,7 +36,7 @@ export const sendEmail = async (url: string, user: User) => {
 export const resetPassword = async (url: string, user: User) => {
   const renderEmailComp = await render(ResetPassword({ resetLink:url, name: user.name, userEmail: user.email }));
   const mailOptions = {
-      from: 'Rex from The Diary <rexpaul853_at_gmail_com_pynjlamm@simplelogin.co>',
+      from: `Rex from The Diary <${process.env.SMTP_USER}>`,
       to: user.email,
       subject: 'Reset your password',
       html: renderEmailComp,
