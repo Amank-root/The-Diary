@@ -32,7 +32,7 @@ function DiaryHeader({ title, description, btnText, href, btnHidden = false, isD
                 <Link href={`/profile/`}>
                     <Avatar>
                         <AvatarImage src={data?.user?.image || ''} alt={data?.user?.name || 'User Avatar'} />
-                        <AvatarFallback>{data?.user?.name || 'User'}</AvatarFallback>
+                        <AvatarFallback>{data?.user?.name.slice(0, 2).toUpperCase() || 'User'}</AvatarFallback>
                     </Avatar>
                 </Link>
             )

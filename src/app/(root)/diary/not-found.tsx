@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { BookOpen } from "lucide-react"
 import Link from "next/link"
 
-export default function NotFound() {
+export default function NotFound({ showCreateDiary = true }: { showCreateDiary?: boolean }) {
   return (
     <div className="flex h-[70vh] flex-col items-center justify-center text-center">
       {/* Icon */}
@@ -17,9 +17,11 @@ export default function NotFound() {
       </p>
 
       {/* Action */}
-      <Link href="/diary/create" className="mt-6">
-        <Button size="lg">Create Diary</Button>
-      </Link>
+      {showCreateDiary && (
+        <Link href="/diary/create" className="mt-6">
+          <Button size="lg">Create Diary</Button>
+        </Link>
+      )}
     </div>
   )
 }

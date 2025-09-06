@@ -1,9 +1,11 @@
 "use server"
 import { cache } from "react";
-import { prisma, authSessionServer } from "../auth";
+import { prisma, authSessionServer, auth } from "../auth";
 import type { ProfileDetails } from "../types";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 const profileUpdateSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters long").max(50),
@@ -62,8 +64,21 @@ export async function updateProfileData(formData: FormData): Promise<{ success: 
                 image: validatedData.data.profileImageUrl,
             }
         });
+
+        if (data.username !== session.user.username) {
+            await auth.api.revokeDeviceSession({
+                body: {
+                    sessionToken: session.session.token
+                },
+                headers: await headers()
+            })
+            redirect('/auth/sign-in?message=Session%20revoked.%20Please%20sign%20in%20again%20to%20continue.&type=info');
+        }
+
         revalidatePath(`/profile/${data.username}`);
+        revalidatePath('/profile/');
         return { success: true };
+
     }
     catch (error) {
         console.error("Error updating profile data:", error);
@@ -117,7 +132,7 @@ export const getProfile = cache(async (username?: string): Promise<ProfileDetail
     const session = await authSessionServer();
     if (!session) throw new Error("Unauthorized");
 
-    const isSelf = session.user.username === username;
+    // const isSelf = session.user.username === username || ;
     // // console.log("Fetching profile for:", username, "Is self:", isSelf, session);
 
 
@@ -193,6 +208,7 @@ export const getProfile = cache(async (username?: string): Promise<ProfileDetail
         })
 
         const [profile, pageCount, currentUser] = await Promise.all([profileData, page, self]);
+        const isSelf = session.user.username === username || session.user.id === profile?.id;
 
         if (profile?.id) {
             await ensureAutoFollow(profile.id);
@@ -227,6 +243,7 @@ export const getProfile = cache(async (username?: string): Promise<ProfileDetail
         //     currentUser: currentUser,
         //     isSelf: isSelf,
         // });
+        // revalidatePath('/profile/');
         return profile ? {
             id: profile?.id ?? "",
             name: profile?.name ?? "",
@@ -264,7 +281,8 @@ export const getProfile = cache(async (username?: string): Promise<ProfileDetail
 
     } catch (error) {
         console.error("Error fetching profile data:", error);
-        throw new Error("Failed to fetch profile data");
+        // throw new Error("Failed to fetch profile data");
+        return null;
     }
 
 

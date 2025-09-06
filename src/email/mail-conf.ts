@@ -1,3 +1,4 @@
+import 'server-only'
 import { Session } from "@/lib/auth";
 import VerificationEmailTemplate from "@/email/mail/verification-template"
 import nodemailer from 'nodemailer';

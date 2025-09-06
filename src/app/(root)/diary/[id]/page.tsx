@@ -3,6 +3,7 @@ import DiaryHeader from '@/components/singleton/DiaryHeader'
 import { Separator } from '@/components/ui/separator';
 import DiaryFlip from '@/components/singleton/DiaryFlip';
 import { getDiaryById } from '@/lib/actions/diaryAction';
+import NotFound from '../not-found';
 
 async function InnerDiary({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -21,9 +22,7 @@ async function InnerDiary({ params }: { params: Promise<{ id: string }> }) {
         // @ts-expect-error: i dont know
         <DiaryFlip diary={getDiary} />
       ) : (
-        <div className="flex items-center justify-center h-96">
-          <p className="text-gray-500">Diary not found</p>
-        </div>
+        <NotFound/>
       )}
     </div>
   )
