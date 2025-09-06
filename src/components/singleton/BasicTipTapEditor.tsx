@@ -40,7 +40,7 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface DiaryOption {
   id: string;
@@ -71,6 +71,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const pathname = usePathname();
   const isDiaryPath = pathname.includes('/diary');
+  const {replace} = useRouter();
 
 
 
@@ -81,8 +82,13 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       fetch(`/api/v1/diary?id=${pathname.split("/")[2] ?? ""}`).then(res => res.json()).then(data => {
         setDiaryOptions(data || [])
         setSelectedDiaryId(data.id ?? "")
+      }).catch(err => {
+        console.error(err);
+        setIsLoading(false);
+        toast.error('Failed to load diary');
+        replace('/diary')
       });
-      // console.log("Diary path detected", data);      
+      // console.log("Diary path detected", data);
       setIsLoading(false);
     }
     if (!isDiaryPath) {
@@ -92,11 +98,19 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
         .then(data => {
           setDiaryOptions(data || []);
           setIsLoading(false);
+          if (data.length > 0) {
+            setSelectedDiaryId(data[0].id);
+          } else {
+            setSelectedDiaryId('');
+            toast.error('No diaries found. Please create a diary first.');
+            replace('/diary')
+          }
         })
         .catch(err => {
           console.error(err);
           setIsLoading(false);
           toast.error('Failed to load diaries');
+          replace('/diary')
         });
     }
   }, [isDiaryPath, pathname]);

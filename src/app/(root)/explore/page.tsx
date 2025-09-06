@@ -42,15 +42,14 @@ async function ExplorePage({ searchParams }: { searchParams: Promise<{ search: s
                 {getUsers.users.map((user) => (
                     <div
                         key={Math.random().toString(36).substr(2, 9)}
-                        className="flex items-center justify-between p-3 border rounded-md hover:bg-muted transition"
-                    >
-                        <div className="flex items-center gap-3">
+                        className="flex items-center justify-between p-3 border rounded-md hover:bg-muted transition">
+                        <Link href={`/profile/${user.username}`} className="flex items-center gap-3">
                             <Avatar>
-                                <AvatarImage src={user.image ?? "https://dummyimage.com/210x297"} alt={user.username ?? undefined} />
+                                <AvatarImage src={user.image || ""} alt={user.username ?? undefined} />
                                 <AvatarFallback>{user.username?.slice(0, 2).toUpperCase() ?? user.name}</AvatarFallback>
                             </Avatar>
                             <span className="text-sm font-medium">{user.username}</span>
-                        </div>
+                        </Link>
                         {/* {getUsers.currentUser, user} */}
                         {/* // @ts-expect-error: i dont know */}
                         {getUsers.currentUser?.reading.some(reading => reading.readingId === user.id) ? (

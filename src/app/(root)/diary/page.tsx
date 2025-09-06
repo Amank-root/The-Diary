@@ -1,22 +1,18 @@
 import React from 'react'
 import { Card } from '@/components/ui/card'
-import { Search } from 'lucide-react'
-import { Input } from '@/components/ui/input'
+// import { Search } from 'lucide-react'
+// import { Input } from '@/components/ui/input'
 import DiaryHeader from '@/components/singleton/DiaryHeader'
 import { Separator } from '@/components/ui/separator'
 import Link from 'next/link'
 import { getDiaries } from '@/lib/actions/diaryAction'
 import BookmarkSaved from '@/components/shared/BookmarkSaved'
 import Image from 'next/image'
-import { notFound } from 'next/navigation'
+import NotFound from './not-found'
 
 async function Diary() {
   const getAllDiaries = await getDiaries()
 
-  if (getAllDiaries?.length === 0) {
-    return notFound()
-  }
-  // console.log(getAllDiaries, 'get all diaries');
 
   return (
     <div className="flex-1 p-4 lg:p-6 space-y-6">
@@ -29,20 +25,24 @@ async function Diary() {
       />
 
       {/* Search */}
-      <div className="relative">
+      {/* <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search your diary entries..."
           className="pl-10"
         />
-      </div>
+      </div> */}
 
       <Separator />
+
+      {getAllDiaries?.length === 0 && (
+          <NotFound showCreateDiary={false} />
+      )}
 
       {/* Rectangular Diary Cards */}
       <div className="grid h-full grid-cols-2 lg:grid-cols-3 gap-6 ">
         {/* // @ts-expect-error: i dont know */}
-        {getAllDiaries ? getAllDiaries?.map((diary) => (
+        {getAllDiaries && getAllDiaries.length >= 0 && getAllDiaries.map((diary) => (
           <Card key={diary.id} className="p-0 aspect-auto overflow-hidden group cursor-pointer border-0 shadow-sm">
             <div className="relative w-full h-full">
               <Link href={`/diary/${diary.id}`}>
@@ -76,9 +76,7 @@ async function Diary() {
            
             </div>
           </Card>
-        )) : (
-          <p>No diary entries found.</p>
-        )}
+        ))}
       </div>
 
 

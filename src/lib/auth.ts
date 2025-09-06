@@ -4,7 +4,7 @@ import { PrismaClient } from "@prisma/client";
 import { headers } from "next/headers";
 import { sendEmail, resetPassword } from "@/email/mail-conf";
 import { nextCookies } from "better-auth/next-js";
-
+import { multiSession } from "better-auth/plugins"
 
 // Create a global instance to avoid multiple connections in development
 const globalForPrisma = globalThis as unknown as {
@@ -80,7 +80,9 @@ export const auth = betterAuth({
     }
   },
   
-  plugins: [nextCookies()],
+  plugins: [nextCookies(), multiSession({
+    maximumSessions: 3,
+  })],
   
   // Ensure proper cookie settings for production
   cookies: {

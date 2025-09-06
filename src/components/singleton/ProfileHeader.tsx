@@ -124,9 +124,11 @@ function ProfileHeader({ profileData }: ProfileHeaderProps) {
                                         type="text"
                                         maxLength={50}
                                         name="username"
+                                        className='mb-0'
                                         defaultValue={profileData.username}
                                         placeholder="Your username"
                                     />
+                                    <span className='text-xs p-0 leading-0 text-gray-500'>👉 Changing username requires re-authentication.</span>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="bio">Bio</Label>
