@@ -1,0 +1,69 @@
+name: Documentation
+description: Suggest improvements or additions to the documentation for The Diary
+title: "[Docs]: "
+labels: ["documentation", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve The Diary's documentation! Clear, updated docs help all users and contributors.
+        
+        Before submitting, please check if your suggestion or issue has already been reported.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Provide a clear and concise description of the documentation issue or improvement.
+      placeholder: What part of the documentation needs updating or adding?
+    validations:
+      required: true
+
+  - type: textarea
+    id: location
+    attributes:
+      label: Location
+      description: Where in the documentation does this issue occur? Specify file, section, or link if possible.
+      placeholder: e.g., README.md, Setup section, API Reference
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_change
+    attributes:
+      label: Proposed Change
+      description: Suggest how this documentation can be improved or added.
+      placeholder: e.g., Add code example for API usage, clarify installation steps
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: Impact
+      description: Who will benefit from this improvement?
+      options:
+        - label: New users
+        - label: Contributors
+        - label: Developers
+        - label: All users
+
+  - type: textarea
+    id: additional_info
+    attributes:
+      label: Additional Information
+      description: Provide any extra context, links, or references that can help implement this change.
+      placeholder: e.g., screenshots, links to relevant docs, related issues
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      description: By submitting this issue, you agree to follow our Code of Conduct
+      options:
+        - label: I have checked for existing documentation issues that might be related
+          required: true
+        - label: I have provided all the requested information
+          required: true
+        - label: I agree to follow this project's Code of Conduct
+          required: true
