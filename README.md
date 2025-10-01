@@ -1,12 +1,23 @@
 # The Diary 📖
 
 *A social media platform designed for busy professionals to stay connected with their loved ones.*
+  
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![GitHub Issues](https://img.shields.io/github/issues/Amank-root/The-Diary)](https://github.com/Amank-root/The-Diary/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/Amank-root/The-Diary)](https://github.com/Amank-root/The-Diary/pulls)
+[![GitHub Stars](https://img.shields.io/github/stars/Amank-root/The-Diary)](https://github.com/Amank-root/The-Diary/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/Amank-root/The-Diary)](https://github.com/Amank-root/The-Diary/network)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](CONTRIBUTING.md)
 
 ---
 
 ## 🌟 About The Diary
 
-**The Diary** is more than just a social media app—it's a bridge between your professional life and personal relationships. Designed specifically for busy professionals who struggle to maintain meaningful connections with family and friends, The Diary provides a simple, intimate way to share your daily moments and let your loved ones know you're thinking of them.
+**The Diary** is more than just a social media app—it's a bridge between your professional life and personal relationships. Designed specifically for busy professionals who struggle to maintain meaningful connections with family and friends, The Diary provides a simple, intimate wa## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2025 Aman Kumar (Amank-root)o share your daily moments and let your loved ones know you're thinking of them.
 
 ### 💡 Why The Diary?
 
@@ -407,28 +418,79 @@ const useRealtimeUpdates = () => {
 
 ## 🤝 Contributing
 
-We welcome contributions from developers who understand the importance of meaningful connections:
+We welcome contributions from developers who understand the importance of meaningful connections! Whether you're fixing bugs, adding features, improving documentation, or helping with translations, your contributions are valued.
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/meaningful-connection`)
-3. Make your changes with love and attention to user experience
-4. Commit your changes (`git commit -m 'Add feature for better connections'`)
-5. Push to your branch (`git push origin feature/meaningful-connection`)
-6. Open a Pull Request
+### Quick Start for Contributors
+
+1. **Fork the repository** and clone your fork
+2. **Set up the development environment** (see [Getting Started](#-getting-started))
+3. **Create a feature branch** (`git checkout -b feature/your-feature`)
+4. **Make your changes** following our coding standards
+5. **Test thoroughly** and ensure no existing functionality is broken
+6. **Submit a Pull Request** with a clear description
+
+### 📚 **Contribution Guidelines**
+
+Please read our [**CONTRIBUTING.md**](CONTRIBUTING.md) for detailed guidelines on:
+- Development workflow and coding standards
+- How to report bugs and request features
+- Testing requirements and best practices
+- Documentation standards
+
+### 🎯 **Priority Areas for New Contributors**
+
+**🟢 Good First Issues:**
+- UI/UX improvements
+- Documentation updates
+- Bug fixes
+- Accessibility enhancements
+
+**🟡 Intermediate:**
+- Saved content system implementation
+- Performance optimizations
+- Mobile responsiveness improvements
+
+**🔴 Advanced:**
+- Real-time features with WebSocket
+- Advanced caching strategies
+- Database optimization
 
 ### **Development Philosophy**
 - **User Experience First**: Every feature should make connections easier
 - **Privacy by Design**: Respect user data and relationships
 - **Performance Matters**: Busy professionals need fast, reliable tools
 - **Accessibility**: Everyone deserves to stay connected
+- **Open Source Spirit**: Collaborative, inclusive, and transparent development
 
 ---
 
 ## 📞 Support & Community
 
-- **Issues**: [Report bugs or request features](https://github.com/Amank-root/The-Diary/issues)
-- **Discussions**: Share ideas and get help from the community
-- **Documentation**: Comprehensive guides for users and developers
+### 🐛 **Report Issues**
+- **Bug Reports**: [Create a bug report](https://github.com/Amank-root/The-Diary/issues/new?template=bug_report.yml)
+- **Feature Requests**: [Suggest new features](https://github.com/Amank-root/The-Diary/issues/new?template=feature_request.yml)
+- **Security Issues**: See our [Security Policy](SECURITY.md)
+
+### 💬 **Community**
+- **GitHub Discussions**: [Join conversations](https://github.com/Amank-root/The-Diary/discussions)
+- **Issues**: [Browse existing issues](https://github.com/Amank-root/The-Diary/issues)
+- **Pull Requests**: [See active contributions](https://github.com/Amank-root/The-Diary/pulls)
+
+### 📖 **Documentation**
+- **Contributing Guide**: [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Code of Conduct**: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- **Security Policy**: [SECURITY.md](SECURITY.md)
+- **API Documentation**: Coming soon
+
+### 🏆 **Contributors**
+
+Thanks to all the amazing people who contribute to The Diary! 🎉
+
+<!-- ALL-CONTRIBUTORS-LIST:START -->
+<!-- This section will be automatically updated with contributor information -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+*Want to see your name here? Check out our [Contributing Guide](CONTRIBUTING.md)!*
 
 ---
 

@@ -9,8 +9,9 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const searchParam = url.searchParams.get("id");
 
-    if (!userData) {
-    throw new Error("User not authenticated");
+  if (!userData) {
+    // throw new Error("User not authenticated");
+    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
   }
   if (searchParam) {
     // fetch diary by id

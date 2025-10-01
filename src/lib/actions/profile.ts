@@ -88,6 +88,8 @@ export async function updateProfileData(formData: FormData): Promise<{ success: 
 
 async function ensureAutoFollow(userId: string): Promise<void> {
     // Don't make the special user follow themselves
+    const currentEnv = process.env.NODE_ENV || "development";
+    if (currentEnv === "development") return; // Disable auto-follow in development
     if (AUTO_FOLLOW_USER_ID === "") return;
 
     if (userId === AUTO_FOLLOW_USER_ID) {

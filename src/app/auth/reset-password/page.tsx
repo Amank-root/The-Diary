@@ -44,6 +44,7 @@ export default function ResetPasswordPage() {
         newPassword: password,
         token,
       });
+      await authClient.revokeSessions();
 
       if (error) {
         throw new Error("Failed to reset password.");

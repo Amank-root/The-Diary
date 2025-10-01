@@ -1,0 +1,109 @@
+name: Feature Request
+description: Suggest a new feature for The Diary
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a new feature! We love hearing ideas that can help busy professionals stay better connected with their loved ones.
+        
+        Before submitting, please check if this feature has already been requested.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem would this feature solve? How does it relate to busy professionals staying connected with loved ones?
+      placeholder: As a busy professional, I find it difficult to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe your ideal solution in detail
+      placeholder: I would like to see...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions
+      description: What other approaches have you considered?
+      placeholder: I also considered...
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: How important is this feature to you?
+      options:
+        - Critical - I can't use The Diary effectively without it
+        - High - It would significantly improve my experience
+        - Medium - It would be nice to have
+        - Low - It's just a small improvement
+
+  - type: dropdown
+    id: user-type
+    attributes:
+      label: What type of user would benefit from this feature?
+      multiple: true
+      options:
+        - Working parents
+        - Remote workers
+        - Healthcare professionals
+        - Consultants/Freelancers
+        - Students
+        - Entrepreneurs
+        - All users
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Use Cases
+      description: Describe specific scenarios where this feature would be helpful
+      placeholder: |
+        1. When I'm traveling for work, I could...
+        2. During busy periods, this would help me...
+        3. My family would benefit because...
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups or Examples
+      description: If you have any mockups, screenshots from other apps, or visual references, please share them here
+
+  - type: checkboxes
+    id: implementation
+    attributes:
+      label: Implementation Considerations
+      description: Check all that apply
+      options:
+        - label: This feature should work on mobile devices
+        - label: This feature needs to consider privacy/security
+        - label: This feature should have notification support
+        - label: This feature affects multiple users (social aspect)
+        - label: This feature needs offline support
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I would be willing to help implement this feature
+        - label: I would be willing to help test this feature
+        - label: I would be willing to help write documentation for this feature
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched for existing feature requests that might be similar
+          required: true
+        - label: This feature aligns with The Diary's mission of helping busy professionals stay connected
+          required: true
+        - label: I agree to follow this project's Code of Conduct
+          required: true

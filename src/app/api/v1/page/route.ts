@@ -3,6 +3,9 @@ import { revalidatePath } from "next/cache";
 
 export async function GET(request: Request) {
   const userData = await authSessionServer();
+  if (!userData?.session){
+    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+  }
   const url = new URL(request.url);
   const pathname = url.pathname;
 

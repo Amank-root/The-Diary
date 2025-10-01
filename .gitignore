@@ -31,7 +31,9 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-.env*
+.env.local
+.env
+.env.sample
 
 # vercel
 .vercel
@@ -42,3 +44,5 @@ next-env.d.ts
 
 # other
 AUTH_SETUP.md
+/prisma/dev.db
+/prisma/_migrations
