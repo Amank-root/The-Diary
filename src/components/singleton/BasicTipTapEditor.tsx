@@ -140,7 +140,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
     formData.append("file", blob);
     formData.append("upload_preset", "pageMiscellaneous");
 
-    const response = await fetch("https://api.cloudinary.com/v1_1/dp3vyfcyc/image/upload", {
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`, {
       method: "POST",
       body: formData,
     });
@@ -610,7 +610,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
     formData.append('upload_preset', 'pageMiscellaneous');
 
     try {
-      const response = await fetch('https://api.cloudinary.com/v1_1/dp3vyfcyc/image/upload', {
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`, {
         method: 'POST',
         body: formData,
       });

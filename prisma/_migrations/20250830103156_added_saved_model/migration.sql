@@ -1,9 +1,0 @@
--- CreateTable
-CREATE TABLE "Saved" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "connectionId" TEXT NOT NULL,
-    "type" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "Saved_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
-);

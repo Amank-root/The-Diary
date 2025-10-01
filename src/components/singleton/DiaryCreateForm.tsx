@@ -28,16 +28,15 @@ function DiaryCreateForm() {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('upload_preset', 'diaryCover')
-        formData.append('cloud_name', 'dp3vyfcyc');
 
-        try {
-            const res = await fetch('https://api.cloudinary.com/v1_1/dp3vyfcyc/image/upload', {
+        try {   
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`, {
                 method: 'POST',
                 body: formData
             });
 
             const data = await res.json();
-            // console.log(data, 'cloudinary response');
+            console.log(data, 'cloudinary response');
             setImagePreview(data.secure_url);
             setBtnDisabled(false);
         } catch (err) {
