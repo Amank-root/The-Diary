@@ -10,8 +10,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function SignUpForm() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     username: "",
@@ -34,6 +36,7 @@ export default function SignUpForm() {
     setLoading(true);
     setError("");
 
+
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       setLoading(false);
@@ -53,7 +56,7 @@ export default function SignUpForm() {
         setError(result.error.message || "An error occurred during sign up");
       } else {
         toast.success("Account created successfully!");
-        window.location.href = "/";
+        router.push("/");
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
