@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 export default function NotFound() {
   return (
@@ -6,7 +6,8 @@ export default function NotFound() {
       <div className="max-w-md text-center space-y-4">
         <h1 className="text-4xl font-bold text-gray-800">User Not Found</h1>
         <p className="text-gray-600">
-          The profile you&apos;re looking for doesn&apos;t exist or may have been removed.
+          The profile you&apos;re looking for doesn&apos;t exist or may have
+          been removed.
         </p>
         <Link
           href="/"

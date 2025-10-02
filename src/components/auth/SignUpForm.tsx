@@ -1,28 +1,34 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { authClient } from "@/lib/auth-client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import React, { useState } from 'react';
+import { authClient } from '@/lib/auth-client';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function SignUpForm() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    name: "",
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+    name: '',
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -34,11 +40,10 @@ export default function SignUpForm() {
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-
+    setError('');
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+      setError('Passwords do not match');
       setLoading(false);
       return;
     }
@@ -53,14 +58,14 @@ export default function SignUpForm() {
       });
 
       if (result.error) {
-        setError(result.error.message || "An error occurred during sign up");
+        setError(result.error.message || 'An error occurred during sign up');
       } else {
-        toast.success("Account created successfully!");
-        router.push("/");
+        toast.success('Account created successfully!');
+        router.push('/');
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setError(err.message || "An unexpected error occurred");
+      setError(err.message || 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -69,13 +74,13 @@ export default function SignUpForm() {
   const handleGoogleSignUp = async () => {
     try {
       await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/",
+        provider: 'google',
+        callbackURL: '/',
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setError(err?.message || "An unexpected error occurred");
-      toast.error("Failed to sign up with Google");
+      setError(err?.message || 'An unexpected error occurred');
+      toast.error('Failed to sign up with Google');
     }
   };
 
@@ -83,7 +88,9 @@ export default function SignUpForm() {
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Create Account</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">
+            Create Account
+          </CardTitle>
           <CardDescription className="text-center">
             Enter your details to create your diary account
           </CardDescription>
@@ -163,7 +170,11 @@ export default function SignUpForm() {
               />
             </div>
 
-            <Button type="submit" className="w-full cursor-pointer" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full cursor-pointer"
+              disabled={loading}
+            >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create Account
             </Button>
@@ -174,7 +185,9 @@ export default function SignUpForm() {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="px-2 text-muted-foreground">Or continue with</span>
+              <span className="px-2 text-muted-foreground">
+                Or continue with
+              </span>
             </div>
           </div>
 
@@ -206,8 +219,11 @@ export default function SignUpForm() {
           </Button>
 
           <div className="text-center text-sm">
-            Already have an account?{" "}
-            <Link href="/auth/sign-in" className="font-medium text-primary hover:underline">
+            Already have an account?{' '}
+            <Link
+              href="/auth/sign-in"
+              className="font-medium text-primary hover:underline"
+            >
               Sign in
             </Link>
           </div>

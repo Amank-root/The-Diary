@@ -1,27 +1,29 @@
-"use server";
+'use server';
 
-import { cache } from "react";
-import { prisma, authSessionServer } from "../auth";
+import { cache } from 'react';
+import { prisma, authSessionServer } from '../auth';
 
-export const getAllUserNotes = cache(async() => {
-    const userData = await authSessionServer();
+export const getAllUserNotes = cache(async () => {
+  const userData = await authSessionServer();
 
-    try {
-        const notes = await prisma.note.findMany({
-            where: { userId: userData?.user?.id },
-            orderBy: { createdAt: "desc" },
-        });
+  try {
+    const notes = await prisma.note.findMany({
+      where: { userId: userData?.user?.id },
+      orderBy: { createdAt: 'desc' },
+    });
 
-        return notes;
-    } catch (error) {
-        console.error("Error fetching user notes:", error);
-        return new Response(JSON.stringify({ error: "Failed to fetch user notes" }), {
-            status: 500,
-            headers: { "Content-Type": "application/json" },
-        });
-    }
-})
-
+    return notes;
+  } catch (error) {
+    console.error('Error fetching user notes:', error);
+    return new Response(
+      JSON.stringify({ error: 'Failed to fetch user notes' }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  }
+});
 
 export const getFriendsNotes = cache(async () => {
   const userData = await authSessionServer();
@@ -38,19 +40,22 @@ export const getFriendsNotes = cache(async () => {
       },
     });
 
-    followedUsers = following?.reading.map(r => ({
+    followedUsers = following?.reading.map((r) => ({
       id: r.reading.id,
       username: r.reading.username,
       name: r.reading.name,
-      image: r.reading.image
+      image: r.reading.image,
     }));
     // // console.log("Followed users:", followedUsers);
   } catch (error) {
-    console.error("Error fetching followed users:", error);
-    return new Response(JSON.stringify({ error: "Failed to fetch followed users" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    console.error('Error fetching followed users:', error);
+    return new Response(
+      JSON.stringify({ error: 'Failed to fetch followed users' }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 
   try {
@@ -58,7 +63,7 @@ export const getFriendsNotes = cache(async () => {
       where: {
         user: {
           id: {
-            in: followedUsers?.map(user => user.id) ?? [],
+            in: followedUsers?.map((user) => user.id) ?? [],
           },
         },
         createdAt: {
@@ -74,9 +79,12 @@ export const getFriendsNotes = cache(async () => {
     return getFriendsDiaries;
   } catch (error) {
     console.error("Error fetching friends' diaries:", error);
-    return new Response(JSON.stringify({ error: "Failed to fetch friends' diaries" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: "Failed to fetch friends' diaries" }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
-})
+});

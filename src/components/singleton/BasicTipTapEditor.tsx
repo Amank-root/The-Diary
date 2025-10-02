@@ -10,7 +10,7 @@ import {
   SelectLabel,
   SelectGroup,
   SelectValue,
-} from "@/components/ui/select"
+} from '@/components/ui/select';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
@@ -20,7 +20,7 @@ import Typography from '@tiptap/extension-typography';
 import CharacterCount from '@tiptap/extension-character-count';
 import { toast } from 'sonner';
 import * as htmlToImage from 'html-to-image';
-import "../css/editor.css"
+import '../css/editor.css';
 
 import {
   Bold,
@@ -71,31 +71,32 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const pathname = usePathname();
   const isDiaryPath = pathname.includes('/diary');
-  const {replace} = useRouter();
-
-
+  const { replace } = useRouter();
 
   useEffect(() => {
     if (isDiaryPath) {
-      setIsLoading(true)
+      setIsLoading(true);
 
-      fetch(`/api/v1/diary?id=${pathname.split("/")[2] ?? ""}`).then(res => res.json()).then(data => {
-        setDiaryOptions(data || [])
-        setSelectedDiaryId(data.id ?? "")
-      }).catch(err => {
-        console.error(err);
-        setIsLoading(false);
-        toast.error('Failed to load diary');
-        replace('/diary')
-      });
+      fetch(`/api/v1/diary?id=${pathname.split('/')[2] ?? ''}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setDiaryOptions(data || []);
+          setSelectedDiaryId(data.id ?? '');
+        })
+        .catch((err) => {
+          console.error(err);
+          setIsLoading(false);
+          toast.error('Failed to load diary');
+          replace('/diary');
+        });
       // console.log("Diary path detected", data);
       setIsLoading(false);
     }
     if (!isDiaryPath) {
       setIsLoading(true);
       fetch('/api/v1/diary')
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           setDiaryOptions(data || []);
           setIsLoading(false);
           if (data.length > 0) {
@@ -103,17 +104,17 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
           } else {
             setSelectedDiaryId('');
             toast.error('No diaries found. Please create a diary first.');
-            replace('/diary')
+            replace('/diary');
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
           setIsLoading(false);
           toast.error('Failed to load diaries');
-          replace('/diary')
+          replace('/diary');
         });
     }
-  }, [isDiaryPath, pathname]);
+  }, [isDiaryPath, pathname, replace]);
 
   const editor = useEditor({
     extensions: [
@@ -131,22 +132,25 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       CharacterCount,
     ],
     content,
-    immediatelyRender: false
+    immediatelyRender: false,
   });
 
   // Function to upload blob to Cloudinary
   const uploadToCloudinary = async (blob: Blob): Promise<string> => {
     const formData = new FormData();
-    formData.append("file", blob);
-    formData.append("upload_preset", "pageMiscellaneous");
+    formData.append('file', blob);
+    formData.append('upload_preset', 'pageMiscellaneous');
 
-    const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`, {
-      method: "POST",
-      body: formData,
-    });
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
 
     if (!response.ok) {
-      throw new Error("Failed to upload image to Cloudinary");
+      throw new Error('Failed to upload image to Cloudinary');
     }
 
     const data = await response.json();
@@ -154,9 +158,11 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
   };
 
   // Function to convert HTML to PNG and upload
-  const convertToImageAndUpload = useCallback(async (): Promise<string | null> => {
+  const convertToImageAndUpload = useCallback(async (): Promise<
+    string | null
+  > => {
     if (!editor) {
-      console.error("Editor not available");
+      console.error('Editor not available');
       return null;
     }
 
@@ -165,9 +171,13 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       const htmlContent = editor.getHTML();
       // console.log("HTML Content to convert:", htmlContent);
 
-      if (!htmlContent || htmlContent.trim() === '<p></p>' || htmlContent.trim() === '') {
-        console.error("No content to convert");
-        toast.error("No content to convert to image");
+      if (
+        !htmlContent ||
+        htmlContent.trim() === '<p></p>' ||
+        htmlContent.trim() === ''
+      ) {
+        console.error('No content to convert');
+        toast.error('No content to convert to image');
         return null;
       }
 
@@ -216,7 +226,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       const currentDate = new Date().toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
-        year: 'numeric'
+        year: 'numeric',
       });
 
       pageHeaderDiv.textContent = currentDate;
@@ -244,16 +254,46 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
 
       // Apply ultra-compact styling for maximum content
       styledContent = styledContent
-        .replace(/<p>/g, '<p style="margin: 0 0 2px 0; color: #333; font-family: inherit; font-size: 10px; line-height: 1.1;">')
-        .replace(/<h1>/g, '<h1 style="font-size: 12px; margin: 0 0 3px 0; color: #333; font-family: inherit; font-weight: bold;">')
-        .replace(/<h2>/g, '<h2 style="font-size: 11px; margin: 0 0 3px 0; color: #333; font-family: inherit; font-weight: bold;">')
-        .replace(/<h3>/g, '<h3 style="font-size: 10px; margin: 0 0 2px 0; color: #333; font-family: inherit; font-weight: bold;">')
-        .replace(/<blockquote>/g, '<blockquote style="margin: 2px 0; padding: 1px 4px; border-left: 1px solid #ccc; background: #f9f9f9; font-style: italic; color: #333; font-family: inherit;">')
-        .replace(/<ul>/g, '<ul style="margin: 2px 0; padding-left: 8px; color: #333; font-family: inherit;">')
-        .replace(/<ol>/g, '<ol style="margin: 2px 0; padding-left: 8px; color: #333; font-family: inherit;">')
-        .replace(/<li>/g, '<li style="margin: 0; color: #333; font-family: inherit;">')
-        .replace(/<strong>/g, '<strong style="color: #333; font-family: inherit; font-weight: bold;">')
-        .replace(/<em>/g, '<em style="color: #333; font-family: inherit; font-style: italic;">')
+        .replace(
+          /<p>/g,
+          '<p style="margin: 0 0 2px 0; color: #333; font-family: inherit; font-size: 10px; line-height: 1.1;">'
+        )
+        .replace(
+          /<h1>/g,
+          '<h1 style="font-size: 12px; margin: 0 0 3px 0; color: #333; font-family: inherit; font-weight: bold;">'
+        )
+        .replace(
+          /<h2>/g,
+          '<h2 style="font-size: 11px; margin: 0 0 3px 0; color: #333; font-family: inherit; font-weight: bold;">'
+        )
+        .replace(
+          /<h3>/g,
+          '<h3 style="font-size: 10px; margin: 0 0 2px 0; color: #333; font-family: inherit; font-weight: bold;">'
+        )
+        .replace(
+          /<blockquote>/g,
+          '<blockquote style="margin: 2px 0; padding: 1px 4px; border-left: 1px solid #ccc; background: #f9f9f9; font-style: italic; color: #333; font-family: inherit;">'
+        )
+        .replace(
+          /<ul>/g,
+          '<ul style="margin: 2px 0; padding-left: 8px; color: #333; font-family: inherit;">'
+        )
+        .replace(
+          /<ol>/g,
+          '<ol style="margin: 2px 0; padding-left: 8px; color: #333; font-family: inherit;">'
+        )
+        .replace(
+          /<li>/g,
+          '<li style="margin: 0; color: #333; font-family: inherit;">'
+        )
+        .replace(
+          /<strong>/g,
+          '<strong style="color: #333; font-family: inherit; font-weight: bold;">'
+        )
+        .replace(
+          /<em>/g,
+          '<em style="color: #333; font-family: inherit; font-style: italic;">'
+        )
         .replace(/<br>/g, '<br>')
         .replace(/&nbsp;/g, ' ');
 
@@ -282,12 +322,12 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
 
       // Append to body temporarily
       document.body.appendChild(pageDiv);
-      
+
       // Force reflow
       void pageDiv.offsetHeight;
 
       // Wait for styles to load
-      await new Promise(resolve => setTimeout(resolve, 200));      // console.log("About to convert element:", pageDiv);
+      await new Promise((resolve) => setTimeout(resolve, 200)); // console.log("About to convert element:", pageDiv);
       // console.log("Element dimensions:", pageDiv.offsetWidth, pageDiv.offsetHeight);
 
       // Convert to PNG using html-to-image with high quality settings for sharp image
@@ -307,7 +347,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
           // @ts-expect-error: i dont know
           WebkitFontSmoothing: 'antialiased',
           fontSmooth: 'always',
-        }
+        },
       });
 
       // console.log("Conversion completed, dataUrl length:", dataUrl.length);
@@ -316,7 +356,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       document.body.removeChild(pageDiv);
 
       if (!dataUrl || dataUrl === 'data:,') {
-        throw new Error("Failed to generate image - empty dataUrl");
+        throw new Error('Failed to generate image - empty dataUrl');
       }
 
       // Convert dataUrl to blob
@@ -326,7 +366,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       // console.log("Blob size:", blob.size);
 
       if (blob.size === 0) {
-        throw new Error("Generated image is empty");
+        throw new Error('Generated image is empty');
       }
 
       // Upload to Cloudinary
@@ -334,17 +374,18 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       // console.log("Uploaded to Cloudinary:", imageUrl);
 
       return imageUrl;
-
     } catch (error) {
-      console.error("Error converting to image:", error);
+      console.error('Error converting to image:', error);
       return null;
     }
   }, [editor]);
 
   // Fallback canvas method
-  const convertToImageAndUploadCanvas = useCallback(async (): Promise<string | null> => {
+  const convertToImageAndUploadCanvas = useCallback(async (): Promise<
+    string | null
+  > => {
     if (!editor) {
-      console.error("Editor not available");
+      console.error('Editor not available');
       return null;
     }
 
@@ -353,7 +394,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       const textContent = editor.getText();
 
       if (!textContent.trim()) {
-        toast.error("No content to convert");
+        toast.error('No content to convert');
         return null;
       }
 
@@ -364,7 +405,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       const ctx = canvas.getContext('2d');
 
       if (!ctx) {
-        throw new Error("Could not get canvas context");
+        throw new Error('Could not get canvas context');
       }
 
       // Fill background
@@ -383,7 +424,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       const dateText = new Date().toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
-        year: 'numeric'
+        year: 'numeric',
       });
       ctx.fillText(dateText, 200, 25);
 
@@ -405,7 +446,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       const lineHeight = 12;
       const maxWidth = 360;
 
-      lines.forEach(line => {
+      lines.forEach((line) => {
         if (y > 570) return; // Stop if we run out of space
 
         if (line.trim()) {
@@ -413,7 +454,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
           const words = line.split(' ');
           let currentLine = '';
 
-          words.forEach(word => {
+          words.forEach((word) => {
             const testLine = currentLine + (currentLine ? ' ' : '') + word;
             const metrics = ctx.measureText(testLine);
 
@@ -443,34 +484,35 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
 
       // Convert canvas to blob
       return new Promise((resolve) => {
-        canvas.toBlob(async (blob) => {
-          if (blob && blob.size > 0) {
-            try {
-              const imageUrl = await uploadToCloudinary(blob);
-              resolve(imageUrl);
-            } catch (error) {
-              console.error("Error uploading to Cloudinary:", error);
+        canvas.toBlob(
+          async (blob) => {
+            if (blob && blob.size > 0) {
+              try {
+                const imageUrl = await uploadToCloudinary(blob);
+                resolve(imageUrl);
+              } catch (error) {
+                console.error('Error uploading to Cloudinary:', error);
+                resolve(null);
+              }
+            } else {
+              console.error('Canvas produced empty blob');
               resolve(null);
             }
-          } else {
-            console.error("Canvas produced empty blob");
-            resolve(null);
-          }
-        }, 'image/png', 0.9);
+          },
+          'image/png',
+          0.9
+        );
       });
-
     } catch (error) {
-      console.error("Error with canvas conversion:", error);
+      console.error('Error with canvas conversion:', error);
       return null;
     }
   }, [editor]);
 
-
-
   // Update the handleSave function with corrected state update logic
   const handleSave = useCallback(async () => {
     if (!editor) {
-      toast.error("Editor not ready");
+      toast.error('Editor not ready');
       return;
     }
 
@@ -482,12 +524,12 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
 
       // Validation
       if (!isDiaryPath && !selectedDiaryId) {
-        toast.error("Please select a diary");
+        toast.error('Please select a diary');
         return;
       }
 
       if (!textContent.trim()) {
-        toast.error("Please add some content");
+        toast.error('Please add some content');
         return;
       }
 
@@ -502,7 +544,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       }
 
       if (!pageImageUrl) {
-        toast.error("Failed to create page preview image");
+        toast.error('Failed to create page preview image');
         return;
       }
 
@@ -513,7 +555,9 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       // Calculate page number more reliably
       let currentPageNumber = 1;
       if (diaryOptions.length >= 2) {
-        const selectedDiary = diaryOptions.find(option => option.id === selectedDiaryId);
+        const selectedDiary = diaryOptions.find(
+          (option) => option.id === selectedDiaryId
+        );
         currentPageNumber = (selectedDiary?.pages?.length || 0) + 1;
         // @ts-expect-error: i dont know
       } else if (diaryOptions.pages) {
@@ -527,16 +571,20 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
         diaryId: selectedDiaryId,
         pageNumber: currentPageNumber,
         // @ts-expect-error: i dont know
-        isPublic: diaryOptions.length >= 2 ? diaryOptions.find(option => option.id === selectedDiaryId)?.types !== "SPECIAL" : diaryOptions.types !== "SPECIAL",
+        isPublic:
+          diaryOptions.length >= 2
+            ? diaryOptions.find((option) => option.id === selectedDiaryId)
+                ?.types !== 'SPECIAL'
+            : diaryOptions.types !== 'SPECIAL',
       };
 
-      const endpoint = "/api/v1/page/";
+      const endpoint = '/api/v1/page/';
       // console.log("Saving to endpoint:", endpoint, "with body:", requestBody);
 
       const response = await fetch(endpoint, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestBody),
       });
@@ -557,7 +605,9 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
             if (diary.id === selectedDiaryId) {
               return {
                 ...diary,
-                pages: Array.isArray(diary.pages) ? [...diary.pages, result] : [result],
+                pages: Array.isArray(diary.pages)
+                  ? [...diary.pages, result]
+                  : [result],
               };
             }
             return diary;
@@ -569,7 +619,9 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
             return {
               ...prev,
               // @ts-expect-error: i dont know
-              pages: Array.isArray(prev.pages) ? [...prev.pages, result] : [result],
+              pages: Array.isArray(prev.pages)
+                ? [...prev.pages, result]
+                : [result],
             };
           }
         }
@@ -578,21 +630,28 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
         return prev;
       });
 
-      toast.success("Page saved successfully!");
+      toast.success('Page saved successfully!');
 
       // Clear editor content after successful save
       editor.commands.clearContent();
-
     } catch (error) {
-      console.error("Error saving:", error);
-      toast.error("Failed to save page");
+      console.error('Error saving:', error);
+      toast.error('Failed to save page');
     } finally {
       setIsSaving(false);
     }
-  }, [editor, selectedDiaryId, isDiaryPath, diaryOptions, convertToImageAndUpload, convertToImageAndUploadCanvas]);
+  }, [
+    editor,
+    selectedDiaryId,
+    isDiaryPath,
+    diaryOptions,
+    convertToImageAndUpload,
+    convertToImageAndUploadCanvas,
+  ]);
 
-
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -610,10 +669,13 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
     formData.append('upload_preset', 'pageMiscellaneous');
 
     try {
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`, {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to upload image');
@@ -644,19 +706,23 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
     }
   };
 
-  if (!editor) return (
-    <div className="flex items-center justify-center h-64">
-      <Loader2 className="h-8 w-8 animate-spin" />
-      <span className="ml-2">Loading editor...</span>
-    </div>
-  );
+  if (!editor)
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Loading editor...</span>
+      </div>
+    );
 
   return (
     <div className={`w-full border rounded-lg ${className}`}>
       {/* Diary Selection - Only show if not in diary path */}
       {!isDiaryPath && (
-        <div className='p-4 border-b bg-muted/20'>
-          <label htmlFor="diary-select" className="block text-sm font-medium mb-2">
+        <div className="p-4 border-b bg-muted/20">
+          <label
+            htmlFor="diary-select"
+            className="block text-sm font-medium mb-2"
+          >
             Select Diary
           </label>
           <Select
@@ -665,7 +731,11 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
             disabled={isLoading}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder={isLoading ? "Loading diaries..." : "Select a diary"} />
+              <SelectValue
+                placeholder={
+                  isLoading ? 'Loading diaries...' : 'Select a diary'
+                }
+              />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
@@ -719,25 +789,37 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
         <Separator orientation="vertical" className="h-6 mx-1" />
 
         <Button
-          variant={editor.isActive('heading', { level: 1 }) ? 'default' : 'ghost'}
+          variant={
+            editor.isActive('heading', { level: 1 }) ? 'default' : 'ghost'
+          }
           size="sm"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 1 }).run()
+          }
           className="h-8 px-2 text-xs font-mono"
         >
           H1
         </Button>
         <Button
-          variant={editor.isActive('heading', { level: 2 }) ? 'default' : 'ghost'}
+          variant={
+            editor.isActive('heading', { level: 2 }) ? 'default' : 'ghost'
+          }
           size="sm"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
           className="h-8 px-2 text-xs font-mono"
         >
           H2
         </Button>
         <Button
-          variant={editor.isActive('heading', { level: 3 }) ? 'default' : 'ghost'}
+          variant={
+            editor.isActive('heading', { level: 3 }) ? 'default' : 'ghost'
+          }
           size="sm"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 3 }).run()
+          }
           className="h-8 px-2 text-xs font-mono"
         >
           H3
@@ -776,7 +858,9 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
           <AlignLeft className="h-4 w-4" />
         </Button>
         <Button
-          variant={editor.isActive({ textAlign: 'center' }) ? 'default' : 'ghost'}
+          variant={
+            editor.isActive({ textAlign: 'center' }) ? 'default' : 'ghost'
+          }
           size="sm"
           onClick={() => editor.chain().focus().setTextAlign('center').run()}
           title="Align Center"
@@ -785,7 +869,9 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
           <AlignCenter className="h-4 w-4" />
         </Button>
         <Button
-          variant={editor.isActive({ textAlign: 'right' }) ? 'default' : 'ghost'}
+          variant={
+            editor.isActive({ textAlign: 'right' }) ? 'default' : 'ghost'
+          }
           size="sm"
           onClick={() => editor.chain().focus().setTextAlign('right').run()}
           title="Align Right"
@@ -883,4 +969,3 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
 };
 
 export default TiptapEditor;
-

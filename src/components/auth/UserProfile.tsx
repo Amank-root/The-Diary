@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useSession, authClient } from "@/lib/auth-client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Loader2, LogOut } from "lucide-react";
+import { useSession, authClient } from '@/lib/auth-client';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Loader2, LogOut } from 'lucide-react';
 
 export default function UserProfile() {
   const { data: session, isPending } = useSession();
@@ -13,7 +13,7 @@ export default function UserProfile() {
 
   const handleSignOut = async () => {
     await authClient.signOut();
-    window.location.href = "/auth/sign-in";
+    window.location.href = '/auth/sign-in';
   };
 
   if (isPending) {
@@ -36,22 +36,29 @@ export default function UserProfile() {
       <CardContent className="space-y-4">
         <div className="flex items-center space-x-4">
           <Avatar className="h-16 w-16">
-            <AvatarImage src={session.user.image || ""} alt={session.user.name || ""} />
+            <AvatarImage
+              src={session.user.image || ''}
+              alt={session.user.name || ''}
+            />
             <AvatarFallback>
-              {session.user.name?.charAt(0)?.toUpperCase() || "U"}
+              {session.user.name?.charAt(0)?.toUpperCase() || 'U'}
             </AvatarFallback>
           </Avatar>
           <div>
             <h3 className="text-lg font-semibold">{session.user.name}</h3>
-            <p className="text-sm text-muted-foreground">{session.user.email}</p>
+            <p className="text-sm text-muted-foreground">
+              {session.user.email}
+            </p>
             {/* @ts-expect-error: i dont know */}
             {session.user.username && (
-                // @ts-expect-error: i dont know
-              <p className="text-sm text-muted-foreground">@{session.user.username}</p>
+              // @ts-expect-error: i dont know
+              <p className="text-sm text-muted-foreground">
+                @{session.user.username}
+              </p>
             )}
           </div>
         </div>
-        
+
         <Button onClick={handleSignOut} variant="outline" className="w-full">
           <LogOut className="mr-2 h-4 w-4" />
           Sign Out

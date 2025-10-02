@@ -1,45 +1,59 @@
-import React from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import NoteEditor from '@/components/singleton/NoteEditor'
-import { getAllUserNotes, getFriendsNotes } from '@/lib/actions/notesAction'
+import React from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import NoteEditor from '@/components/singleton/NoteEditor';
+import { getAllUserNotes, getFriendsNotes } from '@/lib/actions/notesAction';
 
 async function NotesTab() {
-    const getUserNotes = getAllUserNotes();
-    const getFriendsNotesOfUser = getFriendsNotes();
-    const [userNotesResult, friendsNotesResult] = await Promise.all([getUserNotes, getFriendsNotesOfUser]);
-    const userNotes = Array.isArray(userNotesResult) ? userNotesResult : [];
-    const friendsNotes = Array.isArray(friendsNotesResult) ? friendsNotesResult : [];
+  const getUserNotes = getAllUserNotes();
+  const getFriendsNotesOfUser = getFriendsNotes();
+  const [userNotesResult, friendsNotesResult] = await Promise.all([
+    getUserNotes,
+    getFriendsNotesOfUser,
+  ]);
+  const userNotesRaw = Array.isArray(userNotesResult) ? userNotesResult : [];
+  const friendsNotesRaw = Array.isArray(friendsNotesResult)
+    ? friendsNotesResult
+    : [];
 
-    // // console.log('User Notes:', userNotes);
+  // Transform notes to match StickyNote interface
+  const transformNote = (note: any) => ({
+    id: note.id,
+    text: note.text,
+    color: note.color,
+    position:
+      typeof note.position === 'string'
+        ? JSON.parse(note.position)
+        : note.position || { x: 100, y: 100 },
+  });
 
-    if (userNotes.length === 0) {
-        userNotes.push({
-            id: '1',
-            createdAt: new Date(),
-            userId: '',
-            title: null,
-            position: { x: 100, y: 100 },
-            text: 'Welcome to your notes!',
-            color: '#40bf4d',
-        });
-    }
+  const userNotes = userNotesRaw.map(transformNote);
+  const friendsNotes = friendsNotesRaw.map(transformNote);
 
-    return (
-        <Tabs defaultValue="yours">
-            <TabsList>
-                <TabsTrigger value="yours">Your Notes</TabsTrigger>
-                <TabsTrigger value="friends">Friends Notes</TabsTrigger>
-            </TabsList>
-            <TabsContent value="yours">
-                {/*@ts-expect-error: I don't know how to type this*/}
-                <NoteEditor notesData={userNotes} />
-            </TabsContent>
-            <TabsContent value="friends">
-                {/*@ts-expect-error: I don't know how to type this*/}
-                <NoteEditor notesData={friendsNotes} />
-            </TabsContent>
-        </Tabs>
-    )
+  // // console.log('User Notes:', userNotes);
+
+  if (userNotes.length === 0) {
+    userNotes.push({
+      id: '1',
+      text: 'Welcome to your notes!',
+      color: '#40bf4d',
+      position: { x: 100, y: 100 },
+    });
+  }
+
+  return (
+    <Tabs defaultValue="yours">
+      <TabsList>
+        <TabsTrigger value="yours">Your Notes</TabsTrigger>
+        <TabsTrigger value="friends">Friends Notes</TabsTrigger>
+      </TabsList>
+      <TabsContent value="yours">
+        <NoteEditor notesData={userNotes} />
+      </TabsContent>
+      <TabsContent value="friends">
+        <NoteEditor notesData={friendsNotes} />
+      </TabsContent>
+    </Tabs>
+  );
 }
 
-export default NotesTab
+export default NotesTab;

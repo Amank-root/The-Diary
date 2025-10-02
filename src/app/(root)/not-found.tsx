@@ -1,6 +1,6 @@
 // app/not-found.tsx
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export default function NotFound() {
   return (
@@ -28,5 +28,5 @@ export default function NotFound() {
         Tip: The more users you follow, the richer your diary feed becomes ✨
       </p>
     </div>
-  )
+  );
 }
