@@ -7,7 +7,7 @@ Thank you for your interest in contributing to **The Diary**! We're excited to h
 There are many ways to contribute to The Diary:
 
 - 🐛 **Report bugs** or suggest features
-- 📝 **Improve documentation** 
+- 📝 **Improve documentation**
 - 💻 **Write code** for new features or bug fixes
 - 🎨 **Design improvements** for better user experience
 - 🧪 **Write tests** to improve code quality
@@ -17,7 +17,7 @@ There are many ways to contribute to The Diary:
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - PostgreSQL database
 - pnpm (recommended) or npm
 - Git
@@ -25,6 +25,7 @@ There are many ways to contribute to The Diary:
 ### Development Setup
 
 1. **Fork the repository**
+
    ```bash
    # Click the "Fork" button on GitHub, then clone your fork
    git clone https://github.com/YOUR_USERNAME/The-Diary.git
@@ -32,17 +33,20 @@ There are many ways to contribute to The Diary:
    ```
 
 2. **Install dependencies**
+
    ```bash
    pnpm install
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env.local
    # Edit .env.local with your database credentials
    ```
 
 4. **Set up the database**
+
    ```bash
    pnpm db:migrate
    ```
@@ -65,6 +69,7 @@ There are many ways to contribute to The Diary:
 ### Making Changes
 
 1. **Create a new branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -76,6 +81,7 @@ There are many ways to contribute to The Diary:
    - Update documentation if needed
 
 3. **Test your changes**
+
    ```bash
    pnpm lint        # Check code quality
    pnpm type-check  # TypeScript type checking
@@ -83,6 +89,7 @@ There are many ways to contribute to The Diary:
    ```
 
 4. **Commit your changes**
+
    ```bash
    git add .
    git commit -m "feat: add saved content functionality"
@@ -117,7 +124,7 @@ type UserProfile = {
   id: any;
   name: any;
   // ...
-}
+};
 ```
 
 ### React Guidelines
@@ -131,11 +138,11 @@ type UserProfile = {
 // Good
 const DiaryEntry: React.FC<DiaryEntryProps> = ({ diary }) => {
   const [isLoading, setIsLoading] = useState(false);
-  
+
   useEffect(() => {
     // Effect logic here
   }, [diary.id]); // Proper dependencies
-  
+
   return <div>{diary.title}</div>;
 };
 ```
@@ -191,6 +198,7 @@ When reporting bugs, please include:
 A clear and concise description of the bug.
 
 **Steps to Reproduce**
+
 1. Go to '...'
 2. Click on '...'
 3. Scroll down to '...'
@@ -203,6 +211,7 @@ What you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Environment**
+
 - OS: [e.g. Windows 11, macOS 13]
 - Browser: [e.g. Chrome 118, Firefox 119]
 - Node.js version: [e.g. 18.17.0]
@@ -254,7 +263,7 @@ describe('DiaryEntry', () => {
     };
 
     render(<DiaryEntry diary={mockDiary} />);
-    
+
     expect(screen.getByText('My Day')).toBeInTheDocument();
     expect(screen.getByText('Had a great day today!')).toBeInTheDocument();
   });
@@ -273,18 +282,21 @@ describe('DiaryEntry', () => {
 We especially welcome contributions in these areas:
 
 ### 🔥 High Priority
+
 - **Saved Content System**: Implement the bookmarking functionality
 - **Performance Optimization**: Add caching layer with Redis
 - **Search Enhancement**: Implement full-text search
 - **Mobile Responsiveness**: Improve mobile user experience
 
 ### 🚀 Medium Priority
+
 - **Selective Diary Sharing**: Share specific entries with selected users
 - **Real-time Updates**: WebSocket integration for live updates
 - **Accessibility Improvements**: WCAG 2.1 compliance
 - **Test Coverage**: Increase test coverage to 80%+
 
 ### 💡 Low Priority (Great for Beginners)
+
 - **UI Polish**: Small design improvements
 - **Documentation**: Improve code comments and guides
 - **Error Messages**: Better user-facing error messages
@@ -293,6 +305,7 @@ We especially welcome contributions in these areas:
 ## 🏆 Recognition
 
 Contributors will be:
+
 - Added to our contributors list
 - Mentioned in release notes for significant contributions
 - Invited to our contributor Discord (coming soon)
@@ -338,4 +351,4 @@ By contributing to The Diary, you agree that your contributions will be licensed
 
 Thank you for contributing to The Diary! Together, we're helping busy professionals stay connected with the people who matter most. 💕
 
-*Questions? Don't hesitate to ask in our [GitHub Discussions](https://github.com/Amank-root/The-Diary/discussions)!*
+_Questions? Don't hesitate to ask in our [GitHub Discussions](https://github.com/Amank-root/The-Diary/discussions)!_

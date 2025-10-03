@@ -1,13 +1,13 @@
-"use client"
+'use client';
 
-import React from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Bell, Calendar, User } from 'lucide-react'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Separator } from '@/components/ui/separator'
-import Link from 'next/link'
-import { Button } from '../ui/button'
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Bell, Calendar, User } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import Link from 'next/link';
+import { Button } from '../ui/button';
 
 function NotificationPanel() {
   const notifications = [
@@ -27,7 +27,7 @@ function NotificationPanel() {
       content: 'Notification not yet implemented',
       time: '~ Peace ❤',
       icon: Calendar,
-      unread: true
+      unread: true,
     },
     {
       id: 3,
@@ -36,9 +36,9 @@ function NotificationPanel() {
       content: 'Creator ~ Aman Kushwaha',
       time: 'mailto: contact@amank-root.slmail.me',
       icon: User,
-      unread: false
-    }
-  ]
+      unread: false,
+    },
+  ];
 
   return (
     <div className="hidden lg:flex lg:w-80 xl:w-96 lg:flex-col lg:border-l lg:border-border lg:bg-background">
@@ -48,7 +48,7 @@ function NotificationPanel() {
             <Bell className="h-4 w-4" />
             Notifications
             <Badge variant="secondary" className="ml-auto text-xs">
-              {notifications.filter(n => n.unread).length}
+              {notifications.filter((n) => n.unread).length}
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -56,21 +56,26 @@ function NotificationPanel() {
           <ScrollArea className="h-[calc(100vh-8rem)]">
             <div className="space-y-1 p-4">
               {notifications.map((notification, index) => {
-                const Icon = notification.icon
+                const Icon = notification.icon;
                 return (
                   <div key={notification.id}>
-                    <div className={`p-3 rounded-lg transition-colors hover:bg-accent cursor-pointer ${notification.unread ? 'bg-accent/50' : ''}`}>
+                    <div
+                      className={`p-3 rounded-lg transition-colors hover:bg-accent cursor-pointer ${notification.unread ? 'bg-accent/50' : ''}`}
+                    >
                       <div className="flex items-start gap-3">
-                        <Link href={"/profile/amank-root"}>
-                          <div className={`p-2 rounded-full flex-shrink-0 ${notification.unread
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted text-muted-foreground'
-                            }`}>
+                        <Link href={'/profile/amank-root'}>
+                          <div
+                            className={`p-2 rounded-full flex-shrink-0 ${
+                              notification.unread
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-muted text-muted-foreground'
+                            }`}
+                          >
                             <Icon className="h-3 w-3" />
                           </div>
                         </Link>
                         <div className="flex-1 min-w-0">
-                          <Link href={"/profile/amank-root"}>
+                          <Link href={'/profile/amank-root'}>
                             <div className="flex items-center gap-2">
                               <p className="text-sm font-medium truncate">
                                 {notification.title}
@@ -84,9 +89,12 @@ function NotificationPanel() {
                             </p>
                           </Link>
                           <p className="text-xs text-muted-foreground mt-1">
-                            {notification.time.includes("mailto:") ? (
+                            {notification.time.includes('mailto:') ? (
                               <a href={notification.time}>
-                                <Button variant="outline" className="cursor-pointer">
+                                <Button
+                                  variant="outline"
+                                  className="cursor-pointer"
+                                >
                                   Contact me
                                 </Button>
                               </a>
@@ -101,31 +109,40 @@ function NotificationPanel() {
                       <Separator className="my-1" />
                     )}
                   </div>
-                )
+                );
               })}
-              <div className='text-sm flex gap-2 font-light underline'>
+              <div className="text-sm flex gap-2 font-light underline">
                 {/* github */}
-                <Link target='_blank' href={"https://github.com/amank-root"}>
+                <Link target="_blank" href={'https://github.com/amank-root'}>
                   {/* <Button variant="outline" className="cursor-pointer"> */}
-                    GitHub
+                  GitHub
                   {/* </Button> */}
                 </Link>
                 {/* LinkedIn */}
-                <Link target='_blank' href={"https://www.linkedin.com/in/amank-root"}>
+                <Link
+                  target="_blank"
+                  href={'https://www.linkedin.com/in/amank-root'}
+                >
                   {/* <Button variant="outline" className="cursor-pointer"> */}
-                    LinkedIn
+                  LinkedIn
                   {/* </Button> */}
                 </Link>
                 {/* Twitter */}
-                <Link target='_blank' href={"https://twitter.com/Amankushwaha_28"}>
+                <Link
+                  target="_blank"
+                  href={'https://twitter.com/Amankushwaha_28'}
+                >
                   {/* <Button variant="outline" className="cursor-pointer"> */}
-                    Twitter
+                  Twitter
                   {/* </Button> */}
                 </Link>
                 {/* Portfolio */}
-                <Link target='_blank' href={"https://amankushwaha.netlify.app/"}>
+                <Link
+                  target="_blank"
+                  href={'https://amankushwaha.netlify.app/'}
+                >
                   {/* <Button variant="outline" className="cursor-pointer"> */}
-                    Portfolio
+                  Portfolio
                   {/* </Button> */}
                 </Link>
               </div>
@@ -134,7 +151,7 @@ function NotificationPanel() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
 
-export default NotificationPanel
+export default NotificationPanel;

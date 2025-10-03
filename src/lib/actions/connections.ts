@@ -1,8 +1,8 @@
-"use server"
+'use server';
 import { prisma, authSessionServer } from '@/lib/auth';
 import { cache } from 'react';
 
-export const getConnections = cache(async() => {
+export const getConnections = cache(async () => {
   const session = await authSessionServer();
   if (!session) return null;
 
@@ -11,7 +11,7 @@ export const getConnections = cache(async() => {
   try {
     const getUserWithDiaries = await prisma.user.findFirst({
       where: {
-        id: userId
+        id: userId,
       },
       select: {
         id: true,
@@ -26,9 +26,9 @@ export const getConnections = cache(async() => {
               select: {
                 id: true,
                 name: true,
-              }
-            }
-          }
+              },
+            },
+          },
         },
         reading: {
           select: {
@@ -38,14 +38,14 @@ export const getConnections = cache(async() => {
               select: {
                 id: true,
                 name: true,
-              }
-            }
-          }
+              },
+            },
+          },
         },
         _count: {
           select: {
             diaries: true,
-          }
+          },
         },
         diaries: {
           select: {
@@ -55,28 +55,26 @@ export const getConnections = cache(async() => {
             types: true,
             _count: {
               select: {
-                pages: true
-              }
+                pages: true,
+              },
             },
             pages: {
               select: {
                 id: true,
-                createdAt: true
-              }
-            }
-          }
-        }
-      }
-    })
+                createdAt: true,
+              },
+            },
+          },
+        },
+      },
+    });
     // // console.log(getUserWithDiaries?.readers, getUserWithDiaries?.reading)
     return getUserWithDiaries;
   } catch (error) {
-    console.error("Error fetching user with diaries:", error);
-    throw new Error("Failed to fetch user with diaries");
+    console.error('Error fetching user with diaries:', error);
+    throw new Error('Failed to fetch user with diaries');
     // return null;
   }
 
-
   // const connections = "";
-
-})
+});

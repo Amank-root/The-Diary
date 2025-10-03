@@ -1,5 +1,5 @@
-import React from 'react'
-import DiaryHeader from '@/components/singleton/DiaryHeader'
+import React from 'react';
+import DiaryHeader from '@/components/singleton/DiaryHeader';
 import { Separator } from '@/components/ui/separator';
 import DiaryFlip from '@/components/singleton/DiaryFlip';
 import { getDiaryById } from '@/lib/actions/diaryAction';
@@ -18,14 +18,9 @@ async function InnerDiary({ params }: { params: Promise<{ id: string }> }) {
         href={`/diary/${id}/create`}
       />
       <Separator />
-      {getDiary ? (
-        // @ts-expect-error: i dont know
-        <DiaryFlip diary={getDiary} />
-      ) : (
-        <NotFound/>
-      )}
+      {getDiary ? <DiaryFlip diary={getDiary} /> : <NotFound />}
     </div>
-  )
+  );
 }
 
-export default InnerDiary
+export default InnerDiary;

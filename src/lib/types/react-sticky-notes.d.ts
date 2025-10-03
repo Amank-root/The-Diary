@@ -31,7 +31,6 @@ declare module '@react-latest-ui/react-sticky-notes' {
       payload: StickyNote,
       currentNotes: StickyNote[]
     ) => boolean;
-
   }
 
   const ReactStickyNotes: React.FC<ReactStickyNotesProps>;

@@ -1,13 +1,13 @@
 name: Feature Request
 description: Suggest a new feature for The Diary
-title: "[Feature]: "
-labels: ["enhancement", "needs-triage"]
+title: '[Feature]: '
+labels: ['enhancement', 'needs-triage']
 body:
   - type: markdown
     attributes:
       value: |
         Thank you for suggesting a new feature! We love hearing ideas that help busy professionals stay better connected with their loved ones.
-        
+
         Before submitting, please check if this feature has already been requested.
 
   - type: textarea

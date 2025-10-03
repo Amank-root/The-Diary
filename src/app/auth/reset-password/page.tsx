@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import Link from "next/link";
-import { toast } from "sonner";
+import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { toast } from 'sonner';
 
-import { authClient } from "@/lib/auth-client";
+import { authClient } from '@/lib/auth-client';
 
 import {
   Card,
@@ -13,27 +13,27 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
 
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const token = searchParams.get("token") as string;
-  const error = searchParams.get("error") as string;
+  const token = searchParams.get('token') as string;
+  const error = searchParams.get('error') as string;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match.");
+      toast.error('Passwords do not match.');
       return;
     }
 
@@ -47,14 +47,14 @@ export default function ResetPasswordPage() {
       await authClient.revokeSessions();
 
       if (error) {
-        throw new Error("Failed to reset password.");
+        throw new Error('Failed to reset password.');
       }
 
-      toast.success("Password reset successfully.");
-      router.push("/auth/sign-in");
+      toast.success('Password reset successfully.');
+      router.push('/auth/sign-in');
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Something went wrong.";
+        err instanceof Error ? err.message : 'Something went wrong.';
       toast.error(`${message} ❌❌`);
     } finally {
       setLoading(false);
@@ -63,8 +63,8 @@ export default function ResetPasswordPage() {
 
   useEffect(() => {
     if (error) {
-      toast.error(error ?? "Invalid or expired reset token.");
-      router.replace("/auth/forgot-password");
+      toast.error(error ?? 'Invalid or expired reset token.');
+      router.replace('/auth/forgot-password');
     }
   }, [error, router]);
 
@@ -105,7 +105,7 @@ export default function ResetPasswordPage() {
           </form>
 
           <div className="text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
+            Don&apos;t have an account?{' '}
             <Link href="/auth/sign-up" className="text-primary hover:underline">
               Create one
             </Link>
@@ -115,10 +115,6 @@ export default function ResetPasswordPage() {
     </div>
   );
 }
-
-
-
-
 
 // 'use client'
 

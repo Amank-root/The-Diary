@@ -10,13 +10,12 @@ type ErrorPageProps = {
   reset: () => void;
 };
 
-
-
 export default function Error({ error, reset }: ErrorPageProps) {
-    const router = useRouter();
-    const handleReset = () => startTransition(() => {
-        router.refresh();
-        reset();
+  const router = useRouter();
+  const handleReset = () =>
+    startTransition(() => {
+      router.refresh();
+      reset();
     });
 
   useEffect(() => {
@@ -26,7 +25,9 @@ export default function Error({ error, reset }: ErrorPageProps) {
   return (
     <div className="w-full h-screen flex items-center justify-center px-4">
       <div className="max-w-md text-center space-y-4">
-        <h1 className="text-4xl font-bold text-red-600">Something went wrong</h1>
+        <h1 className="text-4xl font-bold text-red-600">
+          Something went wrong
+        </h1>
         <p className="text-gray-700">
           Sorry, there was a problem loading data of the feed. Please try again.
         </p>

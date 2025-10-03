@@ -1,6 +1,6 @@
 // components/search-user-not-found.tsx
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export default function SearchUserNotFound() {
   return (
@@ -31,5 +31,5 @@ export default function SearchUserNotFound() {
         </Link>
       </div>
     </div>
-  )
+  );
 }

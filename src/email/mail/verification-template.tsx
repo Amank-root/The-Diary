@@ -18,10 +18,7 @@ interface VerificationEmailProps {
   name: string;
 }
 
-const VerificationEmailTemplate = ({
-  url,
-  name,
-}: VerificationEmailProps) => {
+const VerificationEmailTemplate = ({ url, name }: VerificationEmailProps) => {
   return (
     <Html lang="en" dir="ltr">
       <Tailwind>
@@ -42,7 +39,10 @@ const VerificationEmailTemplate = ({
             {/* Main Content */}
             <Section className="mb-[32px]">
               <Text className="text-[16px] text-gray-700 leading-[24px] mb-[24px] m-0">
-                Thank you for signing up! We&apos;re excited to have you on board. To ensure the security of your account and enable all features, please verify your email address by clicking the button below.
+                Thank you for signing up! We&apos;re excited to have you on
+                board. To ensure the security of your account and enable all
+                features, please verify your email address by clicking the
+                button below.
               </Text>
 
               {/* Verification Button */}
@@ -56,7 +56,8 @@ const VerificationEmailTemplate = ({
               </Section>
 
               <Text className="text-[14px] text-gray-600 leading-[20px] m-0">
-                This verification link will expire in 24 hours. If you didn&apos;t create an account, you can safely ignore this email.
+                This verification link will expire in 24 hours. If you
+                didn&apos;t create an account, you can safely ignore this email.
               </Text>
             </Section>
 
@@ -65,7 +66,8 @@ const VerificationEmailTemplate = ({
             {/* Alternative Link Section */}
             <Section className="mb-[32px]">
               <Text className="text-[14px] text-gray-600 mb-[16px] m-0">
-                If the button above doesn&apos;t work, you can also verify your email by copying and pasting this link into your browser:
+                If the button above doesn&apos;t work, you can also verify your
+                email by copying and pasting this link into your browser:
               </Text>
               <Text className="text-[14px] text-blue-600 break-all m-0">
                 {url}
@@ -75,7 +77,8 @@ const VerificationEmailTemplate = ({
             {/* Footer */}
             <Section className="border-t border-gray-200 pt-[24px]">
               <Text className="text-[12px] text-gray-500 leading-[16px] m-0">
-                This email was sent to you because you signed up for an account. If you have any questions, please contact our support team.
+                This email was sent to you because you signed up for an account.
+                If you have any questions, please contact our support team.
               </Text>
               <Text className="text-[12px] text-gray-500 mt-[16px] m-0">
                 © {new Date().getFullYear()} The Diary. All rights reserved.
@@ -94,7 +97,6 @@ const VerificationEmailTemplate = ({
 // };
 
 export default VerificationEmailTemplate;
-
 
 // import React from "react";
 // import {

@@ -1,64 +1,68 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
+import { NextRequest, NextResponse } from 'next/server';
+import { getSessionCookie } from 'better-auth/cookies';
 
 const protectedRoutes = [
-  "/dashboard",
-  "/notes",
-  "/explore",
-  "/profile",
-  "/diary",
-  "/page",
-  "/connections"
-]
+  '/dashboard',
+  '/notes',
+  '/explore',
+  '/profile',
+  '/diary',
+  '/page',
+  '/connections',
+];
 
 const authRoutes = [
-  "/auth/sign-in",
-  "/auth/sign-up",
-  "/auth/forgot-password",
-  "/auth/reset-password",
-]
-
+  '/auth/sign-in',
+  '/auth/sign-up',
+  '/auth/forgot-password',
+  '/auth/reset-password',
+];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isApiRoute = pathname.startsWith("/api");
-  
-  if (isApiRoute || pathname.startsWith("/_next") || pathname.startsWith("/favicon")) {
+  const isApiRoute = pathname.startsWith('/api');
+
+  if (
+    isApiRoute ||
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/favicon')
+  ) {
     // Allow API routes without authentication
     return NextResponse.next();
   }
-  
-  const sessionCookie = getSessionCookie(request);
-  const isHome = pathname === "/";
-  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
-  const isProtectedRoute = isHome || protectedRoutes.some(route => pathname.startsWith(route));
 
-  if (isAuthRoute && !sessionCookie){
+  const sessionCookie = getSessionCookie(request);
+  const isHome = pathname === '/';
+  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
+  const isProtectedRoute =
+    isHome || protectedRoutes.some((route) => pathname.startsWith(route));
+
+  if (isAuthRoute && !sessionCookie) {
     return NextResponse.next();
   }
 
   if (isAuthRoute && sessionCookie) {
-    return NextResponse.redirect(new URL("/profile", request.url));
+    return NextResponse.redirect(new URL('/profile', request.url));
   }
 
   if (isProtectedRoute && !sessionCookie) {
-    return NextResponse.redirect(new URL("/auth/sign-in", request.url));
+    return NextResponse.redirect(new URL('/auth/sign-in', request.url));
   }
 
-	return NextResponse.next();
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    "/",
-    "/dashboard/:path*",
-    "/notes/:path*",
-    "/explore/:path*",
-    "/profile/:path*",
-    "/diary/:path*",
-    "/page/:path*",
-    "/connections/:path*",
-    "/auth/:path*",
+    '/',
+    '/dashboard/:path*',
+    '/notes/:path*',
+    '/explore/:path*',
+    '/profile/:path*',
+    '/diary/:path*',
+    '/page/:path*',
+    '/connections/:path*',
+    '/auth/:path*',
   ],
 };
 
@@ -68,10 +72,10 @@ export const config = {
 // export async function middleware(request: NextRequest) {
 //   try {
 //     const { pathname } = request.nextUrl;
-    
+
 //     const isAuthPage = pathname.startsWith("/auth");
 //     const isApiRoute = pathname.startsWith("/api");
-    
+
 //     // Define all protected routes excluding root initially
 //     const isProtectedPage = pathname.startsWith("/dashboard") ||
 //                            pathname.startsWith("/notes") ||
@@ -80,14 +84,14 @@ export const config = {
 //                            pathname.startsWith("/diary") ||
 //                            pathname.startsWith("/page") ||
 //                            pathname.startsWith("/connections");
-    
+
 //     // Skip middleware for API routes
 //     if (isApiRoute || isAuthPage) {
 //       return NextResponse.next();
 //     }
 
 //     // Check for session token in cookies - both possible cookie names
-//     const token = request.cookies.get("better-auth.session_token")?.value || 
+//     const token = request.cookies.get("better-auth.session_token")?.value ||
 //                   request.cookies.get("authjs.session-token")?.value;
 
 //     // Additional validation: check if token exists and is not empty
@@ -110,10 +114,8 @@ export const config = {
 //     // Redirect unauthenticated users to sign-in for protected routes
 //     if (!hasValidToken && isProtectedPage) {
 
-
 //       return NextResponse.redirect(new URL("/auth/sign-in", request.url));
 //     }
-
 
 //     return NextResponse.next();
 //   } catch (error) {
@@ -121,14 +123,13 @@ export const config = {
 //     return NextResponse.next();
 //   }
 
-
 // }
 
 // export const config = {
 //   matcher: [
 //     "/",
 //     "/notes/:path*",
-//     "/dashboard/:path*", 
+//     "/dashboard/:path*",
 //     "/auth/:path*",
 //     "/explore/:path*",
 //     "/profile/:path*",
@@ -138,17 +139,15 @@ export const config = {
 //   ],
 // };
 
-
-
 // import { NextResponse } from "next/server";
 // import type { NextRequest } from "next/server";
 
 // export async function middleware(request: NextRequest) {
 //   const { pathname } = request.nextUrl;
-  
+
 //   const isAuthPage = pathname.startsWith("/auth");
 //   const isApiRoute = pathname.startsWith("/api");
-  
+
 //   // Skip middleware for API routes and static files
 //   if (isApiRoute || pathname.startsWith("/_next") || pathname.startsWith("/favicon")) {
 //     return NextResponse.next();
@@ -169,9 +168,9 @@ export const config = {
 //     });
 //     console.log(`[Middleware] Path: ${pathname}, Cookies:`, cookieValues);
 //   }
-  
+
 //   // More robust token validation
-//   let hasValidToken = sessionToken && 
+//   let hasValidToken = sessionToken &&
 //                       sessionToken.length > 20 && // Better Auth tokens are typically longer
 //                       !sessionToken.includes("deleted") && // Check for deleted tokens
 //                       sessionToken !== "undefined";
@@ -184,11 +183,11 @@ export const config = {
 //           "Cookie": request.headers.get("cookie") || "",
 //         },
 //       });
-      
+
 //       if (sessionResponse.ok) {
 //         const session = await sessionResponse.json();
 //         hasValidToken = !!session?.user;
-        
+
 //         if (process.env.NODE_ENV === "production") {
 //           console.log(`[Middleware] API session check result:`, { hasUser: !!session?.user });
 //         }
