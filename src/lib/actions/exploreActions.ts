@@ -2,7 +2,27 @@
 import { cache } from 'react';
 import { authSessionServer, prisma } from '../auth';
 
-export const getSimilarUsers = cache(async (username: string) => {
+interface UserResult {
+  id: string;
+  username: string | null;
+  image: string | null;
+  name: string | null;
+  reading: Array<{ readingId: string }>;
+  readers: Array<{ readerId: string }>;
+}
+
+interface CurrentUserResult {
+  id: string;
+  username: string | null;
+  reading: Array<{ readingId: string }>;
+}
+
+interface GetSimilarUsersResult {
+  users: UserResult[];
+  currentUser: CurrentUserResult | null;
+}
+
+export const getSimilarUsers = cache(async (username: string): Promise<GetSimilarUsersResult | null> => {
   // Fetch similar users based on the provided username
   const session = await authSessionServer();
   if (!session?.session) {

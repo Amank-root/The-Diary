@@ -32,7 +32,6 @@ function ProfileDetails({ profileData }: { profileData: ProfileDetails }) {
               profileData.currentUser.reading.some(
                 (reading) => reading.readingId === profileData.id
               ) ? (
-                // @ts-expect-error: i dont know
                 <form action={unfollowUser.bind(null, profileData.username)}>
                   <Button
                     variant="secondary"
@@ -44,7 +43,6 @@ function ProfileDetails({ profileData }: { profileData: ProfileDetails }) {
                   </Button>
                 </form>
               ) : (
-                // @ts-expect-error: i dont know
                 <form action={followUser.bind(null, profileData.username)}>
                   <Button
                     variant="secondary"

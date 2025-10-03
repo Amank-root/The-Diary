@@ -44,7 +44,6 @@ async function ExplorePage({
             {getUsers.users.length} user(s) found
           </p>
         </div>
-        {/* // @ts-expect-error: i dont know */}
         {getUsers.users.map((user) => (
           <div
             key={Math.random().toString(36).substr(2, 9)}
@@ -65,14 +64,10 @@ async function ExplorePage({
               </Avatar>
               <span className="text-sm font-medium">{user.username}</span>
             </Link>
-            {/* {getUsers.currentUser, user} */}
-            {/* // @ts-expect-error: i dont know */}
             {getUsers.currentUser?.reading.some(
               (reading) => reading.readingId === user.id
             ) ? (
-              // @ts-expect-error: i dont know
               <form action={unfollowUser.bind(null, user.username)}>
-                {/* // console.log user and currentUser */}
                 <Button
                   variant="secondary"
                   size="sm"
@@ -83,7 +78,6 @@ async function ExplorePage({
                 </Button>
               </form>
             ) : (
-              // @ts-expect-error: i dont know
               <form action={followUser.bind(null, user.username)}>
                 <Button
                   variant="secondary"
@@ -109,7 +103,6 @@ async function ExplorePage({
   return (
     <div className="min-h-screen bg-background py-4">
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 px-4 pb-4">
-        {/* // @ts-expect-error: i dont know */}
         {allPages &&
           allPages.map((page) => (
             <Card

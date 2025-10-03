@@ -76,7 +76,6 @@ function ProfileHeader({ profileData }: ProfileHeaderProps) {
               <DialogHeader>
                 <DialogTitle>Edit Profile</DialogTitle>
               </DialogHeader>
-              {/* @ts-expect-error: i dont know */}
               <form action={updateProfileData}>
                 <div className="space-y-4">
                   <div className="space-y-2">
