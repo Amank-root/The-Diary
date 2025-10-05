@@ -21,7 +21,6 @@ async function DiaryProfilePage({
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 md:gap-4">
-      {/* // @ts-expect-error: i dont know */}
       {diaries &&
         diaries.map((diary) => (
           <Card

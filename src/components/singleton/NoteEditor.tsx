@@ -6,17 +6,14 @@ import type { ReactStickyNotesProps } from '@react-latest-ui/react-sticky-notes'
 import { toast } from 'sonner';
 import { memo } from 'react';
 
-// Define proper types for note data
-interface NoteData {
-  id?: string;
-  text?: string;
-  color?: string;
-  x?: number;
-  y?: number;
-}
-
-type ExtendedNote = ReactStickyNotesProps['notes'][number] & {
-  data: NoteData;
+type NoteType = ReactStickyNotesProps['notes'][number] & {
+  data: {
+    id?: string;
+    text?: string;
+    color?: string;
+    x?: number;
+    y?: number;
+  };
 };
 
 function NoteEditor({
@@ -30,12 +27,9 @@ function NoteEditor({
 
   // console.log('Initial notes data:', notesData);
 
-  const debouncedSave = useDebouncedCallback(
-    (note: ExtendedNote) => {
-      createOrUpdateNote(note);
-    },
-    1000
-  );
+  const debouncedSave = useDebouncedCallback((note: NoteType) => {
+    createOrUpdateNote(note);
+  }, 1000);
 
   if (notes && notes.length === 0) {
     return (
@@ -49,7 +43,7 @@ function NoteEditor({
   };
 
   // Create or update a note via API
-  const createOrUpdateNote = async (note: ExtendedNote) => {
+  const createOrUpdateNote = async (note: NoteType) => {
     // Validate required fields
     // console.log('Creating/updating note:', note);
     if (!note.data.id) {
@@ -142,6 +136,97 @@ function NoteEditor({
   //     createOrUpdateNote(note);
   // }, 1000);
 
+  const handleChange = (
+    type: unknown,
+    payload: unknown,
+    updatedNotes: unknown
+  ) => {
+    // Enhanced debugging
+    // console.log('=== STICKY NOTE CHANGE ===');
+    // console.log('Type:', type);
+    // console.log('update asdahsgdj:', updatedNotes);
+    // console.log('Payload:', payload);
+    // console.log('Payload:', payload.data.text);
+    // console.log('Updated Notes Count:', updatedNotes?.length);
+    // console.log('Payload Keys:', Object.keys(payload || {}));
+    // console.log('==========================');
+
+    // Validate payload
+    if (!payload) {
+      console.error('Payload is null/undefined');
+      return;
+    }
+
+    // Always update local state first
+    if (updatedNotes && Array.isArray(updatedNotes)) {
+      setNotes(updatedNotes);
+    } else {
+      console.error('updatedNotes is not valid:', updatedNotes);
+      return;
+    }
+
+    const note = payload as NoteType;
+
+    // Handle different types of changes
+    switch (type) {
+      case 'add':
+        if (!note.data.id) {
+          toast.error('New note has no ID!');
+          // console.error('New note has no ID!', payload);
+        }
+        // Don't save immediately - wait for user to add text
+        break;
+
+      case 'update':
+        // console.log('Note updated:', note.data.id || 'NO_ID');
+        if (!note.data.id) {
+          toast.error('Updated note has no ID!');
+          // console.error('Updated note has no ID!', payload);
+          break;
+        }
+
+        if (note.data.text && note.data.text.trim() !== '') {
+          // // console.log('Debouncing save for note:', note.data.id);
+          debouncedSave(note);
+        } else {
+          // console.log('Note has no text, skipping save');
+        }
+        break;
+
+      case 'delete':
+        // console.log('Note deleted:', note.data.id || 'NO_ID');
+
+        if (!note.data.id) {
+          toast.error('Error while deleting note');
+          break;
+        }
+
+        // Cancel any pending saves for this note
+        debouncedSave.cancel();
+        // Delete from backend immediately
+        deleteNote(note.data.id);
+        break;
+
+      // case 'move':
+      //     // console.log('Note moved:', note.data.id || 'NO_ID');
+
+      //     if (!note.data.id) {
+      //         console.error('Moved note has no ID!', payload);
+      //         break;
+      //     }
+
+      //     // Only save position if note has text
+      //     if (note.data.text && note.data.text.trim() !== '') {
+      //         // console.log('Debouncing position save for note:', note.data.id);
+      //         debouncedSave(note);
+      //     }
+      //     break;
+
+      default:
+      // console.log('Unknown change type:', type);
+    }
+  };
+
   return (
     <div className="w-full overflow-x-hidden">
       <ReactStickyNotes
@@ -152,92 +237,8 @@ function NoteEditor({
         noteWidth={200}
         noteHeight={200}
         editable={true}
-        onChange={(type: string, payload: ExtendedNote, updatedNotes: ExtendedNote[]) => {
-          // Enhanced debugging
-          // console.log('=== STICKY NOTE CHANGE ===');
-          // console.log('Type:', type);
-          // console.log('update asdahsgdj:', updatedNotes);
-          // console.log('Payload:', payload);
-          // console.log('Payload:', payload.data.text);
-          // console.log('Updated Notes Count:', updatedNotes?.length);
-          // console.log('Payload Keys:', Object.keys(payload || {}));
-          // console.log('==========================');
-
-          // Validate payload
-          if (!payload) {
-            console.error('Payload is null/undefined');
-            return;
-          }
-
-          // Always update local state first
-          if (updatedNotes && Array.isArray(updatedNotes)) {
-            setNotes(updatedNotes);
-          } else {
-            console.error('updatedNotes is not valid:', updatedNotes);
-            return;
-          }
-
-          // Handle different types of changes
-          switch (type) {
-            case 'add':
-              if (!payload.data.id) {
-                toast.error('New note has no ID!');
-                // console.error('New note has no ID!', payload);
-              }
-              // Don't save immediately - wait for user to add text
-              break;
-
-            case 'update':
-              // console.log('Note updated:', payload.data.id || 'NO_ID');
-              if (!payload.data.id) {
-                toast.error('Updated note has no ID!');
-                // console.error('Updated note has no ID!', payload);
-                break;
-              }
-
-              if (payload.data.text && payload.data.text.trim() !== '') {
-                // // console.log('Debouncing save for note:', payload.data.id);
-                debouncedSave(payload);
-              } else {
-                // console.log('Note has no text, skipping save');
-              }
-              break;
-
-            case 'delete':
-              // console.log('Note deleted:', payload.data.id || 'NO_ID');
-
-              if (!payload.data.id) {
-                toast.error('Error while deleting note');
-                break;
-              }
-
-              // Cancel any pending saves for this note
-              debouncedSave.cancel();
-              // Delete from backend immediately
-              deleteNote(payload.data.id);
-              break;
-
-            // case 'move':
-            //     // console.log('Note moved:', payload.data.id || 'NO_ID');
-
-            //     if (!payload.data.id) {
-            //         console.error('Moved note has no ID!', payload);
-            //         break;
-            //     }
-
-            //     // Only save position if note has text
-            //     if (payload.data.text && payload.data.text.trim() !== '') {
-            //         // console.log('Debouncing position save for note:', payload.data.id);
-            //         debouncedSave(payload);
-            //     }
-            //     break;
-
-            default:
-            // console.log('Unknown change type:', type);
-          }
-        }}
+        onChange={handleChange}
       />
-
       {/* Enhanced debug info */}
       {process.env.NODE_ENV === 'development' && (
         <div className="fixed bottom-4 left-4 bg-black text-white p-3 rounded text-xs max-w-sm z-50">

@@ -67,7 +67,12 @@ async function ExplorePage({
             {getUsers.currentUser?.reading.some(
               (reading) => reading.readingId === user.id
             ) ? (
-              <form action={unfollowUser.bind(null, user.username)}>
+              <form action={unfollowUser}>
+                <input
+                  type="hidden"
+                  name="username"
+                  value={user.username || ''}
+                />
                 <Button
                   variant="secondary"
                   size="sm"
@@ -78,7 +83,12 @@ async function ExplorePage({
                 </Button>
               </form>
             ) : (
-              <form action={followUser.bind(null, user.username)}>
+              <form action={followUser}>
+                <input
+                  type="hidden"
+                  name="username"
+                  value={user.username || ''}
+                />
                 <Button
                   variant="secondary"
                   size="sm"

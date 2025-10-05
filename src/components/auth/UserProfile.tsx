@@ -6,6 +6,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Loader2, LogOut } from 'lucide-react';
 
+type User = {
+  id: string;
+  email: string;
+  emailVerified: boolean;
+  name: string;
+  username?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  image?: string | null;
+};
+
 export default function UserProfile() {
   const { data: session, isPending } = useSession();
 
@@ -49,11 +60,9 @@ export default function UserProfile() {
             <p className="text-sm text-muted-foreground">
               {session.user.email}
             </p>
-            {/* @ts-expect-error: i dont know */}
-            {session.user.username && (
-              // @ts-expect-error: i dont know
+            {(session.user as User).username && (
               <p className="text-sm text-muted-foreground">
-                @{session.user.username}
+                @{(session.user as User).username}
               </p>
             )}
           </div>

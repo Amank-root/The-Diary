@@ -71,7 +71,6 @@ function DiaryCreateForm() {
           <DialogHeader>
             <DialogTitle>Create New Diary</DialogTitle>
           </DialogHeader>
-          {/* @ts-expect-error: i dont know */}
           <form action={createDiary}>
             <div className="space-y-4">
               <div className="space-y-2">

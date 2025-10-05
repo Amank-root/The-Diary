@@ -38,7 +38,6 @@ async function Diary() {
 
       {/* Rectangular Diary Cards */}
       <div className="grid h-full grid-cols-2 lg:grid-cols-3 gap-6 ">
-        {/* // @ts-expect-error: i dont know */}
         {getAllDiaries &&
           getAllDiaries.length >= 0 &&
           getAllDiaries.map((diary) => (

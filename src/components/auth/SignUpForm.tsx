@@ -49,11 +49,18 @@ export default function SignUpForm() {
     }
 
     try {
-      const result = await authClient.signUp.email({
+      console.log('Attempting signup with username:', formData.username);
+      const result = await (
+        authClient.signUp.email as unknown as (params: {
+          email: string;
+          password: string;
+          name: string;
+          username: string;
+        }) => Promise<{ error?: { message: string } }>
+      )({
         email: formData.email,
         password: formData.password,
         name: formData.name,
-        // @ts-expect-error: i dont know
         username: formData.username,
       });
 
@@ -63,9 +70,10 @@ export default function SignUpForm() {
         toast.success('Account created successfully!');
         router.push('/');
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred');
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : 'An unexpected error occurred';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -77,9 +85,10 @@ export default function SignUpForm() {
         provider: 'google',
         callbackURL: '/',
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      setError(err?.message || 'An unexpected error occurred');
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : 'An unexpected error occurred';
+      setError(message);
       toast.error('Failed to sign up with Google');
     }
   };

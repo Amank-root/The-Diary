@@ -76,7 +76,13 @@ function ProfileHeader({ profileData }: ProfileHeaderProps) {
               <DialogHeader>
                 <DialogTitle>Edit Profile</DialogTitle>
               </DialogHeader>
-              <form action={updateProfileData}>
+              <form
+                action={
+                  updateProfileData as unknown as (
+                    formData: FormData
+                  ) => Promise<void>
+                }
+              >
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label>Profile Picture</Label>

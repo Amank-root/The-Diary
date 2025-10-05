@@ -45,7 +45,7 @@ export async function createDiary(formData: FormData) {
 
   if (!validated.success) {
     console.error('Invalid diary data:', validated.error);
-    return null;
+    throw new Error('Invalid diary data');
   }
 
   try {
@@ -62,7 +62,7 @@ export async function createDiary(formData: FormData) {
     });
   } catch (error) {
     console.error('Error creating diary:', error);
-    return null;
+    throw new Error('Failed to create diary');
   }
 
   revalidatePath('/diary');

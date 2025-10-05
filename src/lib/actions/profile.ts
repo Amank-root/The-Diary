@@ -309,14 +309,13 @@ export const getProfile = cache(
   }
 );
 
-export async function followUser(
-  username: string
-): Promise<null | { error: string }> {
+export async function followUser(formData: FormData) {
+  const username = formData.get('username') as string;
   const session = await authSessionServer();
   if (!session) throw new Error('Unauthorized');
 
   const isSelf = session.user.username === username;
-  if (isSelf) return null;
+  if (isSelf) return;
 
   try {
     await prisma.reader.create({
@@ -326,23 +325,19 @@ export async function followUser(
       },
     });
     revalidatePath(`/profile/${username}`);
-    return null;
   } catch (error) {
     console.error(error, 'follow user error');
-    return {
-      error: 'Failed to follow user',
-    };
+    throw new Error('Failed to follow user');
   }
 }
 
-export async function unfollowUser(
-  username: string
-): Promise<null | { error: string }> {
+export async function unfollowUser(formData: FormData) {
+  const username = formData.get('username') as string;
   const session = await authSessionServer();
   if (!session) throw new Error('Unauthorized');
 
   const isSelf = session.user.username === username;
-  if (isSelf) return null;
+  if (isSelf) return;
 
   try {
     // First find the user to get their ID
@@ -352,7 +347,7 @@ export async function unfollowUser(
     });
 
     if (!userToUnfollow) {
-      return { error: 'User not found' };
+      throw new Error('User not found');
     }
 
     await prisma.reader.delete({
@@ -364,11 +359,8 @@ export async function unfollowUser(
       },
     });
     revalidatePath(`/profile/${username}`);
-    return null;
   } catch (error) {
     console.error(error, 'unfollow user error');
-    return {
-      error: 'Failed to unfollow user',
-    };
+    throw new Error('Failed to unfollow user');
   }
 }

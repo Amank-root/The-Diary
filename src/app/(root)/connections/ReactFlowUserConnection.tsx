@@ -9,6 +9,7 @@ import {
   MarkerType,
   Node,
   Edge,
+  BackgroundVariant,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Avatar } from '@/components/ui/avatar';
@@ -388,11 +389,9 @@ export default function ReactFlowUserConnection({ data }: { data: DiaryData }) {
         maxZoom={1.2}
         nodesDraggable={true}
       >
-        {/* @ts-expect-error: i dont know */}
         <Background
           color="#dbeafe"
-          darkColor="#1f2937"
-          variant="dots"
+          variant={BackgroundVariant.Dots}
           gap={20}
           size={1}
         />

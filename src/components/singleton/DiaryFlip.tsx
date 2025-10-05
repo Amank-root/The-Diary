@@ -10,6 +10,8 @@ import Typography from '@tiptap/extension-typography';
 import { JsonValue } from '@prisma/client/runtime/library';
 import '../css/diaryflip.css';
 
+// Props for HTMLFlipBook inferred from usage
+
 // PageCover Component with proper TypeScript
 // Updated PageCover Component with cover image support
 const PageCover = React.forwardRef<
@@ -97,10 +99,8 @@ interface TiptapContent {
   type: string;
   content?: TiptapContent[];
   text?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  attrs?: Record<string, any>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  marks?: any[];
+  attrs?: Record<string, unknown>;
+  marks?: { type: string; attrs?: Record<string, unknown> }[];
 }
 
 interface DiaryFlipProps {
@@ -148,8 +148,11 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
     { content: string; date: Date; pageNumber: number }[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
+  const flipBook = useRef<unknown>(null);
+
+  // Use HTMLFlipBook with type assertion
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const flipBook = useRef<any>(null);
+  const TypedHTMLFlipBook = HTMLFlipBook as unknown as React.ComponentType<any>;
 
   // Define the extensions that match your editor
 
@@ -198,10 +201,20 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
               const parsedContent = JSON.parse(diaryPage.content as string);
               if (parsedContent?.content) {
                 // Extract text content from Tiptap structure
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const extractText = (node: any): string => {
-                  if (node.text) return node.text;
-                  if (node.content) {
+                const extractText = (node: unknown): string => {
+                  if (
+                    node &&
+                    typeof node === 'object' &&
+                    'text' in node &&
+                    typeof node.text === 'string'
+                  )
+                    return node.text;
+                  if (
+                    node &&
+                    typeof node === 'object' &&
+                    'content' in node &&
+                    Array.isArray(node.content)
+                  ) {
                     return node.content.map(extractText).join('');
                   }
                   return '';
@@ -253,9 +266,11 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
           // The correct way to access HTMLFlipBook methods
           if (
             flipBook.current &&
-            typeof flipBook.current.getPageFlip === 'function'
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            typeof (flipBook.current as any).getPageFlip === 'function'
           ) {
-            const pageFlipInstance = flipBook.current.getPageFlip();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const pageFlipInstance = (flipBook.current as any).getPageFlip();
             if (
               pageFlipInstance &&
               typeof pageFlipInstance.getPageCount === 'function'
@@ -341,8 +356,7 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
   return (
     <div className="diary-flip-container">
       <div className="mb-6">
-        {/* @ts-expect-error: i dont know */}
-        <HTMLFlipBook
+        <TypedHTMLFlipBook
           width={550}
           height={733}
           size="stretch"
@@ -374,7 +388,7 @@ const DiaryFlip: React.FC<DiaryFlipProps> = ({ diary, title }) => {
 
           {/* Back cover without image */}
           <PageCover isBackCover={true}>THE END</PageCover>
-        </HTMLFlipBook>
+        </TypedHTMLFlipBook>
         {/* <HTMLFlipBook
                     width={550}
                     height={733}

@@ -18,6 +18,7 @@ import Image from '@tiptap/extension-image';
 import Placeholder from '@tiptap/extension-placeholder';
 import Typography from '@tiptap/extension-typography';
 import CharacterCount from '@tiptap/extension-character-count';
+import { JsonValue } from '@prisma/client/runtime/library';
 import { toast } from 'sonner';
 import * as htmlToImage from 'html-to-image';
 import '../css/editor.css';
@@ -42,12 +43,29 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { usePathname, useRouter } from 'next/navigation';
 
+interface Page {
+  id: string;
+  content: JsonValue;
+  pageNumber: number;
+  pageImageUrl?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 interface DiaryOption {
   id: string;
   title: string;
   slug: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  pages?: any[] | any | null;
+  types?: string;
+  pages?: Page[] | null;
+}
+
+interface RequestBody {
+  content: string;
+  pageImageUrl: string;
+  diaryId: string;
+  pageNumber: number;
+  isPublic: boolean;
 }
 
 interface TiptapEditorProps {
@@ -80,7 +98,8 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       fetch(`/api/v1/diary?id=${pathname.split('/')[2] ?? ''}`)
         .then((res) => res.json())
         .then((data) => {
-          setDiaryOptions(data || []);
+          const options = Array.isArray(data) ? data : [data];
+          setDiaryOptions(options);
           setSelectedDiaryId(data.id ?? '');
         })
         .catch((err) => {
@@ -344,10 +363,9 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
           transform: 'scale(1)',
           transformOrigin: 'top left',
           imageRendering: 'crisp-edges', // Sharp image rendering
-          // @ts-expect-error: i dont know
           WebkitFontSmoothing: 'antialiased',
           fontSmooth: 'always',
-        },
+        } as unknown as Partial<CSSStyleDeclaration>,
       });
 
       // console.log("Conversion completed, dataUrl length:", dataUrl.length);
@@ -554,28 +572,18 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
 
       // Calculate page number more reliably
       let currentPageNumber = 1;
-      if (diaryOptions.length >= 2) {
-        const selectedDiary = diaryOptions.find(
-          (option) => option.id === selectedDiaryId
-        );
-        currentPageNumber = (selectedDiary?.pages?.length || 0) + 1;
-        // @ts-expect-error: i dont know
-      } else if (diaryOptions.pages) {
-        // @ts-expect-error: i dont know
-        currentPageNumber = (diaryOptions.pages.length || 0) + 1;
-      }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const requestBody: any = {
+      const selectedDiary = diaryOptions.find(
+        (option) => option.id === selectedDiaryId
+      );
+      currentPageNumber = (selectedDiary?.pages?.length || 0) + 1;
+      const requestBody: RequestBody = {
         content: JSON.stringify(editorContent),
         pageImageUrl: pageImageUrl,
         diaryId: selectedDiaryId,
         pageNumber: currentPageNumber,
-        // @ts-expect-error: i dont know
         isPublic:
-          diaryOptions.length >= 2
-            ? diaryOptions.find((option) => option.id === selectedDiaryId)
-                ?.types !== 'SPECIAL'
-            : diaryOptions.types !== 'SPECIAL',
+          diaryOptions.find((option) => option.id === selectedDiaryId)
+            ?.types !== 'SPECIAL',
       };
 
       const endpoint = '/api/v1/page/';
@@ -598,37 +606,18 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       // console.log("Content saved:", result);
 
       // Update diary options state to reflect the new page
-      setDiaryOptions((prev) => {
-        if (Array.isArray(prev) && prev.length >= 2) {
-          // Multiple diaries case
-          const updatedDiaries = prev.map((diary) => {
-            if (diary.id === selectedDiaryId) {
-              return {
+      setDiaryOptions((prev) =>
+        prev.map((diary) =>
+          diary.id === selectedDiaryId
+            ? {
                 ...diary,
                 pages: Array.isArray(diary.pages)
                   ? [...diary.pages, result]
                   : [result],
-              };
-            }
-            return diary;
-          });
-          return updatedDiaries;
-        } else if (prev && typeof prev === 'object' && 'id' in prev) {
-          // Single diary case
-          if (prev.id === selectedDiaryId) {
-            return {
-              ...prev,
-              // @ts-expect-error: i dont know
-              pages: Array.isArray(prev.pages)
-                ? [...prev.pages, result]
-                : [result],
-            };
-          }
-        }
-
-        // console.log("State update fallback - prev:", prev, "result:", result);
-        return prev;
-      });
+              }
+            : diary
+        )
+      );
 
       toast.success('Page saved successfully!');
 

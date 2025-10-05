@@ -32,7 +32,12 @@ function ProfileDetails({ profileData }: { profileData: ProfileDetails }) {
               profileData.currentUser.reading.some(
                 (reading) => reading.readingId === profileData.id
               ) ? (
-                <form action={unfollowUser.bind(null, profileData.username)}>
+                <form action={unfollowUser}>
+                  <input
+                    type="hidden"
+                    name="username"
+                    value={profileData.username}
+                  />
                   <Button
                     variant="secondary"
                     size="sm"
@@ -43,7 +48,12 @@ function ProfileDetails({ profileData }: { profileData: ProfileDetails }) {
                   </Button>
                 </form>
               ) : (
-                <form action={followUser.bind(null, profileData.username)}>
+                <form action={followUser}>
+                  <input
+                    type="hidden"
+                    name="username"
+                    value={profileData.username}
+                  />
                   <Button
                     variant="secondary"
                     size="sm"

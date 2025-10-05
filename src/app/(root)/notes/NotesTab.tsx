@@ -2,6 +2,7 @@ import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import NoteEditor from '@/components/singleton/NoteEditor';
 import { getAllUserNotes, getFriendsNotes } from '@/lib/actions/notesAction';
+import { Note } from '@prisma/client';
 
 async function NotesTab() {
   const getUserNotes = getAllUserNotes();
@@ -16,7 +17,7 @@ async function NotesTab() {
     : [];
 
   // Transform notes to match StickyNote interface
-  const transformNote = (note: any) => ({
+  const transformNote = (note: Note) => ({
     id: note.id,
     text: note.text,
     color: note.color,

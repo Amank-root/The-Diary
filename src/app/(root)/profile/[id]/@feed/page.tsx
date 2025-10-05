@@ -18,7 +18,6 @@ async function Feed({ params }: { params: Promise<{ id: string }> }) {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-      {/* // @ts-expect-error: i dont know */}
       {allPages &&
         allPages.map((page) => (
           <Card
