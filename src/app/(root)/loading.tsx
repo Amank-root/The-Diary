@@ -13,5 +13,5 @@ export default function Loading() {
         Loading, please wait...
       </p>
     </div>
-  )
+  );
 }

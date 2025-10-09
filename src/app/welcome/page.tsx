@@ -1,17 +1,22 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Heart, Shield, Users } from "lucide-react";
-import Link from "next/link";
-import { useSession } from "@/lib/auth-client";
-import { redirect } from "next/navigation";
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { BookOpen, Heart, Shield, Users } from 'lucide-react';
+import Link from 'next/link';
+import { useSession } from '@/lib/auth-client';
+import { redirect } from 'next/navigation';
 
 export default function WelcomePage() {
   const { data: session } = useSession();
 
-  if(session) {
-    redirect("/")
+  if (session) {
+    redirect('/');
   }
 
   return (
@@ -41,8 +46,9 @@ export default function WelcomePage() {
                 Your Personal Digital Diary
               </h1>
               <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
-                Capture your thoughts, memories, and experiences in a beautiful, secure digital space. 
-                Share moments with friends or keep them private - it&apos;s your choice.
+                Capture your thoughts, memories, and experiences in a beautiful,
+                secure digital space. Share moments with friends or keep them
+                private - it&apos;s your choice.
               </p>
             </div>
             <div className="space-x-4">
@@ -70,27 +76,30 @@ export default function WelcomePage() {
                 <Heart className="h-12 w-12 mx-auto text-red-500 mb-4" />
                 <CardTitle>Rich Text Editor</CardTitle>
                 <CardDescription>
-                  Express yourself with our beautiful markdown editor. Add images, format text, and create beautiful entries.
+                  Express yourself with our beautiful markdown editor. Add
+                  images, format text, and create beautiful entries.
                 </CardDescription>
               </CardHeader>
             </Card>
-            
+
             <Card className="border-0 shadow-md">
               <CardHeader className="text-center">
                 <Shield className="h-12 w-12 mx-auto text-green-500 mb-4" />
                 <CardTitle>Privacy First</CardTitle>
                 <CardDescription>
-                  Your thoughts are yours. Choose what to share publicly and what to keep private with granular privacy controls.
+                  Your thoughts are yours. Choose what to share publicly and
+                  what to keep private with granular privacy controls.
                 </CardDescription>
               </CardHeader>
             </Card>
-            
+
             <Card className="border-0 shadow-md">
               <CardHeader className="text-center">
                 <Users className="h-12 w-12 mx-auto text-blue-500 mb-4" />
                 <CardTitle>Social Features</CardTitle>
                 <CardDescription>
-                  Connect with friends, share your favorite memories, and discover inspiring stories from others.
+                  Connect with friends, share your favorite memories, and
+                  discover inspiring stories from others.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -107,7 +116,8 @@ export default function WelcomePage() {
                 Ready to Start Your Journey?
               </h2>
               <p className="mx-auto max-w-[600px] text-blue-100 md:text-xl">
-                Join thousands of users who trust My Diary to capture their most important moments.
+                Join thousands of users who trust My Diary to capture their most
+                important moments.
               </p>
             </div>
             <Link href="/auth/sign-up">
@@ -121,7 +131,9 @@ export default function WelcomePage() {
 
       {/* Footer */}
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t bg-white">
-        <p className="text-xs text-gray-500">© 2025 My Diary. All rights reserved.</p>
+        <p className="text-xs text-gray-500">
+          © 2025 My Diary. All rights reserved.
+        </p>
         <nav className="sm:ml-auto flex gap-4 sm:gap-6">
           <Link className="text-xs hover:underline underline-offset-4" href="#">
             Terms of Service

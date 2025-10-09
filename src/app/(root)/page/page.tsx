@@ -1,7 +1,7 @@
-import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation';
 
 function page() {
-  redirect('/explore')
+  redirect('/explore');
 }
 
-export default page
+export default page;

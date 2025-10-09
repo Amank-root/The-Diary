@@ -4,8 +4,11 @@ import { getPageById } from '@/lib/actions/pageAction';
 import BookmarkSaved from '@/components/shared/BookmarkSaved';
 import { Button } from '@/components/ui/button';
 
-
-export default async function PageModal({ params }: { params: Promise<{ id: string }> }) {
+export default async function PageModal({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const param = await params;
   // // console.log("pageId", param);
   const page = await getPageById(param.id);
@@ -30,13 +33,15 @@ export default async function PageModal({ params }: { params: Promise<{ id: stri
   return (
     <div className="z-50 flex lg:pt-20 items-center justify-center p-4">
       <div className="relative w-full max-w-sm aspect-[2/3] bg-white rounded-lg overflow-hidden shadow-lg group">
-
         {/* Main image with overlay */}
-        <Link href={`/page/${page.id}`} className="relative w-full h-full block">
+        <Link
+          href={`/page/${page.id}`}
+          className="relative w-full h-full block"
+        >
           <Image
             width={400}
             height={600}
-            src={page.pageImageUrl || "https://dummyimage.com/400x600"}
+            src={page.pageImageUrl || 'https://dummyimage.com/400x600'}
             alt={`Page ${page.id}`}
             className="w-full h-full object-cover group-hover:opacity-75 transition-opacity"
           />
@@ -54,10 +59,13 @@ export default async function PageModal({ params }: { params: Promise<{ id: stri
 
         {/* Bottom info bar */}
         <div className="absolute bottom-5 left-0 right-0 px-4 flex items-center justify-between">
-          <Link href={`/profile/${page.diary.user.username}`} className="flex items-center gap-2">
+          <Link
+            href={`/profile/${page.diary.user.username}`}
+            className="flex items-center gap-2"
+          >
             <Image
-              src={page.diary.user.image || "https://dummyimage.com/100x100"}
-              alt={page.diary.user.username || ""}
+              src={page.diary.user.image || 'https://dummyimage.com/100x100'}
+              alt={page.diary.user.username || ''}
               width={40}
               height={40}
               className="rounded-full"

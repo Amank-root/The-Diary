@@ -1,17 +1,18 @@
-import { prisma } from "@/lib/auth";
-import { authSessionServer } from "@/lib/auth";
-
+import { prisma } from '@/lib/auth';
+import { authSessionServer } from '@/lib/auth';
 
 export async function GET(request: Request) {
   const userData = await authSessionServer();
   const username = userData?.user.username;
   // check search param
   const url = new URL(request.url);
-  const searchParam = url.searchParams.get("id");
+  const searchParam = url.searchParams.get('id');
 
   if (!userData) {
     // throw new Error("User not authenticated");
-    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+    });
   }
   if (searchParam) {
     // fetch diary by id
@@ -25,16 +26,16 @@ export async function GET(request: Request) {
           diaryCoverImage: true,
           createdAt: true,
           types: true,
-          pages: true
-        }
+          pages: true,
+        },
       });
       if (!diary) {
-        return new Response("Diary not found", { status: 404 });
+        return new Response('Diary not found', { status: 404 });
       }
       return new Response(JSON.stringify(diary), { status: 200 });
     } catch (error) {
-      console.error("Error fetching diary by id:", error);
-      return new Response("Error fetching diary", { status: 500 });
+      console.error('Error fetching diary by id:', error);
+      return new Response('Error fetching diary', { status: 500 });
     }
   }
 
@@ -43,11 +44,11 @@ export async function GET(request: Request) {
     const diaries = await prisma.diary.findMany({
       where: {
         user: {
-          username: username
+          username: username,
         },
         types: {
-          in: ["PERSONAL", "GENERAL", "SPECIAL", "TRIVIAL"]
-        }
+          in: ['PERSONAL', 'GENERAL', 'SPECIAL', 'TRIVIAL'],
+        },
       },
       select: {
         id: true,
@@ -55,14 +56,13 @@ export async function GET(request: Request) {
         diaryCoverImage: true,
         createdAt: true,
         types: true,
-        pages: true
-      }
+        pages: true,
+      },
     });
     // revalidatePath(`/profile/${username}/diary`);
     return new Response(JSON.stringify(diaries), { status: 200 });
-
   } catch (error) {
-    console.error("Error fetching diaries:", error);
-    return new Response("Error fetching diaries", { status: 500 });
+    console.error('Error fetching diaries:', error);
+    return new Response('Error fetching diaries', { status: 500 });
   }
 }

@@ -38,6 +38,7 @@ Please describe how you manually tested your changes:
 - [ ] No console errors or warnings
 
 **Test Configuration:**
+
 - Node.js version:
 - Browser(s):
 - OS:
@@ -51,6 +52,7 @@ Please add screenshots to help explain your changes, especially for UI modificat
 Before submitting your PR, please check all applicable items:
 
 ### Code Quality
+
 - [ ] My code follows the project's style guidelines
 - [ ] I have performed a self-review of my code
 - [ ] I have commented my code, particularly in hard-to-understand areas
@@ -58,22 +60,26 @@ Before submitting your PR, please check all applicable items:
 - [ ] I have manually tested that my fix/feature works as expected
 
 ### Documentation
+
 - [ ] I have updated the documentation accordingly
 - [ ] I have updated the README.md if needed
 - [ ] I have added JSDoc comments to new functions
 
 ### Database Changes (if applicable)
+
 - [ ] I have created proper Prisma migrations
 - [ ] Database schema changes are backward compatible
 - [ ] I have updated seed data if necessary
 
 ### User Experience
+
 - [ ] My changes improve the experience for busy professionals
 - [ ] Privacy and security considerations have been addressed
 - [ ] The feature works well on both desktop and mobile
 - [ ] Error handling is implemented and user-friendly
 
 ### Dependencies
+
 - [ ] I have not added unnecessary dependencies
 - [ ] New dependencies are well-maintained and secure
 - [ ] I have updated package.json correctly

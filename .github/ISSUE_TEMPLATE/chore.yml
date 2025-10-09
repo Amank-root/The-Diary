@@ -1,7 +1,7 @@
 name: Chore / Maintenance
 description: Tasks for maintenance, refactoring, or general improvements that do not add new features or fix bugs
-title: "[Chore]: "
-labels: ["chore", "needs-triage"]
+title: '[Chore]: '
+labels: ['chore', 'needs-triage']
 body:
   - type: markdown
     attributes:

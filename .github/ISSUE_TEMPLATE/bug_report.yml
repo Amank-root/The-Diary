@@ -1,13 +1,13 @@
 name: Bug Report
 description: Report a bug to help us improve The Diary
-title: "[Bug]: "
-labels: ["bug", "needs-triage"]
+title: '[Bug]: '
+labels: ['bug', 'needs-triage']
 body:
   - type: markdown
     attributes:
       value: |
         Thank you for taking the time to report a bug! Your feedback helps us make The Diary better for everyone.
-        
+
         Before submitting, please check if this issue has already been reported.
 
   - type: textarea

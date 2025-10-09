@@ -1,21 +1,27 @@
-import React from 'react'
+import React from 'react';
 // import { ThemeProvider } from '@/components/theme-provider'
-import Container from '@/components/shared/container'
+import Container from '@/components/shared/container';
 
-function Layout({ children, modal }: { children: React.ReactNode, modal: React.ReactNode }) {
+function Layout({
+  children,
+  modal,
+}: {
+  children: React.ReactNode;
+  modal: React.ReactNode;
+}) {
   return (
     <div>
       {/* <SessionProvider> */}
       {/* <ThemeProvider attribute={'class'} defaultTheme="system" disableTransitionOnChange> */}
-        <Container>
-          {modal}
-          {children}
-          {/* <Toaster richColors /> */}
-        </Container>
+      <Container>
+        {modal}
+        {children}
+        {/* <Toaster richColors /> */}
+      </Container>
       {/* </ThemeProvider> */}
       {/* </SessionProvider> */}
     </div>
-  )
+  );
 }
 
-export default Layout
+export default Layout;

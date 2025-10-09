@@ -9,6 +9,7 @@ import {
   MarkerType,
   Node,
   Edge,
+  BackgroundVariant,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Avatar } from '@/components/ui/avatar';
@@ -16,28 +17,24 @@ import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 
 type DiaryData = {
   id: string;
-  name: string;
-  username: string;
-  image: string;
+  name: string | null;
+  username: string | null;
+  image: string | null;
   readers: Array<{
     id: string;
+    createdAt: Date;
     reader: {
       id: string;
-      name: string;
+      name: string | null;
     };
-    readerId: string;
-    readingId: string;
-    createdAt: string;
   }>;
   reading: Array<{
     id: string;
+    createdAt: Date;
     reading: {
       id: string;
-      name: string;
+      name: string | null;
     };
-    readerId: string;
-    readingId: string;
-    createdAt: string;
   }>;
   _count: {
     diaries: number;
@@ -45,29 +42,28 @@ type DiaryData = {
   diaries: Array<{
     id: string;
     title: string;
+    createdAt: Date;
     types: string;
     _count: {
       pages: number;
     };
     pages: Array<{
       id: string;
-      createdAt: string;
+      createdAt: Date;
     }>;
   }>;
 };
 
 const diaryTypeColors = {
-    PERSONAL: '#ef4444', // red
-    SPECIAL: '#8b5cf6', // purple
-    GENERAL: '#10b981', // green
-    DEFAULT: '#6b7280', // gray
-  };
+  PERSONAL: '#ef4444', // red
+  SPECIAL: '#8b5cf6', // purple
+  GENERAL: '#10b981', // green
+  DEFAULT: '#6b7280', // gray
+};
 
 export default function ReactFlowUserConnection({ data }: { data: DiaryData }) {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
-
-  
 
   useEffect(() => {
     if (!data) return;
@@ -82,10 +78,13 @@ export default function ReactFlowUserConnection({ data }: { data: DiaryData }) {
         label: (
           <div className="text-center p-4">
             <Avatar className="w-20 h-20 rounded-full mx-auto flex items-center justify-center text-white font-bold text-xl bg-blue-500">
-              <AvatarImage src={data.image} alt={data.name} />
+              <AvatarImage
+                src={data.image || undefined}
+                alt={data.name || 'User'}
+              />
               <AvatarFallback>
                 <div>
-                  {data.name
+                  {(data.name || 'User')
                     .split(' ')
                     .map((n) => n[0])
                     .join('')
@@ -94,13 +93,15 @@ export default function ReactFlowUserConnection({ data }: { data: DiaryData }) {
               </AvatarFallback>
             </Avatar>
             {/* <div className="w-20 h-20 rounded-full mx-auto mb-3 flex items-center justify-center text-white font-bold text-xl bg-blue-500">
-              {data.name
+              {(data.name || 'User')
                 .split(' ')
                 .map((n) => n[0])
                 .join('')
                 .toUpperCase()}
             </div> */}
-            <div className="font-bold text-lg">{data.name}</div>
+            <div className="font-bold text-lg">
+              {data.name || 'Unknown User'}
+            </div>
             <div className="text-sm text-gray-600">@{data.username}</div>
             <div className="text-xs text-blue-600 font-semibold mt-2">YOU</div>
           </div>
@@ -126,12 +127,15 @@ export default function ReactFlowUserConnection({ data }: { data: DiaryData }) {
       data: {
         label: (
           <div className="p-4">
-            <h3 className="font-bold text-lg mb-3 text-center">📚 My Diaries</h3>
+            <h3 className="font-bold text-lg mb-3 text-center">
+              📚 My Diaries
+            </h3>
             <div className="space-y-2 max-h-96 overflow-y-auto">
               {data.diaries.map((diary) => {
                 const color =
-                  diaryTypeColors[diary.types as keyof typeof diaryTypeColors] ||
-                  diaryTypeColors.DEFAULT;
+                  diaryTypeColors[
+                    diary.types as keyof typeof diaryTypeColors
+                  ] || diaryTypeColors.DEFAULT;
                 return (
                   <div
                     key={diary.id}
@@ -193,7 +197,9 @@ export default function ReactFlowUserConnection({ data }: { data: DiaryData }) {
                     </div>
                     <div className="flex-1">
                       {/* <div className="font-semibold text-sm dark:text-white">Follower {index + 1}</div> */}
-                      <div className="font-semibold text-sm dark:text-white">{reader.reader.name}</div>
+                      <div className="font-semibold text-sm dark:text-white">
+                        {reader.reader.name}
+                      </div>
                       <div className="text-xs text-gray-500 dark:text-gray-300">
                         Since {new Date(reader.createdAt).toLocaleDateString()}
                       </div>
@@ -244,7 +250,9 @@ export default function ReactFlowUserConnection({ data }: { data: DiaryData }) {
                       {index + 1}
                     </div>
                     <div className="flex-1">
-                      <div className="font-semibold text-sm dark:text-white">{reading.reading.name}</div>
+                      <div className="font-semibold text-sm dark:text-white">
+                        {reading.reading.name}
+                      </div>
                       <div className="text-xs text-gray-500 dark:text-gray-300">
                         Since {new Date(reading.createdAt).toLocaleDateString()}
                       </div>
@@ -313,7 +321,9 @@ export default function ReactFlowUserConnection({ data }: { data: DiaryData }) {
   if (!data) {
     return (
       <div className="flex items-center justify-center h-96">
-        <p className="text-gray-500 dark:text-gray-300">No connection data available</p>
+        <p className="text-gray-500 dark:text-gray-300">
+          No connection data available
+        </p>
       </div>
     );
   }
@@ -355,18 +365,22 @@ export default function ReactFlowUserConnection({ data }: { data: DiaryData }) {
           </div>
           <div className="flex justify-between gap-4">
             <span>👥 Followers:</span>
-            <span className="font-bold text-green-600 dark:text-green-400">{data.readers.length}</span>
+            <span className="font-bold text-green-600 dark:text-green-400">
+              {data.readers.length}
+            </span>
           </div>
           <div className="flex justify-between gap-4">
             <span>👁️ Following:</span>
-            <span className="font-bold text-orange-600 dark:text-orange-400">{data.reading.length}</span>
+            <span className="font-bold text-orange-600 dark:text-orange-400">
+              {data.reading.length}
+            </span>
           </div>
         </div>
       </div>
 
       {/* ReactFlow Canvas */}
       <ReactFlow
-      className='dark:text-black'
+        className="dark:text-black"
         nodes={nodes}
         edges={edges}
         fitView
@@ -375,8 +389,12 @@ export default function ReactFlowUserConnection({ data }: { data: DiaryData }) {
         maxZoom={1.2}
         nodesDraggable={true}
       >
-        {/* @ts-expect-error: i dont know */}
-        <Background color="#dbeafe" darkColor="#1f2937" variant="dots" gap={20} size={1} />
+        <Background
+          color="#dbeafe"
+          variant={BackgroundVariant.Dots}
+          gap={20}
+          size={1}
+        />
         <Controls />
       </ReactFlow>
     </div>
