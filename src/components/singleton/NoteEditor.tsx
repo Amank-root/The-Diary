@@ -199,6 +199,9 @@ function NoteEditor({ notesData }: { notesData?: ReactStickyNotesProps['notes'] 
                             // Delete from backend immediately
                             // @ts-expect-error: I don't know how to type this
                             deleteNote(payload.data.id);
+                            // update notes state to remove the deleted note
+                            // @ts-expect-error: I don't know how to type this
+                            setNotes(prevNotes => prevNotes.filter(n => n.id !== payload.data.id));
                             break;
 
                         // case 'move':
