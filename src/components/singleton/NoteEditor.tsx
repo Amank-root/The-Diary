@@ -1,125 +1,205 @@
-'use client'
-import React, { useState } from 'react'
-import { useDebouncedCallback } from 'use-debounce'
+'use client';
+import React, { useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 import ReactStickyNotes from '@react-latest-ui/react-sticky-notes';
 import type { ReactStickyNotesProps } from '@react-latest-ui/react-sticky-notes';
 import { toast } from 'sonner';
 import { memo } from 'react';
 
-function NoteEditor({ notesData }: { notesData?: ReactStickyNotesProps['notes'] }) {
-    const [notes, setNotes] = useState<ReactStickyNotesProps['notes']>(notesData || []);
+type NoteType = ReactStickyNotesProps['notes'][number] & {
+  data: {
+    id?: string;
+    text?: string;
+    color?: string;
+    x?: number;
+    y?: number;
+  };
+};
 
-    // console.log('Initial notes data:', notesData);
+function NoteEditor({
+  notesData,
+}: {
+  notesData?: ReactStickyNotesProps['notes'];
+}) {
+  const [notes, setNotes] = useState<ReactStickyNotesProps['notes']>(
+    notesData || []
+  );
 
-    const debouncedSave = useDebouncedCallback((note: ReactStickyNotesProps['notes'][number]) => {
-        createOrUpdateNote(note);
-    }, 1000);
+  // console.log('Initial notes data:', notesData);
 
-    if (notes && notes.length === 0) {
-        return <div className='p-4 text-center text-gray-500'>No notes available.</div>;
+  const debouncedSave = useDebouncedCallback((note: NoteType) => {
+    createOrUpdateNote(note);
+  }, 1000);
+
+  if (notes && notes.length === 0) {
+    return (
+      <div className="p-4 text-center text-gray-500">No notes available.</div>
+    );
+  }
+
+  const getRandomColor = () => {
+    const colors = ['#ff0', '#0f0', '#00f', '#f00', '#ff00f', '#0ffff'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
+  // Create or update a note via API
+  const createOrUpdateNote = async (note: NoteType) => {
+    // Validate required fields
+    // console.log('Creating/updating note:', note);
+    if (!note.data.id) {
+      console.error('Cannot save note - missing ID:', note);
+      toast.error('Error: Note ID is missing');
+      return;
+    }
+    if (!note.data.text || note.data.text.trim() === '') {
+      // console.log('Skipping save - note has no text');
+      return;
     }
 
-    const getRandomColor = () => {
-        const colors = ['#ff0', '#0f0', '#00f', '#f00', '#ff00f', '#0ffff'];
-        return colors[Math.floor(Math.random() * colors.length)];
-    };
+    try {
+      // console.log("Saving note:", {
+      //     id: note.data.id,
+      //     text: note.data.text?.substring(0, 50) + '...',
+      //     color: note.data.color,
+      //     position: { x: note.data.x, y: note.data.y }
+      // });
 
-    // Create or update a note via API
-    const createOrUpdateNote = async (note: ReactStickyNotesProps['notes'][number]) => {
-        // Validate required fields
-        // console.log('Creating/updating note:', note);
-        // @ts-expect-error: I don't know how to type this
+      const response = await fetch('/api/v1/note', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: note.data.id,
+          text: note.data.text,
+          color:
+            notes.find((n) => n.id === note.data.id)?.color || getRandomColor(), // use a random color
+          position: {
+            x: note.data.x || 0,
+            y: note.data.y || 0,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `Failed to save note: ${response.statusText} - ${errorText}`
+        );
+      }
+
+      const result = await response.json();
+      // console.log('Note saved successfully:', result);
+      toast.success('Note saved!');
+      return result;
+    } catch (error) {
+      console.error('Error saving note:', error);
+      toast.error('Failed to save note. Please try again.');
+    }
+  };
+
+  // Delete a note via API
+  const deleteNote = async (noteId: string) => {
+    if (!noteId) {
+      console.error('Cannot delete note - missing ID');
+      toast.error('Error: Note ID is missing');
+      return;
+    }
+
+    try {
+      // console.log('Deleting note:', noteId);
+
+      const response = await fetch(`/api/v1/note?id=${noteId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `Failed to delete note: ${response.statusText} - ${errorText}`
+        );
+      }
+
+      // console.log('Note deleted successfully:', noteId);
+      toast.success('Note deleted!');
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      toast.error('Failed to delete note.');
+    }
+  };
+
+  // Debounced save function - waits 1 second after user stops typing
+  // const debouncedSave = useDebouncedCallback((note: ReactStickyNotesProps['notes'][number]) => {
+  //     createOrUpdateNote(note);
+  // }, 1000);
+
+  const handleChange = (
+    type: unknown,
+    payload: unknown,
+    updatedNotes: unknown
+  ) => {
+    // Enhanced debugging
+    // console.log('=== STICKY NOTE CHANGE ===');
+    // console.log('Type:', type);
+    // console.log('update asdahsgdj:', updatedNotes);
+    // console.log('Payload:', payload);
+    // console.log('Payload:', payload.data.text);
+    // console.log('Updated Notes Count:', updatedNotes?.length);
+    // console.log('Payload Keys:', Object.keys(payload || {}));
+    // console.log('==========================');
+
+    // Validate payload
+    if (!payload) {
+      console.error('Payload is null/undefined');
+      return;
+    }
+
+    // Always update local state first
+    if (updatedNotes && Array.isArray(updatedNotes)) {
+      setNotes(updatedNotes);
+    } else {
+      console.error('updatedNotes is not valid:', updatedNotes);
+      return;
+    }
+
+    const note = payload as NoteType;
+
+    // Handle different types of changes
+    switch (type) {
+      case 'add':
         if (!note.data.id) {
-            console.error('Cannot save note - missing ID:', note);
-            toast.error('Error: Note ID is missing');
-            return;
+          toast.error('New note has no ID!');
+          // console.error('New note has no ID!', payload);
         }
-        // @ts-expect-error: I don't know how to type this
-        if (!note.data.text || note.data.text.trim() === '') {
-            // console.log('Skipping save - note has no text');
-            return;
-        }
+        // Don't save immediately - wait for user to add text
+        break;
 
-        try {
-            // console.log("Saving note:", {
-            //     id: note.data.id,
-            //     text: note.data.text?.substring(0, 50) + '...',
-            //     color: note.data.color,
-            //     position: { x: note.data.x, y: note.data.y }
-            // });
-
-            const response = await fetch('/api/v1/note', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    // @ts-expect-error: I don't know how to type this
-                    id: note.data.id,
-                    // @ts-expect-error: I don't know how to type this
-                    text: note.data.text,
-                    // @ts-expect-error: I don't know how to type this
-                    color: notes.find(n => n.id === note.data.id)?.color || getRandomColor(), // use a random color
-                    position: {
-                        // @ts-expect-error: I don't know how to type this
-                        x: note.data.x || 0,
-                        // @ts-expect-error: I don't know how to type this
-                        y: note.data.y || 0
-                    }
-                }),
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Failed to save note: ${response.statusText} - ${errorText}`);
-            }
-
-            const result = await response.json();
-            // console.log('Note saved successfully:', result);
-            toast.success('Note saved!');
-            return result;
-        } catch (error) {
-            console.error('Error saving note:', error);
-            toast.error('Failed to save note. Please try again.');
-        }
-    };
-
-    // Delete a note via API
-    const deleteNote = async (noteId: string) => {
-
-        if (!noteId) {
-            console.error('Cannot delete note - missing ID');
-            toast.error('Error: Note ID is missing');
-            return;
+      case 'update':
+        // console.log('Note updated:', note.data.id || 'NO_ID');
+        if (!note.data.id) {
+          toast.error('Updated note has no ID!');
+          // console.error('Updated note has no ID!', payload);
+          break;
         }
 
-        try {
-            // console.log('Deleting note:', noteId);
-
-            const response = await fetch(`/api/v1/note?id=${noteId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Failed to delete note: ${response.statusText} - ${errorText}`);
-            }
-
-            // console.log('Note deleted successfully:', noteId);
-            toast.success('Note deleted!');
-        } catch (error) {
-            console.error('Error deleting note:', error);
-            toast.error('Failed to delete note.');
+        if (note.data.text && note.data.text.trim() !== '') {
+          // // console.log('Debouncing save for note:', note.data.id);
+          debouncedSave(note);
+        } else {
+          // console.log('Note has no text, skipping save');
         }
-    };
+        break;
 
-    // Debounced save function - waits 1 second after user stops typing
-    // const debouncedSave = useDebouncedCallback((note: ReactStickyNotesProps['notes'][number]) => {
-    //     createOrUpdateNote(note);
-    // }, 1000);
+      case 'delete':
+        // console.log('Note deleted:', note.data.id || 'NO_ID');
+
+        if (!note.data.id) {
+          toast.error('Error while deleting note');
+          break;
+        }
 
     return (
         <div className='w-full overflow-x-hidden'>
@@ -248,8 +328,9 @@ function NoteEditor({ notesData }: { notesData?: ReactStickyNotesProps['notes'] 
                 </div>
             )}
         </div>
-    );
+      )}
+    </div>
+  );
 }
 
-export default memo(NoteEditor)
-
+export default memo(NoteEditor);

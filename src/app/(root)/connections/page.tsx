@@ -1,6 +1,6 @@
 // connections/page.tsx
-import React from 'react'
-import ReactFlowUserConnection from './ReactFlowUserConnection'
+import React from 'react';
+import ReactFlowUserConnection from './ReactFlowUserConnection';
 import { getConnections } from '@/lib/actions/connections';
 
 async function Connections() {
@@ -12,11 +12,10 @@ async function Connections() {
   }
 
   return (
-    <div className='w-full h-full '>
-      {/* @ts-expect-error: i don't know */}
+    <div className="w-full h-full ">
       <ReactFlowUserConnection data={data} />
     </div>
-  )
+  );
 }
 
-export default Connections
+export default Connections;

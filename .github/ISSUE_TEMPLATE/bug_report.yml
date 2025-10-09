@@ -1,21 +1,21 @@
 name: Bug Report
 description: Report a bug to help us improve The Diary
-title: "[Bug]: "
-labels: ["bug", "needs-triage"]
+title: '[Bug]: '
+labels: ['bug', 'needs-triage']
 body:
   - type: markdown
     attributes:
       value: |
-        Thank you for taking the time to report a bug! This helps us improve The Diary for all users.
-        
+        Thank you for taking the time to report a bug! Your feedback helps us make The Diary better for everyone.
+
         Before submitting, please check if this issue has already been reported.
 
   - type: textarea
     id: description
     attributes:
       label: Bug Description
-      description: A clear and concise description of what the bug is.
-      placeholder: Tell us what happened!
+      description: Provide a clear and concise description of the bug.
+      placeholder: Describe what happened
     validations:
       required: true
 
@@ -23,11 +23,11 @@ body:
     id: reproduction
     attributes:
       label: Steps to Reproduce
-      description: Tell us how to reproduce this bug
+      description: Explain how to reproduce this bug.
       placeholder: |
         1. Go to '...'
         2. Click on '...'
-        3. See error
+        3. Observe the error
     validations:
       required: true
 
@@ -35,7 +35,7 @@ body:
     id: expected
     attributes:
       label: Expected Behavior
-      description: What did you expect to happen?
+      description: Describe what you expected to happen?
       placeholder: I expected...
     validations:
       required: true
@@ -44,7 +44,7 @@ body:
     id: actual
     attributes:
       label: Actual Behavior
-      description: What actually happened?
+      description: Explain what actually happened?
       placeholder: Instead, what happened was...
     validations:
       required: true
@@ -52,7 +52,7 @@ body:
   - type: dropdown
     id: browsers
     attributes:
-      label: What browsers are you seeing the problem on?
+      label: Browsers affected
       multiple: true
       options:
         - Firefox
@@ -66,7 +66,7 @@ body:
     id: version
     attributes:
       label: Version
-      description: What version of The Diary are you running?
+      description: What version of The Diary are you using?
       placeholder: e.g., v1.0.0
 
   - type: textarea
@@ -87,14 +87,14 @@ body:
     id: logs
     attributes:
       label: Relevant Log Output
-      description: Please copy and paste any relevant log output (check browser console for errors)
+      description: Copy and paste any relevant logs (e.g., browser console errors)
       render: shell
 
   - type: textarea
     id: screenshots
     attributes:
       label: Screenshots
-      description: If applicable, add screenshots to help explain your problem.
+      description: Add screenshots if they help explain the bug.
 
   - type: checkboxes
     id: terms

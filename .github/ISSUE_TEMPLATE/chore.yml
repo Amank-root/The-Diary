@@ -1,0 +1,58 @@
+name: Chore / Maintenance
+description: Tasks for maintenance, refactoring, or general improvements that do not add new features or fix bugs
+title: '[Chore]: '
+labels: ['chore', 'needs-triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for tasks such as refactoring code, updating dependencies, cleaning up the repository, or other maintenance activities.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Task Description
+      description: Provide a clear description of the maintenance task or chore.
+      placeholder: e.g., Update dependencies, refactor API module, improve logging
+    validations:
+      required: true
+
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Rationale
+      description: Why is this task needed? How does it improve the project?
+      placeholder: e.g., Improve performance, reduce technical debt, ensure compatibility
+    validations:
+      required: true
+
+  - type: textarea
+    id: impacted_areas
+    attributes:
+      label: Impacted Areas
+      description: Which parts of the codebase or documentation will be affected?
+      placeholder: e.g., Backend API, Frontend UI, README.md, Docker setup
+
+  - type: checkboxes
+    id: priority
+    attributes:
+      label: Priority
+      description: How urgent is this task?
+      options:
+        - label: Critical - Needs immediate attention
+        - label: High - Should be done soon
+        - label: Medium - Can be scheduled
+        - label: Low - Nice to have
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      description: By submitting this issue, you agree to follow our Code of Conduct
+      options:
+        - label: I have verified that this task does not introduce new features or fix bugs
+          required: true
+        - label: I have provided all the requested information
+          required: true
+        - label: I agree to follow this project's Code of Conduct
+          required: true

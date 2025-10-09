@@ -1,18 +1,17 @@
-import React from 'react'
-import { Card } from '@/components/ui/card'
+import React from 'react';
+import { Card } from '@/components/ui/card';
 // import { Search } from 'lucide-react'
 // import { Input } from '@/components/ui/input'
-import DiaryHeader from '@/components/singleton/DiaryHeader'
-import { Separator } from '@/components/ui/separator'
-import Link from 'next/link'
-import { getDiaries } from '@/lib/actions/diaryAction'
-import BookmarkSaved from '@/components/shared/BookmarkSaved'
-import Image from 'next/image'
-import NotFound from './not-found'
+import DiaryHeader from '@/components/singleton/DiaryHeader';
+import { Separator } from '@/components/ui/separator';
+import Link from 'next/link';
+import { getDiaries } from '@/lib/actions/diaryAction';
+import BookmarkSaved from '@/components/shared/BookmarkSaved';
+import Image from 'next/image';
+import NotFound from './not-found';
 
 async function Diary() {
-  const getAllDiaries = await getDiaries()
-
+  const getAllDiaries = await getDiaries();
 
   return (
     <div className="flex-1 p-4 lg:p-6 space-y-6">
@@ -21,7 +20,7 @@ async function Diary() {
         title="Your Diaries"
         description="Keep track of your thoughts and experiences."
         btnText="New Diary"
-      // href="/diary/new"
+        // href="/diary/new"
       />
 
       {/* Search */}
@@ -35,53 +34,58 @@ async function Diary() {
 
       <Separator />
 
-      {getAllDiaries?.length === 0 && (
-          <NotFound showCreateDiary={false} />
-      )}
+      {getAllDiaries?.length === 0 && <NotFound showCreateDiary={false} />}
 
       {/* Rectangular Diary Cards */}
       <div className="grid h-full grid-cols-2 lg:grid-cols-3 gap-6 ">
-        {/* // @ts-expect-error: i dont know */}
-        {getAllDiaries && getAllDiaries.length >= 0 && getAllDiaries.map((diary) => (
-          <Card key={diary.id} className="p-0 aspect-auto overflow-hidden group cursor-pointer border-0 shadow-sm">
-            <div className="relative w-full h-full">
-              <Link href={`/diary/${diary.id}`}>
-                <Image
-                  width={400}
-                  height={600}
-                  src={diary.diaryCoverImage || "https://dummyimage.com/210x297"}
-                  alt={`diary ${diary.id}`}
-                  className="w-full h-full object-cover group-hover:opacity-75 transition-opacity"
-                />
-              </Link>
+        {getAllDiaries &&
+          getAllDiaries.length >= 0 &&
+          getAllDiaries.map((diary) => (
+            <Card
+              key={diary.id}
+              className="p-0 aspect-auto overflow-hidden group cursor-pointer border-0 shadow-sm"
+            >
+              <div className="relative w-full h-full">
+                <Link href={`/diary/${diary.id}`}>
+                  <Image
+                    width={400}
+                    height={600}
+                    src={
+                      diary.diaryCoverImage || 'https://dummyimage.com/210x297'
+                    }
+                    alt={`diary ${diary.id}`}
+                    className="w-full h-full object-cover group-hover:opacity-75 transition-opacity"
+                  />
+                </Link>
 
-              <div className="absolute top-3 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ">
-                {/* <Image
+                <div className="absolute top-3 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ">
+                  {/* <Image
                   src={diary.avatar}
                   alt="Author avatar"
                   width={40}
                   height={40}
                   className="rounded-full border-2 border-white shadow-md"
                 /> */}
-                {/* DATE diaryED ON */}
-                <span className="text-sm text-accent dark:text-white">{diary.createdAt.toLocaleDateString()}</span>
-              </div>
-              <div className="absolute flex items-center w-full justify-between bottom-5 px-4">
-                <div>
-                  {/* title */}
-                  <h3 className="text-md md:text-lg font-semibold mix-blend-difference text-white">{diary.title}</h3>
+                  {/* DATE diaryED ON */}
+                  <span className="text-sm text-accent dark:text-white">
+                    {diary.createdAt.toLocaleDateString()}
+                  </span>
                 </div>
-                <BookmarkSaved />
+                <div className="absolute flex items-center w-full justify-between bottom-5 px-4">
+                  <div>
+                    {/* title */}
+                    <h3 className="text-md md:text-lg font-semibold mix-blend-difference text-white">
+                      {diary.title}
+                    </h3>
+                  </div>
+                  <BookmarkSaved />
+                </div>
               </div>
-           
-            </div>
-          </Card>
-        ))}
+            </Card>
+          ))}
       </div>
-
-
     </div>
-  )
+  );
 }
 
-export default Diary
+export default Diary;

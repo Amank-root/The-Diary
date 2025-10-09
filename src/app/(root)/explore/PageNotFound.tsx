@@ -1,6 +1,6 @@
 // app/not-found.tsx
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export default function PageNotFound() {
   return (
@@ -9,13 +9,15 @@ export default function PageNotFound() {
       <div className="text-6xl mb-4">📓</div>
 
       {/* Main Heading */}
-      <h1 className="text-3xl font-bold mb-3">No diaries have been posted yet</h1>
+      <h1 className="text-3xl font-bold mb-3">
+        No diaries have been posted yet
+      </h1>
 
       {/* Supporting text */}
       <p className="text-muted-foreground text-lg mb-6 max-w-lg">
-        This platform is still growing 🌱. Be the first to invite friends and 
-        encourage them to share their diaries. The more people join, 
-        the richer your feed becomes!
+        This platform is still growing 🌱. Be the first to invite friends and
+        encourage them to share their diaries. The more people join, the richer
+        your feed becomes!
       </p>
 
       {/* Call-to-action buttons */}
@@ -37,5 +39,5 @@ export default function PageNotFound() {
         Tip: Share this platform with your friends to see more diaries ✨
       </p>
     </div>
-  )
+  );
 }

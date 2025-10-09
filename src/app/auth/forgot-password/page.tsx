@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
-import { authClient } from "@/lib/auth-client";
-import { toast } from "sonner";
+import { useState } from 'react';
+import Link from 'next/link';
+import { authClient } from '@/lib/auth-client';
+import { toast } from 'sonner';
 
 import {
   Card,
@@ -11,13 +11,13 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,19 +27,21 @@ export default function ForgotPasswordPage() {
     try {
       const { error } = await authClient.requestPasswordReset({
         email,
-        redirectTo: "/auth/reset-password",
+        redirectTo: '/auth/reset-password',
       });
 
       if (error) {
-        throw new Error(error.message || "Failed to send reset email.");
+        throw new Error(error.message || 'Failed to send reset email.');
       }
 
-      toast.success("If this email exists in our system, check your email for the reset link");
+      toast.success(
+        'If this email exists in our system, check your email for the reset link'
+      );
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "An unexpected error occurred.";
+        err instanceof Error ? err.message : 'An unexpected error occurred.';
       toast.error(errorMessage);
-      console.error("Error requesting password reset:", err);
+      console.error('Error requesting password reset:', err);
     } finally {
       setLoading(false);
     }
@@ -76,11 +78,8 @@ export default function ForgotPasswordPage() {
           </form>
 
           <div className="text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
-            <Link
-              href="/auth/sign-up"
-              className="text-primary hover:underline"
-            >
+            Don&apos;t have an account?{' '}
+            <Link href="/auth/sign-up" className="text-primary hover:underline">
               Create one
             </Link>
           </div>
@@ -89,8 +88,6 @@ export default function ForgotPasswordPage() {
     </div>
   );
 }
-
-
 
 // 'use client'
 

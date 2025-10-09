@@ -1,23 +1,29 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { authClient } from "@/lib/auth-client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
-import Link from "next/link";
+import React, { useState } from 'react';
+import { authClient } from '@/lib/auth-client';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import Link from 'next/link';
 
 export default function SignInForm() {
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -29,7 +35,7 @@ export default function SignInForm() {
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
+    setError('');
 
     try {
       const result = await authClient.signIn.email({
@@ -38,15 +44,15 @@ export default function SignInForm() {
       });
 
       if (result.error) {
-        setError(result.error.message || "An error occurred during sign in");
+        setError(result.error.message || 'An error occurred during sign in');
       } else {
-        toast.success("Signed in successfully!");
+        toast.success('Signed in successfully!');
         // Use router instead of window.location for better Next.js integration
-        window.location.href = "/";
+        window.location.href = '/';
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setError(err.message || "An unexpected error occurred");
+      setError(err.message || 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -55,13 +61,13 @@ export default function SignInForm() {
   const handleGoogleSignIn = async () => {
     try {
       await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/",
+        provider: 'google',
+        callbackURL: '/',
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setError(err?.message || "An unexpected error occurred");
-      toast.error("Failed to sign in with Google");
+      setError(err?.message || 'An unexpected error occurred');
+      toast.error('Failed to sign in with Google');
     }
   };
 
@@ -69,7 +75,9 @@ export default function SignInForm() {
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Welcome Back</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">
+            Welcome Back
+          </CardTitle>
           <CardDescription className="text-center">
             Sign in to your diary account
           </CardDescription>
@@ -109,12 +117,19 @@ export default function SignInForm() {
             </div>
 
             <div className="flex items-center justify-between">
-              <Link href="/auth/forgot-password" className="text-sm text-primary hover:underline">
+              <Link
+                href="/auth/forgot-password"
+                className="text-sm text-primary hover:underline"
+              >
                 Forgot password?
               </Link>
             </div>
 
-            <Button type="submit" className="w-full cursor-pointer" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full cursor-pointer"
+              disabled={loading}
+            >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign In
             </Button>
@@ -157,8 +172,11 @@ export default function SignInForm() {
           </Button>
 
           <div className="text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="/auth/sign-up" className="font-medium text-primary hover:underline">
+            Don&apos;t have an account?{' '}
+            <Link
+              href="/auth/sign-up"
+              className="font-medium text-primary hover:underline"
+            >
               Sign up
             </Link>
           </div>
