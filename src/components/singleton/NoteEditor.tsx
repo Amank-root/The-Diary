@@ -205,6 +205,7 @@ function NoteEditor({
         debouncedSave.cancel();
         // Delete from backend immediately
         deleteNote(note.data.id);
+        setNotes((prev) => prev.filter((n) => n.id !== note.data.id));
         break;
 
       // case 'move':
