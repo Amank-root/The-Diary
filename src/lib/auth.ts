@@ -20,12 +20,12 @@ export const auth = betterAuth({
     provider: 'postgresql',
   }),
   trustedOrigins: [
-    'http://localhost:3000',
-    'https://write-diary.vercel.app',
-    'https://write-diary.amankushwaha.dev',
-    'https://preview.write-diary.amankushwaha.dev',
+    "http://localhost:3000", 
+    "https://write-diary.vercel.app", 
+    "https://write-diary.amankushwaha.dev", 
+    "https://preview.write-diary.amankushwaha.dev"
   ],
-
+  
   emailAndPassword: {
     enabled: true,
     autoSignIn: false,
