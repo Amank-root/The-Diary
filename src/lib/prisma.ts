@@ -1,7 +1,7 @@
 // lib/prisma.ts
-import { PrismaClient } from "@/generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { readReplicas } from "@prisma/extension-read-replicas";
+import { PrismaClient } from '@/generated/prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { readReplicas } from '@prisma/extension-read-replicas';
 
 const createPrismaClient = () => {
   // Primary (write) client
@@ -31,7 +31,7 @@ const createPrismaClient = () => {
   return mainClient.$extends(
     readReplicas({
       replicas: [replica1Client, replica2Client, replica3Client],
-    }),
+    })
   );
 };
 
@@ -43,10 +43,9 @@ const globalForPrisma = globalThis as unknown as {
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
 }
-
 
 // // lib/prisma.ts
 // import { PrismaClient } from "@/generated/prisma/client";
@@ -110,13 +109,12 @@ if (process.env.NODE_ENV !== "production") {
 // };
 
 // export const prisma =
-//   globalForPrisma.prisma ?? 
+//   globalForPrisma.prisma ??
 //   new PrismaClient({
 //     adapter,
 //   });
 
 // if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
-
 
 // import { readReplicas } from '@prisma/extension-read-replicas'
 // import { PrismaPg } from '@prisma/adapter-pg'

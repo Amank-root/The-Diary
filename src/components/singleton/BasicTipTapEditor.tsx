@@ -43,7 +43,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { usePathname, useRouter } from 'next/navigation';
 
-type JsonValue = Prisma.JsonValue
+type JsonValue = Prisma.JsonValue;
 
 interface Page {
   id: string;

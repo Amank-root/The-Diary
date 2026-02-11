@@ -16,17 +16,17 @@ const authRoutes = [
   '/auth/sign-up',
   '/auth/forgot-password',
   '/auth/reset-password',
-  '/verify-email'
+  '/verify-email',
 ];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isApiRoute = pathname.startsWith('/api');
 
   if (
     isApiRoute ||
     pathname.startsWith('/_next') ||
-    pathname.startsWith('/favicon') || 
+    pathname.startsWith('/favicon') ||
     pathname.startsWith('/verify-email')
   ) {
     // Allow API routes without authentication
@@ -48,7 +48,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (isProtectedRoute && !sessionCookie) {
-    console.log(pathname)
+    console.log(pathname);
     return NextResponse.redirect(new URL('/auth/sign-in', request.url));
   }
 
