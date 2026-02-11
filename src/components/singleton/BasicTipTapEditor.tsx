@@ -18,7 +18,7 @@ import Image from '@tiptap/extension-image';
 import Placeholder from '@tiptap/extension-placeholder';
 import Typography from '@tiptap/extension-typography';
 import CharacterCount from '@tiptap/extension-character-count';
-import { JsonValue } from '@prisma/client/runtime/library';
+import { Prisma } from '@/generated/prisma/browser';
 import { toast } from 'sonner';
 import * as htmlToImage from 'html-to-image';
 import '../css/editor.css';
@@ -42,6 +42,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { usePathname, useRouter } from 'next/navigation';
+
+type JsonValue = Prisma.JsonValue
 
 interface Page {
   id: string;

@@ -1,10 +1,10 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -18,7 +18,6 @@ model User {
   website       String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-
   accounts      Account[]
   diaries       Diary[]
   notes         Note[]
@@ -26,8 +25,6 @@ model User {
   readers       Reader[]  @relation("UserReaders")
   saved         Saved[]
   sessions      Session[]
-
-  @@map("user")
 }
 
 model Account {
@@ -44,12 +41,9 @@ model Account {
   password              String?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
-
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([providerId, accountId])
-  @@index([userId])
-  @@map("account")
 }
 
 model Session {
@@ -61,11 +55,7 @@ model Session {
   ipAddress String?
   userAgent String?
   userId    String
-
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@map("session")
 }
 
 model Verification {
@@ -77,8 +67,6 @@ model Verification {
   updatedAt  DateTime @updatedAt
 
   @@unique([identifier, value])
-  @@index([identifier])
-  @@map("verification")
 }
 
 model Reader {
@@ -86,44 +74,33 @@ model Reader {
   readerId  String
   readingId String
   createdAt DateTime @default(now())
-
   reader    User     @relation("UserReading", fields: [readerId], references: [id], onDelete: Cascade)
   reading   User     @relation("UserReaders", fields: [readingId], references: [id], onDelete: Cascade)
 
   @@unique([readerId, readingId])
-  @@index([readerId])
-  @@index([readingId])
 }
 
 model Note {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   position  Json
   title     String?
   text      String
   color     String
   userId    String
   createdAt DateTime @default(now())
-
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Diary {
-  id              String     @id @default(cuid())
+  id              String    @id @default(cuid())
   title           String
   diaryCoverImage String?
-  isPublic        Boolean    @default(false)
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
   userId          String
-  types            DiaryType
-
-  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  types           DiaryType
+  user            User      @relation(fields: [userId], references: [id])
   pages           Page[]
-  savedBy         Saved[]
-
-  @@index([userId])
 }
 
 model Page {
@@ -135,29 +112,16 @@ model Page {
   diaryId      String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-
   diary        Diary    @relation(fields: [diaryId], references: [id], onDelete: Cascade)
-  savedBy      Saved[]
-
-  @@unique([diaryId, pageNumber])
-  @@index([diaryId])
 }
 
 model Saved {
-  id        String     @id @default(cuid())
-  type      SavedType
-  userId    String
-  diaryId   String?
-  pageId    String?
-  createdAt DateTime   @default(now())
-
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  diary     Diary?     @relation(fields: [diaryId], references: [id], onDelete: Cascade)
-  page      Page?      @relation(fields: [pageId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([diaryId])
-  @@index([pageId])
+  id           String    @id @default(cuid())
+  connectionId String
+  type         SavedType
+  userId       String
+  createdAt    DateTime  @default(now())
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum SavedType {

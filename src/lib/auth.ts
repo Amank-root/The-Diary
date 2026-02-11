@@ -1,19 +1,19 @@
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from './prisma';
 import { headers } from 'next/headers';
 import { sendEmail, resetPassword } from '@/email/mail-conf';
 import { nextCookies } from 'better-auth/next-js';
 import { multiSession } from 'better-auth/plugins';
 
 // Create a global instance to avoid multiple connections in development
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
+// const globalForPrisma = globalThis as unknown as {
+//   prisma: PrismaClient | undefined;
+// };
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient();
+// export const prisma = globalForPrisma.prisma ?? new PrismaClient();
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+// if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {

@@ -2,7 +2,7 @@ import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import NoteEditor from '@/components/singleton/NoteEditor';
 import { getAllUserNotes, getFriendsNotes } from '@/lib/actions/notesAction';
-import { Note } from '@prisma/client';
+import { Note } from '@/generated/prisma/client';
 
 async function NotesTab() {
   const getUserNotes = getAllUserNotes();

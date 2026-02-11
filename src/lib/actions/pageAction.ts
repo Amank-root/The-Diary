@@ -1,7 +1,8 @@
 'use server';
 
 import { cache } from 'react';
-import { prisma, authSessionServer } from '../auth';
+import {  authSessionServer } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 
 // import { cache } from "react";
 

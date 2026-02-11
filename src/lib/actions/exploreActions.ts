@@ -1,6 +1,7 @@
 'use server';
 import { cache } from 'react';
-import { authSessionServer, prisma } from '../auth';
+import { authSessionServer } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 
 interface UserResult {
   id: string;

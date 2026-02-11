@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 import { authSessionServer } from '@/lib/auth';
 
 export async function GET(request: Request) {

@@ -46,3 +46,4 @@ next-env.d.ts
 AUTH_SETUP.md
 /prisma/dev.db
 /prisma/_migrations
+/src/generated*

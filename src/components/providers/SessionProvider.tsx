@@ -11,8 +11,9 @@ interface SessionProviderProps {
 }
 
 export default function SessionProvider({ children }: SessionProviderProps) {
-  const { data: session, isPending } = useSession();
   const pathname = usePathname();
+  if (pathname.startsWith('/verify-email')) return <>{children}</>
+  const { data: session, isPending } = useSession();
   // console.log("SessionProvider - Session:", session, "isPending:", isPending);
   const router = useRouter();
   const [initialLoad, setInitialLoad] = useState(true);
@@ -34,7 +35,8 @@ export default function SessionProvider({ children }: SessionProviderProps) {
       !initialLoad &&
       !isPending &&
       !session &&
-      !pathname.startsWith('/auth')
+      !pathname.startsWith('/auth') 
+      // pathname.startsWith('/verify-email')
     ) {
       // console.log("No session found, redirecting to sign-in");
       router.push('/auth/sign-in');

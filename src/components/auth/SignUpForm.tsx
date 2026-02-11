@@ -56,19 +56,21 @@ export default function SignUpForm() {
           password: string;
           name: string;
           username: string;
+          callbackURL?: string;
         }) => Promise<{ error?: { message: string } }>
       )({
         email: formData.email,
         password: formData.password,
         name: formData.name,
         username: formData.username,
+        callbackURL: '/',
       });
 
       if (result.error) {
         setError(result.error.message || 'An error occurred during sign up');
       } else {
         toast.success('Account created successfully!');
-        router.push('/');
+        router.push('/verify-email');
       }
     } catch (err: unknown) {
       const message =

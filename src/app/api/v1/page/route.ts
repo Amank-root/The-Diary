@@ -1,4 +1,5 @@
-import { prisma, authSessionServer } from '@/lib/auth';
+import { authSessionServer } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 
 export async function GET(request: Request) {

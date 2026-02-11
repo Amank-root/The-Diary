@@ -1,5 +1,6 @@
 'use server';
-import { prisma, authSessionServer } from '@/lib/auth';
+import { authSessionServer } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 import { cache } from 'react';
 
 export const getConnections = cache(async () => {

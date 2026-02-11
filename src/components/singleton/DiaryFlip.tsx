@@ -7,13 +7,16 @@ import Image from '@tiptap/extension-image'; // Add this import
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Typography from '@tiptap/extension-typography';
-import { JsonValue } from '@prisma/client/runtime/library';
+import { Prisma } from '@/generated/prisma/browser';
 import '../css/diaryflip.css';
 
 // Props for HTMLFlipBook inferred from usage
 
 // PageCover Component with proper TypeScript
 // Updated PageCover Component with cover image support
+
+type JsonValue = Prisma.JsonValue;
+
 const PageCover = React.forwardRef<
   HTMLDivElement,
   React.PropsWithChildren<{

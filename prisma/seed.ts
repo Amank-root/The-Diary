@@ -1,7 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-import { users, diaries, pages, accounts } from '../src/lib/data';
+import { PrismaClient } from '@/generated/prisma/client';
+import { users, diaries, pages, accounts } from '@/lib/data';
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  
+});
 
 async function main() {
   // Seed your database here

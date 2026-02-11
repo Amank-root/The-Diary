@@ -1,7 +1,8 @@
 'use server';
 
 import { cache } from 'react';
-import { prisma, authSessionServer } from '../auth';
+import { authSessionServer } from '../auth';
+import { prisma } from '../prisma';
 
 export const getAllUserNotes = cache(async () => {
   const userData = await authSessionServer();

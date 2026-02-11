@@ -1,6 +1,7 @@
 'use server';
 import { cache } from 'react';
-import { prisma, authSessionServer, auth } from '../auth';
+import { authSessionServer, auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 import type { ProfileDetails } from '../types';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
